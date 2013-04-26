@@ -291,6 +291,7 @@ namespace RCF  {
 
             os <<  
                 "HTTP/1.1 200 OK\r\n"
+                "Access-Control-Allow-Origin: *\r\n" //+ CORS, allow for all
                 "Content-Length: " << messageLength << "\r\n"
                 "\r\n";
         }
