@@ -439,6 +439,8 @@
     <ClCompile Include="windows\QueueFrame.cpp" />
     <ClCompile Include="windows\QueuePage.cpp" />
     <ClCompile Include="windows\RecentsFrm.cpp" />
+    <ClCompile Include="windows\RpcServiceHub.cpp" />
+    <ClCompile Include="windows\RpcServices.cpp" />
     <ClCompile Include="windows\SDCPage.cpp" />
     <ClCompile Include="windows\SearchFrm.cpp" />
     <ClCompile Include="windows\SharePage.cpp" />
@@ -531,6 +533,8 @@
     <ClInclude Include="windows\QueuePage.h" />
     <ClInclude Include="windows\RecentsFrm.h" />
     <ClInclude Include="windows\resource.h" />
+    <ClInclude Include="windows\RpcServiceHub.h" />
+    <ClInclude Include="windows\RpcServices.h" />
     <ClInclude Include="windows\SDCPage.h" />
     <ClInclude Include="windows\SearchFrm.h" />
     <ClInclude Include="windows\SharePage.h" />
@@ -585,6 +589,9 @@
     <ProjectReference Include="natpmp\natpmp.vcxproj">
       <Project>
       </Project>
+    </ProjectReference>
+    <ProjectReference Include="RCF.vcxproj">
+      <Project>{16aa7f08-7723-4e0e-a9da-529213191a5b}</Project>
     </ProjectReference>
     <ProjectReference Include="zlib.vcxproj">
       <Project>{dfbbe42a-45f4-4188-89c2-17f5dfe50673}</Project>

@@ -48,6 +48,10 @@
 #include "MainFrm.h"
 #include "PopupManager.h"
 
+#include <RCF/RCF.hpp>
+#include <RCF/JsonRpc.hpp>
+#include "RpcServices.h"
+
 #include <delayimp.h>
 #ifdef USE_RIP_MINIDUMP
 #include <Dbghelp.h>
@@ -555,6 +559,31 @@ static void send_stack_dmp()
 
 static int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 {
+
+   /* Definition of rpc service */
+    RCF::RcfInitDeinit rcfInit;
+    RCF::RcfServer server;
+
+    RpcServices services;
+    server.addEndpoint( RCF::HttpEndpoint("127.0.0.1", 1271) ) //TODO: available port
+            .setRpcProtocol(RCF::Rp_JsonRpc);
+
+    server.bindJsonRpc(boost::bind(&RpcServices::transfers, &services, _1, _2), "r.transfers");
+    server.bindJsonRpc(boost::bind(&RpcServices::hub, &services, _1, _2), "r.hub");
+    server.bindJsonRpc(boost::bind(&RpcServices::search, &services, _1, _2), "r.search");
+    server.bindJsonRpc(boost::bind(&RpcServices::queue, &services, _1, _2), "r.queue");
+    server.bindJsonRpc(boost::bind(&RpcServices::share, &services, _1, _2), "r.share");
+    server.bindJsonRpc(boost::bind(&RpcServices::settings, &services, _1, _2), "r.settings");
+    server.bindJsonRpc(boost::bind(&RpcServices::execute, &services, _1, _2), "r.execute");
+    server.bindJsonRpc(boost::bind(&RpcServices::hashing, &services, _1, _2), "r.hashing");
+
+    RCF::ThreadPoolPtr tpPtr( new RCF::ThreadPool(1, 50) );
+    server.setThreadPool(tpPtr);
+
+    server.start();
+   /* - */
+
+
 	checkCommonControls();
 	
 	CMessageLoop theLoop;

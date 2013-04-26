@@ -738,6 +738,14 @@ LRESULT MainFrame::onSpeaker(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& 
 			bIsPM = true;
 		}
 	}
+    else if(wParam == QUICK_CONNECT_HUB)
+    {
+        const string* server = (string*)lParam;
+        RecentHubEntry r;
+		r.setServer(*server);
+		FavoriteManager::getInstance()->addRecent(r);
+		HubFrame::openWindow(Text::toT(*server));
+    }
 	
 	return 0;
 }

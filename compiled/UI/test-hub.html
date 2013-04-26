@@ -1,0 +1,135 @@
+<!-- test -->
+<script type="text/javascript" src="lib/jquery/jquery-1.9.1.min.js"></script>
+
+<script>
+
+    var HUB_TYPE = {
+        LIST:       0,
+        USED:       1,        
+        CONNECT:    2,
+        CLOSE:      3,
+        CREATE:     4,
+        UPDATE:     5,
+        DELETE:     6,
+        MENU:       7
+    };
+
+    function callback(response)
+    {
+        var debugInfo = "";
+        
+        if(response.error != null){
+            debugInfo += "detect error<br />";
+        }
+        
+        debugInfo += "id: " + response.id  + "<br />"
+                  + "error: " + response.error + "<br />"
+                  + "result: " + response.result + "<hr />";
+        
+        $('#output').html(debugInfo);
+    }
+    
+    function clkHubAdd()
+    {
+        var request = {};
+        request.id     = 1;
+        request.method = "r.hub";
+        request.params = [HUB_TYPE.CREATE, {
+                                            'caption':'capt1',
+                                            'server':'dchub://test',
+                                            'description':'descr'
+                                            }];    
+        $.post("http://localhost:1271", JSON.stringify(request), callback, "json");
+    }
+
+    function clkHubDelete()
+    {
+        var request = {};
+        request.id     = 1;
+        request.method = "r.hub";
+        request.params = [HUB_TYPE.DELETE, {'server':'dchub://test'}];
+        $.post("http://localhost:1271", JSON.stringify(request), callback, "json");
+    }
+    
+    function clkHubUpdate()
+    {
+        var request = {};
+        request.id     = 1;
+        request.method = "r.hub";
+        request.params = [HUB_TYPE.UPDATE, {
+                                            'caption':'NewCapt1',
+                                            'server':'dchub://test',
+                                            //'serverNew':'dchub://testNew',
+                                            'description':'NewDescr'
+                                            }];    
+        $.post("http://localhost:1271", JSON.stringify(request), callback, "json");
+    }
+    
+    function clkHubConnect()
+    {
+        var request = {};
+        request.id     = 1;
+        request.method = "r.hub";
+        request.params = [HUB_TYPE.CONNECT, {'server':'test'}];
+        $.post("http://localhost:1271", JSON.stringify(request), callback, "json");
+    }
+    
+    function clkHubClose()
+    {
+        var request = {};
+        request.id     = 1;
+        request.method = "r.hub";
+        request.params = [HUB_TYPE.CLOSE, {'server':'test'}];
+        $.post("http://localhost:1271", JSON.stringify(request), callback, "json");
+    }
+    
+    function clkHubList()
+    {
+        var request = {};
+        request.id     = 1;
+        request.method = "r.hub";
+        request.params = [HUB_TYPE.LIST, {}];
+        $.post("http://localhost:1271", JSON.stringify(request), callback, "json");
+    }
+        
+    function clkHubUsed()
+    {
+        $('#hUsed').hide();
+        setInterval(speakerHub, 1000);
+    }
+    
+    var speakerHub = function()
+    {
+        $.post("http://localhost:1271", 
+                JSON.stringify({id:1,method:'r.hub',params:[HUB_TYPE.USED,{}]}),
+                function(response)
+                {
+                    callback(response);
+                    if(response.result){
+                        var hubs = eval( '(' + response.result + ')' );
+                        var strHubs = "";
+                        for(var hub in hubs){
+                            strHubs += hub + ' - ' + (hubs[hub]? 'Online':'Offline') + '<br />';
+                        }
+                        $('#testHub').html(strHubs);
+                    }
+                }, "json");
+    }    
+    
+</script>
+
+<div id="output"></div>
+<hr />
+<input type="button" onclick="clkHubAdd();" value="clkHubAdd()" />
+<input type="button" onclick="clkHubDelete();" value="clkHubDelete()" />
+<input type="button" onclick="clkHubUpdate();" value="clkHubUpdate()" />
+<input type="button" onclick="clkHubConnect();" value="clkHubConnect()" />
+<input type="button" onclick="clkHubClose();" value="clkHubClose()" />
+<input type="button" onclick="clkHubList();" value="clkHubList()" />
+<input id="hUsed" type="button" onclick="clkHubUsed();" value="clkHubUsed()" />
+
+
+
+<br /><br />
+list:
+<div id="testHub"></div>
