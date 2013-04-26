@@ -3,6 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StrongDC", "StrongDC.vcxproj", "{E82610AA-B6FD-4813-B5B9-E717CBD0F23B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{51015502-C27C-43CF-9FA4-12AB9DB5D36E} = {51015502-C27C-43CF-9FA4-12AB9DB5D36E}
+		{16AA7F08-7723-4E0E-A9DA-529213191A5B} = {16AA7F08-7723-4E0E-A9DA-529213191A5B}
 		{E93296BC-BD48-FEA8-4A71-CD50672863D0} = {E93296BC-BD48-FEA8-4A71-CD50672863D0}
 	EndProjectSection
 EndProject
@@ -39,6 +40,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MediaInfoLib", "MediaInfoLi
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "natpmp", "natpmp\natpmp.vcxproj", "{E93296BC-BD48-FEA8-4A71-CD50672863D0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RCF", "RCF.vcxproj", "{16AA7F08-7723-4E0E-A9DA-529213191A5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -135,6 +138,12 @@ Global
 		{E93296BC-BD48-FEA8-4A71-CD50672863D0}.Release|Win32.Build.0 = Release|Win32
 		{E93296BC-BD48-FEA8-4A71-CD50672863D0}.Release|x64.ActiveCfg = Release|x64
 		{E93296BC-BD48-FEA8-4A71-CD50672863D0}.Release|x64.Build.0 = Release|x64
+		{16AA7F08-7723-4E0E-A9DA-529213191A5B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{16AA7F08-7723-4E0E-A9DA-529213191A5B}.Debug|Win32.Build.0 = Debug|Win32
+		{16AA7F08-7723-4E0E-A9DA-529213191A5B}.Debug|x64.ActiveCfg = Debug|Win32
+		{16AA7F08-7723-4E0E-A9DA-529213191A5B}.Release|Win32.ActiveCfg = Release|Win32
+		{16AA7F08-7723-4E0E-A9DA-529213191A5B}.Release|Win32.Build.0 = Release|Win32
+		{16AA7F08-7723-4E0E-A9DA-529213191A5B}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
