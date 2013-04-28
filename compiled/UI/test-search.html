@@ -1,0 +1,87 @@
+<!-- test -->
+<script type="text/javascript" src="lib/jquery/jquery-1.9.1.min.js"></script>
+
+<script>
+
+    var SEARCH_TYPE =
+    {
+        RESPONSE:   0,
+        DEFAULT:    1,
+        TTH:        2,
+        COMMAND:    3
+    };
+
+    function callback(response)
+    {
+        var debugInfo = "";
+        
+        if(response.error != null){
+            debugInfo += "detect error<br />";
+        }
+        
+        debugInfo += "id: " + response.id  + "<br />"
+                  + "error: " + response.error + "<br />"
+                  + "result: " + response.result + "<hr />";
+        
+        $('#output').html(debugInfo);
+    }
+    
+    function clkSearch()
+    {
+        $.post("http://localhost:1271", 
+                JSON.stringify({
+                                    id: 1, 
+                                    method: 'r.search',
+                                    params:[SEARCH_TYPE.DEFAULT, 'friend']
+                                }), callback, "json");
+    }
+    
+    function clkSearchListen()
+    {
+        $('#sListen').hide();
+        setInterval(speakerSearch, 1000);
+    }
+    
+    var received = [];
+    var speakerSearch = function()
+    {
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: 'http://localhost:1271',
+            beforeSend : function(xhr){
+               xhr.overrideMimeType("application/json; charset=windows-1251");
+            },
+            data: JSON.stringify({
+                                    id: 1, 
+                                    method: 'r.search',
+                                    //params:[SEARCH_TYPE.RESPONSE] default 500
+                                    params:[SEARCH_TYPE.RESPONSE, 2]
+                                }),
+            success: function(response){
+                callback(response);
+                if(response.result != null){
+                    //received.push(response.result);
+                    var arr = eval('([' + response.result + '])');
+                    received = received.concat(arr);
+                }
+            }
+        });
+    }
+    
+    var printReceived = function(){
+        for(var k in received){
+            console.log(k + ': ' + received[k]);
+        }
+    }
+    
+</script>
+
+<div id="output"></div>
+<hr />
+<input type="button" onclick="clkSearch();" value="clkSearch()" />
+<input type="button" onclick="speakerSearch();" value="speakerSearch()" />
+<input id="sListen" type="button" onclick="clkSearchListen();" value="clkSearchListen()" />
+
+
+<input type="button" onclick="printReceived();" value="printReceived()" />

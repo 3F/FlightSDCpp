@@ -2,7 +2,7 @@
 #include <RCF/RCF.hpp>
 
 /**
- * Удволетворение основных потребностей.
+ * РЈРґРІРѕР»РµС‚РІРѕСЂРµРЅРёРµ РѕСЃРЅРѕРІРЅС‹С… РїРѕС‚СЂРµР±РЅРѕСЃС‚РµР№.
  */
 class RpcServices
 {
@@ -31,7 +31,7 @@ public:
   /* hashing operation: calculate, status */
     void hashing(const RCF::JsonRpcRequest &request,  RCF::JsonRpcResponse &response);
 
-    //INFO: RCF скуп на привязывания, поэтому лучше сводить схожие операции
+    //INFO: RCF СЃРєСѓРї РЅР° РїСЂРёРІСЏР·С‹РІР°РЅРёСЏ, РїРѕСЌС‚РѕРјСѓ Р»СѓС‡С€Рµ СЃРІРѕРґРёС‚СЊ СЃС…РѕР¶РёРµ РѕРїРµСЂР°С†РёРё
     //void uploads(const RCF::JsonRpcRequest &request,  RCF::JsonRpcResponse &response);
     //void downloads(const RCF::JsonRpcRequest &request,  RCF::JsonRpcResponse &response);
     //// combination of uploads / downloads
@@ -44,7 +44,8 @@ public:
         ERR_PARAM_UNKNOWN_ARG           = 102,
         ERR_PARAM_KEYARG_NOTFOUND       = 103,
         ERR_OPERATION_TYPE_INCORRECT    = 200,
-        ERR_UNKNOWN_ERROR               = 500
+        ERR_UNKNOWN_ERROR               = 500,
+        ERR_UNSUPPORTED_FUNCTION        = 700
     };
 
     RpcServices(void);

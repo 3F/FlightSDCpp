@@ -57,8 +57,8 @@ bool RpcServiceHub::connect(const json_spirit::Object &data)
 {
     json_spirit::Pair_impl<json_spirit::Config_vector<std::string>>::Value_type addr = json_spirit::find_value(data, "server");
     if(addr.type() != json_spirit::null_type && addr.get_str().length() > 0){
-        //TODO: лучше разделить на отдельные потоки, если клиент посылает множетсвенные запросы
-        //     Автостарт у них также отрабатывает в едином - см. MainFrm::onSpeaker(AUTO_CONNECT) autoConnect(...); !
+        //TODO: Р»СѓС‡С€Рµ СЂР°Р·РґРµР»РёС‚СЊ РЅР° РѕС‚РґРµР»СЊРЅС‹Рµ РїРѕС‚РѕРєРё, РµСЃР»Рё РєР»РёРµРЅС‚ РїРѕСЃС‹Р»Р°РµС‚ РјРЅРѕР¶РµС‚СЃРІРµРЅРЅС‹Рµ Р·Р°РїСЂРѕСЃС‹
+        //     РђРІС‚РѕСЃС‚Р°СЂС‚ Сѓ РЅРёС… С‚Р°РєР¶Рµ РѕС‚СЂР°Р±Р°С‚С‹РІР°РµС‚ РІ РµРґРёРЅРѕРј - СЃРј. MainFrm::onSpeaker(AUTO_CONNECT) autoConnect(...); !
         PostMessage(MainFrame::getMainFrame()->m_hWnd, 
                     WM_SPEAKER, MainFrame::QUICK_CONNECT_HUB, (WPARAM)new std::string(addr.get_str()));
         return true;
@@ -100,7 +100,7 @@ std::string RpcServiceHub::used(const json_spirit::Object &data)
             server = server.substr(pos + 3);
         }
         ret += "'" + server + "':" + ((it->second)? "1":"0") + ",";
-        //TODO: адреса fav возвращать в виде ID
+        //TODO: Р°РґСЂРµСЃР° fav РІРѕР·РІСЂР°С‰Р°С‚СЊ РІ РІРёРґРµ ID
     }
     //return ret.substr(0, ret.length()) + "}";
     return ret += "}"; //yep

@@ -746,6 +746,10 @@ LRESULT MainFrame::onSpeaker(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& 
 		FavoriteManager::getInstance()->addRecent(r);
 		HubFrame::openWindow(Text::toT(*server));
     }
+    else if(wParam == SEARCH_SIMPLE)
+    {
+        SearchFrame::openWindow(Text::toT(*(string*)lParam));
+    }
 	
 	return 0;
 }

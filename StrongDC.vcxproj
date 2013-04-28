@@ -441,6 +441,7 @@
     <ClCompile Include="windows\RecentsFrm.cpp" />
     <ClCompile Include="windows\RpcServiceHub.cpp" />
     <ClCompile Include="windows\RpcServices.cpp" />
+    <ClCompile Include="windows\RpcServiceSearch.cpp" />
     <ClCompile Include="windows\SDCPage.cpp" />
     <ClCompile Include="windows\SearchFrm.cpp" />
     <ClCompile Include="windows\SharePage.cpp" />
@@ -535,6 +536,7 @@
     <ClInclude Include="windows\resource.h" />
     <ClInclude Include="windows\RpcServiceHub.h" />
     <ClInclude Include="windows\RpcServices.h" />
+    <ClInclude Include="windows\RpcServiceSearch.h" />
     <ClInclude Include="windows\SDCPage.h" />
     <ClInclude Include="windows\SearchFrm.h" />
     <ClInclude Include="windows\SharePage.h" />

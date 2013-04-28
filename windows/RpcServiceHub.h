@@ -18,4 +18,3 @@ private:
     RpcServiceHub(void){};
     ~RpcServiceHub(void){};
 };
-

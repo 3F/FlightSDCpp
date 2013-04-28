@@ -20,11 +20,8 @@
       <UniqueIdentifier>{5c7bcc03-a9a8-4e13-9a1d-518062c5668c}</UniqueIdentifier>
       <Extensions>txt</Extensions>
     </Filter>
-    <Filter Include="Header Files\RpcServices">
-      <UniqueIdentifier>{e1c866bf-287e-445d-9351-1851e83ea15e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\RpcServices">
-      <UniqueIdentifier>{b9ba0bea-450e-4876-80a5-36dd2ec04395}</UniqueIdentifier>
+    <Filter Include="RpcServices">
+      <UniqueIdentifier>{0ac48105-5f32-4268-a181-5fa10290a6f6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -417,11 +414,14 @@
     <ClCompile Include="windows\Mapper_NATPMP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="windows\RpcServices.cpp">
-      <Filter>Source Files\RpcServices</Filter>
-    </ClCompile>
     <ClCompile Include="windows\RpcServiceHub.cpp">
-      <Filter>Source Files\RpcServices</Filter>
+      <Filter>RpcServices</Filter>
+    </ClCompile>
+    <ClCompile Include="windows\RpcServices.cpp">
+      <Filter>RpcServices</Filter>
+    </ClCompile>
+    <ClCompile Include="windows\RpcServiceSearch.cpp">
+      <Filter>RpcServices</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -690,10 +690,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="windows\RpcServiceHub.h">
-      <Filter>Header Files\RpcServices</Filter>
+      <Filter>RpcServices</Filter>
     </ClInclude>
     <ClInclude Include="windows\RpcServices.h">
-      <Filter>Header Files\RpcServices</Filter>
+      <Filter>RpcServices</Filter>
+    </ClInclude>
+    <ClInclude Include="windows\RpcServiceSearch.h">
+      <Filter>RpcServices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
