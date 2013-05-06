@@ -16,86 +16,66 @@ void RpcServices::transfers(const RCF::JsonRpcRequest &request,  RCF::JsonRpcRes
  */
 void RpcServices::hub(const RCF::JsonRpcRequest &request,  RCF::JsonRpcResponse &response)
 {
-    prepareFailure(ERR_UNKNOWN_ERROR, response);
+    prepareFailure(RpcServicesTypes::ErrorCodes::ERR_UNKNOWN_ERROR, response);
     const json_spirit::Array &params = request.getJsonParams();    
     
     if(params.size() != 2){
         //throw Exception("..."); - catch in RcfServer:938
-        prepareFailure(ERR_PARAM_COUNT_DIFFERENT, response);
+        prepareFailure(RpcServicesTypes::ErrorCodes::ERR_PARAM_COUNT_DIFFERENT, response);
         return;
     }
 
     if(params[0].type() != json_spirit::int_type || params[1].type() != json_spirit::obj_type){
-        prepareFailure(ERR_PARAM_TYPE_INCORRECT, response);
+        prepareFailure(RpcServicesTypes::ErrorCodes::ERR_PARAM_TYPE_INCORRECT, response);
         return;
     }
 
-    const int type                  = params[0].get_int();
     const json_spirit::Object &data = params[1].get_obj();
-
-    enum TypeAllow
-    {
-        /* list fav */
-        TYPE_LIST,
-        /* current links */
-        TYPE_USED,
-        /* quick / fav. */
-        TYPE_CONNECT,
-        TYPE_CLOSE,
-        TYPE_CREATE,
-        TYPE_UPDATE,
-        TYPE_DELETE,
-        /* getting custom menu from the connected hub */
-        TYPE_MENU
-    };
     
-    switch(type)
+    switch(params[0].get_int())
     {
-        case TYPE_USED:
+        case RpcServicesTypes::ServiceHub::USED:
         {
             handlerStringResult(RpcServiceHub::used(data), response);
             return;
         }
-        case TYPE_CONNECT:
+        case RpcServicesTypes::ServiceHub::CONNECT:
         {
             handlerBooleanResult(RpcServiceHub::connect(data), response);
             return;
         }
-        case TYPE_CLOSE:
+        case RpcServicesTypes::ServiceHub::CLOSE:
         {
             handlerBooleanResult(RpcServiceHub::close(data), response);
             return;
         }
-        case TYPE_LIST:
+        case RpcServicesTypes::ServiceHub::LIST:
         {
             handlerStringResult(RpcServiceHub::list(data), response);
             return;
         }
-        case TYPE_CREATE:
+        case RpcServicesTypes::ServiceHub::CREATE:
         {
             handlerBooleanResult(RpcServiceHub::create(data), response);
             return;
         }
-        case TYPE_UPDATE:
+        case RpcServicesTypes::ServiceHub::UPDATE:
         {
             handlerBooleanResult(RpcServiceHub::update(data), response);
             return;
         }
-        case TYPE_DELETE:
+        case RpcServicesTypes::ServiceHub::REMOVE:
         {
             handlerBooleanResult(RpcServiceHub::remove(data), response);
             return;
         }
-        case TYPE_MENU:
+        case RpcServicesTypes::ServiceHub::MENU:
         {
-            prepareFailure(ERR_UNSUPPORTED_FUNCTION, response); //TODO:
-            return;
-        }
-        default:{
-            prepareFailure(ERR_OPERATION_TYPE_INCORRECT, response);
+            prepareFailure(RpcServicesTypes::ErrorCodes::ERR_UNSUPPORTED_FUNCTION, response); //TODO:
             return;
         }
     }
+    prepareFailure(RpcServicesTypes::ErrorCodes::ERR_OPERATION_TYPE_INCORRECT, response);
 }
 
 /**
@@ -108,65 +88,51 @@ void RpcServices::hub(const RCF::JsonRpcRequest &request,  RCF::JsonRpcResponse 
  */
 void RpcServices::search(const RCF::JsonRpcRequest &request,  RCF::JsonRpcResponse &response)
 {
-    prepareFailure(ERR_UNKNOWN_ERROR, response);
+    prepareFailure(RpcServicesTypes::ErrorCodes::ERR_UNKNOWN_ERROR, response);
     const json_spirit::Array &params = request.getJsonParams();
 
     if(params[0].type() != json_spirit::int_type){
-        prepareFailure(ERR_PARAM_TYPE_INCORRECT, response);
+        prepareFailure(RpcServicesTypes::ErrorCodes::ERR_PARAM_TYPE_INCORRECT, response);
         return;
     }
 
-    enum TypeAllow
-    {
-        /* listen answer */
-        RESPONSE,
-        /*  simple query */
-        DEFAULT,
-        /* request by tth */
-        TTH,
-        /* commands after start */
-        COMMAND
-        /* additional features: ADC - SCH {AN, NO, EX}, separation of words & etc., */
-        //SPECIFIC
-    };
-
     const int type = params[0].get_int();
+
     switch(type)
     {
-        case RESPONSE:
+        case RpcServicesTypes::ServiceSearch::RESPONSE:
         {
             if(params.size() == 2){
                 if(params[1].type() == json_spirit::int_type){
                     handlerStringResult(RpcServiceSearch::result(params[1].get_int()), response);
                     return;
                 }
-                prepareFailure(ERR_PARAM_TYPE_INCORRECT, response);
+                prepareFailure(RpcServicesTypes::ErrorCodes::ERR_PARAM_TYPE_INCORRECT, response);
                 return;
             }
             handlerStringResult(RpcServiceSearch::result(), response);
             return;
         }
-        case DEFAULT: case TTH:
+        case RpcServicesTypes::ServiceSearch::DEFAULT: case RpcServicesTypes::ServiceSearch::TTH:
         {
             if(params[1].type() != json_spirit::str_type){
-                prepareFailure(ERR_PARAM_TYPE_INCORRECT, response);
+                prepareFailure(RpcServicesTypes::ErrorCodes::ERR_PARAM_TYPE_INCORRECT, response);
                 return;
             }
-            handlerBooleanResult(RpcServiceSearch::simpleSearch(params[1].get_str(), (type == TTH)? true : false), response);
+            handlerBooleanResult(RpcServiceSearch::simpleSearch(params[1].get_str(), (type == RpcServicesTypes::ServiceSearch::TTH)? true : false), response);
             return;
         }
-        case COMMAND:
+        case RpcServicesTypes::ServiceSearch::COMMAND:
         {
             if(params[1].type() != json_spirit::obj_type){
-                prepareFailure(ERR_PARAM_TYPE_INCORRECT, response);
+                prepareFailure(RpcServicesTypes::ErrorCodes::ERR_PARAM_TYPE_INCORRECT, response);
                 return;
             }
             handlerBooleanResult(RpcServiceSearch::command(params[1].get_obj()), response);
             return;
         }
     }
-    prepareFailure(ERR_OPERATION_TYPE_INCORRECT, response);
-    return;
+    prepareFailure(RpcServicesTypes::ErrorCodes::ERR_OPERATION_TYPE_INCORRECT, response);
 }
 
 void RpcServices::queue(const RCF::JsonRpcRequest &request,  RCF::JsonRpcResponse &response)

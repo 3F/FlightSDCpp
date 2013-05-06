@@ -1,6 +1,78 @@
 #pragma once
 #include <RCF/RCF.hpp>
 
+namespace RpcServicesTypes
+{
+    namespace ErrorCodes
+    {
+        enum ServiceErrorCodes
+        {
+            ERR_PARAM_TYPE_INCORRECT        = 100,
+            ERR_PARAM_COUNT_DIFFERENT       = 101,
+            ERR_PARAM_UNKNOWN_ARG           = 102,
+            ERR_PARAM_KEYARG_NOTFOUND       = 103,
+            ERR_OPERATION_TYPE_INCORRECT    = 200,
+            ERR_UNKNOWN_ERROR               = 500,
+            ERR_UNSUPPORTED_FUNCTION        = 700
+        };
+    };
+
+    namespace ServiceSearch
+    {
+        enum TypeAllow
+        {
+            /* listen answer */
+            RESPONSE,
+            /*  simple query */
+            DEFAULT,
+            /* request by tth */
+            TTH,
+            /* commands after start */
+            COMMAND
+            /* additional features: ADC - SCH {AN, NO, EX}, separation of words & etc., */
+            //SPECIFIC
+        };
+
+        namespace LabelFile
+        {
+            enum
+            {
+                /* default no label */
+                WITHOUT_LABEL,
+                WAITING_DOWNLOAD,
+                DOWNLOADED_PART,
+                DOWNLOADED_COMPLETE,
+                ALREADY_IN_SHARE,
+                /* manually of user */
+                EXCLUDED
+            };
+        };
+
+        namespace LabelUser
+        {
+            enum{};
+        };
+    };
+
+    namespace ServiceHub
+    {
+        enum TypeAllow
+        {
+            /* list fav */
+            LIST,
+            /* current links */
+            USED,
+            /* quick / fav. */
+            CONNECT,
+            CLOSE,
+            CREATE, UPDATE, REMOVE,
+            /* getting custom menu from the connected hub */
+            MENU
+        };
+    };
+};
+
+
 /**
  * Удволетворение основных потребностей.
  */
@@ -36,17 +108,6 @@ public:
     //void downloads(const RCF::JsonRpcRequest &request,  RCF::JsonRpcResponse &response);
     //// combination of uploads / downloads
     //void transfers(const RCF::JsonRpcRequest &request,  RCF::JsonRpcResponse &response);
-
-    enum ErrorCodes
-    {
-        ERR_PARAM_TYPE_INCORRECT        = 100,
-        ERR_PARAM_COUNT_DIFFERENT       = 101,
-        ERR_PARAM_UNKNOWN_ARG           = 102,
-        ERR_PARAM_KEYARG_NOTFOUND       = 103,
-        ERR_OPERATION_TYPE_INCORRECT    = 200,
-        ERR_UNKNOWN_ERROR               = 500,
-        ERR_UNSUPPORTED_FUNCTION        = 700
-    };
 
     RpcServices(void);
     ~RpcServices(void);

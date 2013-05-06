@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "RpcServiceSearch.h"
+#include "RpcServices.h"
 #include "SearchFrm.h"
 #include "MainFrm.h" //onSpeaker., TODO:~
 
@@ -13,7 +14,14 @@ std::string RpcServiceSearch::result(int count)
     for(int i = 0; !SearchFrame::searchResults.empty() && i < count; ++i){
         const SearchResultPtr &res = SearchFrame::searchResults.back();
         SearchFrame::searchResults.pop_back();
-        ret += "[\"" + safeString(res->getFile()) + "\"],";
+
+        ret += "[\"" + safeString(res->getFile()) 
+            + "\",\"" + Util::toString(res->getSize()) 
+            + "\",\"" + (res->getType() == SearchResult::TYPE_FILE ? res->getTTH().toBase32() : "")
+            + "\",\"" + safeString(res->getUser()->getFirstNick()) 
+            + "\",\"" + res->getSlotString() 
+            + "\",\"" + safeString(res->getHubName()) 
+            + "\","   + Util::toString(RpcServicesTypes::ServiceSearch::LabelFile::WITHOUT_LABEL) +"],"; //TODO: Пометки к файлу
     }
     if(ret.length() > 0){
         //return "[" + ret.substr(0, ret.length() - 1) + "]";
