@@ -469,7 +469,7 @@ SettingsManager::SettingsManager()
 	setDefault(EMOTICONS_FILE, "Kolobok");
 	setDefault(GROUP_SEARCH_RESULTS, true);
 	setDefault(TABS_POS, 1);
-	setDefault(DONT_ANNOUNCE_NEW_VERSIONS, false);
+	setDefault(DONT_ANNOUNCE_NEW_VERSIONS, true);
 	setDefault(DOWNCONN_PER_SEC, 2);
 	setDefault(FILTER_ENTER, false);
 	setDefault(SHOW_QUICK_SEARCH, true);
