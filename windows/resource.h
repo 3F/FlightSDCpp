@@ -843,6 +843,8 @@
 #define IDC_CHATDBLCLICKACTION          10194
 #define IDC_CHAT_DBLCLICK               10195
 #define IDC_HEADER_MENU                 10196
+#define IDC_SETTINGS_IGNORELIST         10197
+#define IDC_IGNORELIST_LABEL            10198
 #define ID_SHELLCONTEXTMENU_MIN         12000
 #define ID_SHELLCONTEXTMENU_MAX         14000
 #define IDC_BITZI_LOOKUP                20000

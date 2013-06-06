@@ -65,6 +65,7 @@ const string SettingsManager::settingTags[] =
 	"FinishedVisible", "FinishedULVisible", "DirectoryListingFrameVisible",
 	"RecentFrameOrder", "RecentFrameWidths", "ToolbarSettings", "DHTKey", "Mapper",
 	"ISPResourceRootURL",// //[+]FlylinkDC++ Team
+    "ShareIgnoreList",
 	"SENTRY",
 	// Ints
 	"IncomingConnections", "InPort", "Slots", "AutoFollow", "ClearSearch",

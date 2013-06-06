@@ -50,6 +50,7 @@ PropPage::Item SharePage::items[] =
 	{ IDC_SHAREHIDDEN, SettingsManager::SHARE_HIDDEN, PropPage::T_BOOL },
 	{ IDC_AUTO_REFRESH_TIME, SettingsManager::AUTO_REFRESH_TIME, PropPage::T_INT },
 	{ IDC_MAX_HASH_SPEED, SettingsManager::MAX_HASH_SPEED, PropPage::T_INT },
+    { IDC_SETTINGS_IGNORELIST, SettingsManager::SHARE_IGNORELIST, PropPage::T_STR },
 	{ 0, 0, PropPage::T_END }
 };
 

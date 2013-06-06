@@ -84,6 +84,7 @@ class SettingsManager : public Singleton<SettingsManager>, public Speaker<Settin
 		                  FINISHED_VISIBLE, FINISHED_UL_VISIBLE, DIRECTORYLISTINGFRAME_VISIBLE,
 		                  RECENTFRAME_ORDER, RECENTFRAME_WIDTHS, TOOLBAR_SETTINGS, DHT_KEY, MAPPER,
 		                  ISP_RESOURCE_ROOT_URL, //[+]FlylinkDC++ Team
+                          SHARE_IGNORELIST,
 		                  STR_LAST
 		                };
 		                
