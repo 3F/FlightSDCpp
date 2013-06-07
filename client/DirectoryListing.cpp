@@ -204,7 +204,6 @@ void ListLoader::startTag(const string& name, StringPairList& attribs, bool simp
 			string l_hit;
 			string l_br;
 			CFlyMediaInfo l_mediaXY;
-			const int l_i_hit = l_hit.empty() ? 0 : atoi(l_hit.c_str());
 			const string& l_ts = getAttrib(attribs, sTS, 3);
 			if (l_ts.size()) // Extended tags - exists only FlylinkDC++ or StrongDC++ sqlite or clones
 			{
@@ -214,6 +213,7 @@ void ListLoader::startTag(const string& name, StringPairList& attribs, bool simp
 				l_mediaXY.m_audio = getAttrib(attribs, sMAudio, 3);
 				l_mediaXY.m_video = getAttrib(attribs, sMVideo, 3);
 			}
+            const int l_i_hit = l_hit.empty() ? 0 : atoi(l_hit.c_str());
 			DirectoryListing::File* f = new DirectoryListing::File(cur, n, Util::toInt64(s), h, l_i_hit, atoi(l_ts.c_str()), l_mediaXY);
 			cur->files.push_back(f);
 			if (!m_own_list && ShareManager::getInstance()->isTTHShared(f->getTTH()))
