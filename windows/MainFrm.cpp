@@ -260,8 +260,7 @@ LRESULT MainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	
 	ctrlStatus.Attach(m_hWndStatusBar);
 	ctrlStatus.SetSimple(FALSE);
-	int w[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	ctrlStatus.SetParts(11, w);
+
 	statusSizes[0] = WinUtil::getTextWidth(TSTRING(AWAY), ctrlStatus.m_hWnd); // for "AWAY" segment
 	
 	CToolInfo ti(TTF_SUBCLASS, ctrlStatus.m_hWnd);
@@ -619,7 +618,7 @@ LRESULT MainFrame::onSpeaker(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& 
 		{
 			bool u = false;
 			ctrlStatus.SetText(1, str[0].c_str());
-			for (int i = 1; i < 9; i++)
+			for (int i = 1, n = STATUSBAR_ELEMS - 2; i < n; i++)
 			{
 				int w = WinUtil::getTextWidth(str[i], ctrlStatus.m_hWnd);
 				
@@ -639,18 +638,18 @@ LRESULT MainFrame::onSpeaker(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& 
 				uint64_t iSec = GET_TICK() / 1000;
 				if (!isShutdownStatus)
 				{
-					ctrlStatus.SetIcon(10, hShutdownIcon);
+					ctrlStatus.SetIcon(STATUSBAR_ELEMS - 1, hShutdownIcon);
 					isShutdownStatus = true;
 				}
 				if (DownloadManager::getInstance()->getDownloadCount() > 0)
 				{
 					iCurrentShutdownTime = iSec;
-					ctrlStatus.SetText(10, _T(""));
+					ctrlStatus.SetText(STATUSBAR_ELEMS - 1, _T(""));
 				}
 				else
 				{
 					int64_t timeLeft = SETTING(SHUTDOWN_TIMEOUT) - (iSec - iCurrentShutdownTime);
-					ctrlStatus.SetText(10, (_T(" ") + Util::formatSeconds(timeLeft, timeLeft < 3600)).c_str(), SBT_POPOUT);
+					ctrlStatus.SetText(STATUSBAR_ELEMS - 1, (_T(" ") + Util::formatSeconds(timeLeft, timeLeft < 3600)).c_str(), SBT_POPOUT);
 					if (iCurrentShutdownTime + SETTING(SHUTDOWN_TIMEOUT) <= iSec)
 					{
 						bool bDidShutDown = false;
@@ -663,7 +662,7 @@ LRESULT MainFrame::onSpeaker(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& 
 						else
 						{
 							LogManager::getInstance()->message(STRING(FAILED_TO_SHUTDOWN));
-							ctrlStatus.SetText(10, _T(""));
+							ctrlStatus.SetText(STATUSBAR_ELEMS - 1, _T(""));
 						}
 						// We better not try again. It WON'T work...
 						bShutdown = false;
@@ -674,10 +673,10 @@ LRESULT MainFrame::onSpeaker(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& 
 			{
 				if (isShutdownStatus)
 				{
-					ctrlStatus.SetIcon(10, NULL);
+					ctrlStatus.SetIcon(STATUSBAR_ELEMS - 1, NULL);
 					isShutdownStatus = false;
 				}
-				ctrlStatus.SetText(10, _T(""));
+				ctrlStatus.SetText(STATUSBAR_ELEMS - 1, _T(""));
 			}
 		}
 	}
@@ -1372,22 +1371,16 @@ void MainFrame::UpdateLayout(BOOL bResizeBars /* = TRUE */)
 	if (ctrlStatus.IsWindow() && ctrlLastLines.IsWindow())
 	{
 		CRect sr;
-		int w[11];
+		int w[STATUSBAR_ELEMS];
 		ctrlStatus.GetClientRect(sr);
-		w[10] = sr.right - 20;
-		w[9] = w[10] - 60;
-#define setw(x) w[x] = max(w[x+1] - statusSizes[x], 0)
-		setw(8);
-		setw(7);
-		setw(6);
-		setw(5);
-		setw(4);
-		setw(3);
-		setw(2);
-		setw(1);
-		setw(0);
+
+        w[STATUSBAR_ELEMS - 1] = sr.right - (this->IsZoomed()? 0 : 18);
+        w[STATUSBAR_ELEMS - 2] = w[STATUSBAR_ELEMS - 1] - 60;
+        for(int i = STATUSBAR_ELEMS - 3; i >= 0; --i){
+            w[i] = max(w[i + 1] - statusSizes[i], 0);
+        }
 		
-		ctrlStatus.SetParts(11, w);
+		ctrlStatus.SetParts(STATUSBAR_ELEMS, w);
 		ctrlLastLines.SetMaxTipWidth(w[0]);
 	}
 	
@@ -1675,6 +1668,16 @@ void MainFrame::on(TimerManagerListener::Second, uint64_t aTick) noexcept
 	
 	str->push_back(down + _T("] ") + Util::formatBytesW(downdiff * 1000I64 / diff) + _T("/s"));
 	str->push_back(up + _T("] ") + Util::formatBytesW(updiff * 1000I64 / diff) + _T("/s"));
+
+    if(SETTING(TOTAL_DOWNLOAD) > 0){
+		TCHAR buf[32];
+		snwprintf(buf, _countof(buf), _T("R: %.02f"), ((double)SETTING(TOTAL_UPLOAD)) / ((double)SETTING(TOTAL_DOWNLOAD)));
+        str->push_back(buf);
+    }
+    else{
+        str->push_back(_T("R: -"));
+    }
+    str->push_back(Util::formatBytesW(SETTING(TOTAL_UPLOAD)) + _T(" / ") + Util::formatBytesW(SETTING(TOTAL_DOWNLOAD)));
 	
 	PostMessage(WM_SPEAKER, STATS, (LPARAM)str);
 	

@@ -45,6 +45,7 @@
 #include "WinUtil.h"
 
 #define QUICK_SEARCH_MAP 20
+#define STATUSBAR_ELEMS 13
 
 class MainFrame : public CMDIFrameWindowImpl<MainFrame>, public CUpdateUI<MainFrame>,
 	public CMessageFilter, public CIdleHandler, public CSplitterImpl<MainFrame, false>, public Thread,

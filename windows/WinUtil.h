@@ -266,7 +266,9 @@ static const toolbarButton ToolbarButtons[] =
 	{IDC_SHUTDOWN, 18, true, ResourceManager::SHUTDOWN},
 	{IDC_LIMITER, 19, true, ResourceManager::SETSTRONGDC_ENABLE_LIMITING},
 	{IDC_UPDATE, 20, false, ResourceManager::UPDATE_CHECK},
-	{IDC_DISABLE_SOUNDS, 21, true, ResourceManager::DISABLE_SOUNDS}
+	{IDC_DISABLE_SOUNDS, 21, true, ResourceManager::DISABLE_SOUNDS},
+    {IDC_OPEN_MY_LIST, 14, false, ResourceManager::MENU_OPEN_OWN_LIST},
+    {IDC_REFRESH_FILE_LIST, 1, false, ResourceManager::MENU_REFRESH_FILE_LIST}
 };
 
 class WinUtil

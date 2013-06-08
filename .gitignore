@@ -17,3 +17,4 @@
 /compiled/Settings/*.xml*
 /client/StringDefs.cpp
 /EN_Example.xml
+/revision.h
