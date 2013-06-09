@@ -1472,7 +1472,7 @@ LRESULT MainFrame::onRefreshFileList(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*
 
 LRESULT MainFrame::onTrayIcon(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& /*bHandled*/)
 {
-	if (lParam == WM_LBUTTONUP)
+	if (lParam == WM_LBUTTONDBLCLK)
 	{
 		if (bAppMinimized)
 		{

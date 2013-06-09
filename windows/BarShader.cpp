@@ -22,7 +22,6 @@ CBarShader::CBarShader(uint32_t dwHeight, uint32_t dwWidth, COLORREF crColor /*=
 	m_bIsPreview = false;
 	m_used3dlevel = 0;
 	SetFileSize(qwFileSize);
-	m_dblBytesPerPixel = 0.0; //[+]PPA
 }
 
 CBarShader::~CBarShader(void)
@@ -73,7 +72,7 @@ void CBarShader::SetFileSize(uint64_t qwFileSize)
 	if (m_qwFileSize != qwFileSize)
 	{
 		m_qwFileSize = qwFileSize;
-		if (m_qwFileSize && (m_qwFileSize < 10737418240))
+		if (m_qwFileSize /*&& (m_qwFileSize < 10737418240)*/)
 			m_dblPixelsPerByte = static_cast<double>(m_iWidth) / m_qwFileSize;
 		else
 			m_dblPixelsPerByte = 0.0;
