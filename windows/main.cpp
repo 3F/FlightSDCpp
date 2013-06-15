@@ -56,16 +56,15 @@
 #endif
 #endif
 
-#ifndef _DEBUG
+/*#ifndef _DEBUG
 #include "CrashHandler.h"
 CrashHandler g_crashHandler(
-    "425C9A0C-5485-4E9F-8999-CF8742E60201", // GUID assigned to this application.
-    "strongdc-sqlite",                      // Prefix that will be used with the dump name: YourPrefix_v1.v2.v3.v4_YYYYMMDD_HHMMSS.mini.dmp.
-    L"StrongDC++ sqlite",                   // Application name that will be used in message box.
-    L"FlylinkDC++ Team"                     // Company name that will be used in message box.
+    "",     // GUID assigned to this application.
+    "",     // Prefix that will be used with the dump name: YourPrefix_v1.v2.v3.v4_YYYYMMDD_HHMMSS.mini.dmp.
+    L"",    // Application name that will be used in message box.
+    L""     // Company name that will be used in message box.
 );
-
-#endif
+#endif*/
 
 CAppModule _Module;
 

@@ -21,7 +21,7 @@
 #define VERSIONFLOAT 2.43
 
 #define DCVERSIONSTRING "0.785"
-#define VERSION_URL "http://www.fly-server.ru/etc/strongdc-sqlite-version.xml"
+#define VERSION_URL ""
 
 #define SVNVERSION "svn$WCREV$"
 

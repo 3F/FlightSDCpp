@@ -38,7 +38,7 @@
 
 #define DCVERSIONSTRING "0.785"
 #ifdef PPA_INCLUDE_VERSION_CHECK
-#define VERSION_URL "http://www.fly-server.ru/etc/strongdc-sqlite-version.xml"
+#define VERSION_URL ""
 #endif
 
 #define SVNVERSION "svn580"

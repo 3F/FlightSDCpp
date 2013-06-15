@@ -45,9 +45,8 @@ class AboutDlg : public CDialogImpl<AboutDlg>
 		LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 		{
 			SetDlgItemText(IDC_VERSION,
-			               _T("StrongDC++ sqlite ") T_VERSIONSTRING
-			               _T(" (c) 2007-2012 pavel.pimenov@gmail.com\r\nBased on: StrongDC++ 2.43+svn\r\n")
-			               _T(" (c) 2004-2011 Big Muscle"));
+			               _T("*!is not public release!\r\ndo not use this client is not for debugging or testing\r\n") T_VERSIONSTRING
+			               _T("\r\n\r\nBased on: StrongDC++ sqlite (FlylinkDC++ Team)"));
 			CEdit ctrlThanks(GetDlgItem(IDC_THANKS));
 			ctrlThanks.FmtLines(TRUE);
 			ctrlThanks.AppendText(g_thanks, TRUE);
