@@ -87,7 +87,8 @@ class NmdcHub : public Client, private Flags
 				list.push_back(i->second);
 			}
 		}
-		
+
+		void clearUsers();
 	private:
 		friend class ClientManager;
 		enum SupportFlags
@@ -121,7 +122,6 @@ class NmdcHub : public Client, private Flags
 		NmdcHub(const NmdcHub&);
 		NmdcHub& operator=(const NmdcHub&);
 		
-		void clearUsers();
 		void onLine(const string& aLine) noexcept;
 		
 		OnlineUser& getUser(const string& aNick);

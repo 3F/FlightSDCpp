@@ -64,7 +64,6 @@ AdcHub::AdcHub(const string& aHubURL, bool secure) : Client(aHubURL, '\n', secur
 AdcHub::~AdcHub()
 {
 	TimerManager::getInstance()->removeListener(this);
-	clearUsers();
 }
 
 OnlineUser& AdcHub::getUser(const uint32_t aSID, const CID& aCID)

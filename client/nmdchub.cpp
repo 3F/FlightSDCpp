@@ -46,7 +46,7 @@ NmdcHub::NmdcHub(const string& aHubURL, bool secure) : Client(aHubURL, '|', secu
 
 NmdcHub::~NmdcHub()
 {
-	clearUsers();
+
 }
 
 

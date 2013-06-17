@@ -174,6 +174,11 @@ class ClientManager : public Speaker<ClientManagerListener>,
 		
 		OnlineUserPtr findDHTNode(const CID& cid) const;
 		
+        static void setSigKill(bool status)
+        {
+            isSigKill = status;
+        }
+
 	private:
 	
 		typedef unordered_map<CID, UserPtr> UserMap;
@@ -234,6 +239,9 @@ class ClientManager : public Speaker<ClientManagerListener>,
 		void on(AdcSearch, const Client* c, const AdcCommand& adc, const CID& from) noexcept;
 		// TimerManagerListener
 		void on(TimerManagerListener::Minute, uint64_t aTick) noexcept;
+
+        /** status of destroying app */
+        static bool isSigKill;
 };
 
 } // namespace dcpp

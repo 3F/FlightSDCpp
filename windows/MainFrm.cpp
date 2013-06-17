@@ -1214,6 +1214,7 @@ LRESULT MainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, 
 	{
 		if (oldshutdown || (!BOOLSETTING(CONFIRM_EXIT)) || (MessageBox(CTSTRING(REALLY_EXIT), _T(APPNAME) _T(" ") T_VERSIONSTRING, MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES))
 		{
+            ClientManager::setSigKill(true);
 			updateTray(false);
 			
 			WINDOWPLACEMENT wp;
