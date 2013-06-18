@@ -457,6 +457,11 @@ LRESULT DirectoryListingFrame::onDoubleClickFiles(int /*idCtrl*/, LPNMHDR pnmh, 
 		
 		if (ii->type == ItemInfo::FILE)
 		{
+            if(ShareManager::getInstance()->toRealPath(ii->file->getTTH()) != Util::emptyString){
+                PostMessage(WM_COMMAND, IDC_OPEN_FILE);
+                return 0;
+            }
+
 			try
 			{
 				dl->download(ii->file, SETTING(DOWNLOAD_DIRECTORY) + Text::fromT(ii->getText(COLUMN_FILENAME)), false, WinUtil::isShift(), QueueItem::DEFAULT);
@@ -599,6 +604,22 @@ void DirectoryListingFrame::downloadList(const tstring& aTarget, bool view /* = 
 			ctrlStatus.SetText(STATUS_TEXT, Text::toT(e.getError()).c_str());
 		}
 	}
+}
+
+LRESULT DirectoryListingFrame::onOpenFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	if(ctrlList.GetSelectedCount() != 1){
+        return 0;
+    }
+
+    const ItemInfo* ii = ctrlList.getItemData(ctrlList.GetNextItem(-1, LVNI_SELECTED));
+    if(ii->type == ItemInfo::FILE){
+        string fpath = ShareManager::getInstance()->toRealPath(ii->file->getTTH());
+        if(fpath != Util::emptyString){
+            WinUtil::openFile(Text::toT(fpath));
+        }
+    }
+	return 0;
 }
 
 LRESULT DirectoryListingFrame::onDownload(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
@@ -874,6 +895,11 @@ LRESULT DirectoryListingFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARA
 		
 		if (ctrlList.GetSelectedCount() == 1 && ii->type == ItemInfo::FILE)
 		{
+            if(ShareManager::getInstance()->toRealPath(ii->file->getTTH()) != Util::emptyString){
+                fileMenu.AppendMenu(MF_STRING, IDC_OPEN_FILE, CTSTRING(OPEN));
+                fileMenu.SetMenuDefaultItem(IDC_OPEN_FILE);
+            }
+
 			fileMenu.InsertSeparatorFirst(Text::toT(Util::getFileName(ii->file->getName())));
 			
 			//Append Favorite download dirs
