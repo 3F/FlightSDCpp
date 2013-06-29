@@ -27,11 +27,11 @@ namespace dcpp
 {
 
 #ifdef _WIN32
-DWORD threadId;
 void Thread::start()
 {
+	static DWORD g_threadId;
 	join();
-	if ((threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &starter, this, 0, reinterpret_cast<unsigned int*>(&threadId)))) == NULL)
+	if ((threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &starter, this, 0, reinterpret_cast<unsigned int*>(&g_threadId)))) == NULL)
 	{
 		throw ThreadException(STRING(UNABLE_TO_CREATE_THREAD));
 	}

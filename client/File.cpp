@@ -85,7 +85,7 @@ uint32_t File::getLastWriteTime()const noexcept
 int64_t File::getTimeStamp(const string& aFileName) throw(FileException)
 {
 	WIN32_FIND_DATA fd;
-	HANDLE hFind = FindFirstFile(Text::toT(aFileName).c_str(), &fd);
+	HANDLE hFind = FindFirstFile(Text::toT(FormatPath(aFileName)).c_str(), &fd);
 	if (hFind == INVALID_HANDLE_VALUE)
 		throw FileException(Util::translateError(GetLastError()) + ": " + aFileName);
 	FindClose(hFind);

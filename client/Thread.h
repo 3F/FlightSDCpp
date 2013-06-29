@@ -78,14 +78,12 @@ class Thread
 		void start();
 		void join()
 		{
-			if (threadHandle == INVALID_HANDLE_VALUE)
+			if (threadHandle != INVALID_HANDLE_VALUE)
 			{
-				return;
+				WaitForSingleObject(threadHandle, INFINITE);
+				CloseHandle(threadHandle);
+				threadHandle = INVALID_HANDLE_VALUE;
 			}
-			
-			WaitForSingleObject(threadHandle, INFINITE);
-			CloseHandle(threadHandle);
-			threadHandle = INVALID_HANDLE_VALUE;
 		}
 		
 		void setThreadPriority(Priority p)

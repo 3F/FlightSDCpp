@@ -24,7 +24,7 @@ AppUpdatesURL=http://code.google.com/p/flylinkdc/downloads/list
 DefaultDirName={sd}\StrongDC++sqlite-x64
 DefaultGroupName=StrongDC++ sqlite x64
 InfoBeforeFile="readme.rtf"
-OutputBaseFilename=SetupStrongDC-sqlite-x64-r13490
+OutputBaseFilename=SetupStrongDC-sqlite-x64-r13802
 SetupIconFile="..\res\StrongDC.ico"
 Compression=lzma2/ultra64
 SolidCompression=yes
@@ -83,7 +83,6 @@ Source: "Favorites.xml"; DestDir: "{app}\Settings"; Components: DCPlusPlus\vip_d
 
 [Icons]
 Name: "{group}\StrongDC++ sqlite x64"; Filename: "{app}\StrongDC64.exe"; WorkingDir: "{app}"
-;Name: "{group}\FlylinkDiscover"; Filename: "{app}\FlylinkDiscover.exe"; WorkingDir: "{app}"
 Name: "{group}\О программе"; Filename: "{app}\Readme.rtf"
 Name: "{group}\{cm:ProgramOnTheWeb,StrongDC++ sqlite x64}"; Filename: "http://flylinkdc.googlecode.com/"
 Name: "{group}\{cm:UninstallProgram,StrongDC++ sqlite x64}"; Filename: "{uninstallexe}"

@@ -51,6 +51,11 @@ class CBarShader
 		double  *m_pdblModifiers;
 		byte    m_used3dlevel;
 		bool    m_bIsPreview;
+		uint32_t CalcHalfHeight(uint32_t p_x) const
+		{
+			return (p_x + 1) / 2;
+		}
+		void CalcPerPixelandPerByte(); //[+] PPA
 };
 
 typedef struct tagHLSTRIPLE
@@ -231,7 +236,7 @@ class OperaColors
 		
 		struct fci_hash
 		{
-			size_t operator()(FloodCacheItem::FCIMapper __x) const
+			size_t operator()(const FloodCacheItem::FCIMapper& __x) const
 			{
 				return (__x.c1 ^ __x.c2);
 			}

@@ -567,7 +567,7 @@ Reader::readArray( Token &tokenStart )
       {
          ok = readToken( token );
       }
-      bool badTokenType = ( token.type_ == tokenArraySeparator  &&  
+      bool badTokenType = ( token.type_ == tokenArraySeparator  &&   // V547 Expression is always false. Probably the '||' operator should be used here. json_reader.cpp 570
                             token.type_ == tokenArrayEnd );
       if ( !ok  ||  badTokenType )
       {
@@ -718,9 +718,9 @@ Reader::decodeUnicodeCodePoint( Token &token,
       // surrogate pairs
       if (end - current < 6)
          return addError( "additional six characters expected to parse unicode surrogate pair.", token, current );
+      unsigned int surrogatePair;
       if (*(current++) == '\\' && *(current++)== 'u')
       {
-         unsigned int surrogatePair;
          if (decodeUnicodeEscapeSequence( token, current, end, surrogatePair ))
          {
             unicode = 0x10000 + ((unicode & 0x3FF) << 10) + (surrogatePair & 0x3FF);

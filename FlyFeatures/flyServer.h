@@ -22,6 +22,8 @@
 #include <unordered_set>
 #include <string>
 
+#include <boost/atomic.hpp>
+
 #include "../client/Thread.h"
 #include "../client/CFlyMediaInfo.h"
 #include "../client/MerkleTree.h"
@@ -66,6 +68,7 @@ class CFlyServerConfig
     m_min_file_size(0), 
     m_type(TYPE_FLYSERVER_TCP), 
     m_time_load_config(0), 
+    m_time_reload_config(0), 
     m_send_full_mediainfo(false),
     m_zlib_compress_level(9) // Z_BEST_COMPRESSION
   {
@@ -90,6 +93,7 @@ public:
  std::unordered_set<std::string> m_include_tag; 
  std::unordered_set<std::string> m_mediainfo_ext; 
  uint64_t m_time_load_config;
+ uint32_t m_time_reload_config;
 //
  static std::vector<CServerItem > g_mirror_read_only_servers;
  static std::vector<DHTServer> g_dht_servers;
@@ -153,7 +157,7 @@ typedef std::vector<CFlyServerKey> CFlyServerKeyArray;
 class CFlyServerJSON
 {
 public:
-		CFlyServerJSON():m_IdleTime(0), m_merge_process(0)
+		CFlyServerJSON():m_IdleTime(0), m_merge_process(false)
 		{
 		}
 		virtual ~CFlyServerJSON()
@@ -161,14 +165,14 @@ public:
 		}
 		CFlyServerKeyArray	m_GetFlyServerArray; // Запросы на получения медиаинформации. TODO - сократить размер структуры для запроса.
 		CFlyServerKeyArray	m_SetFlyServerArray; // Запросы на передачу медиаинформации если она у нас есть в базе и ее ниразу не слали.
-		LONG				m_merge_process;		// Блокировка вложенного запуска внутри процесса
+		boost::atomic_uint	m_merge_process;     // Блокировка вложенного запуска внутри процесса
 		::CriticalSection	m_merge_fly_server_cs;
 		int					m_IdleTime;
 		void clear()
 		{
-			m_merge_process = 0;
 			m_GetFlyServerArray.clear();
 			m_SetFlyServerArray.clear();
+			m_merge_process = false;
 		}
 		void merge_fly_server_info();
 		static void login();

@@ -167,7 +167,7 @@ void CFlyServerConfig::initOfflineConfig()
 		g_dht_servers.push_back(DHTServer(l_url_0, "StrongDC++ v 2.43"));
 		g_dht_servers.push_back(DHTServer(l_url_1));
 	}
-	m_time_load_config = 0; // Возвращаем попытку загрузки
+	m_time_reload_config = 1000 * 60 * 30; // Не смогли открыть конфиг - попытаться еще раз через 30 минут.
 }
 //======================================================================================================
 inline static void checkStrKey(const string& p_str)
@@ -226,12 +226,16 @@ void CFlyServerConfig::ConvertInform(string& p_inform) const
 void CFlyServerConfig::loadConfig()
 {
   const auto l_cur_tick = GET_TICK();
-  if(m_time_load_config == 0 || (l_cur_tick - m_time_load_config) > 1000*60*60*10 )
+	if(m_time_load_config == 0 || (l_cur_tick - m_time_load_config) > m_time_reload_config ) 
   {
-    m_time_load_config = l_cur_tick;
+	 m_time_load_config = l_cur_tick + 1;
 	CFlyLog l_dht_server_log("[fly-server config loader]");
 	std::string l_data;
+#ifdef _DEBUG
+	const string l_url_config_file = "file://C:/vc10/etc/strongdc-sqlite-config.xml"; //TODO
+#else
 	const string l_url_config_file = "http://www.fly-server.ru/etc/strongdc-sqlite-config.xml";
+#endif
 	l_dht_server_log.step("Download:" + l_url_config_file);
 	if (Util::getDataFromInet(Text::toT(g_user_agent).c_str(), 4096, l_url_config_file, l_data, 0) == 0)
 	{
@@ -327,6 +331,8 @@ void CFlyServerConfig::loadConfig()
 				l_xml.stepOut();
 			}
 			l_dht_server_log.step("Download and parse - Ok!");
+		    m_time_reload_config = 1000 * 60 * 60 * 12; // Все ок - след раз перечитать конфиг через 12 часов.
+			m_time_load_config = l_cur_tick;
 		}
 		catch (const Exception& e)
 		{
@@ -714,3 +720,4 @@ string CFlyServerJSON::connectFlyServer(const CFlyServerKeyArray& p_fileInfoArra
 	}
 	return l_result_query;
 }
+

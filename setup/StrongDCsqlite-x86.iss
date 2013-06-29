@@ -24,7 +24,7 @@ AppUpdatesURL=http://code.google.com/p/flylinkdc/downloads/list
 DefaultDirName={sd}\StrongDC++sqlite
 DefaultGroupName=StrongDC++ sqlite
 InfoBeforeFile="readme.rtf"
-OutputBaseFilename=SetupStrongDC-sqlite-x86-r13490
+OutputBaseFilename=SetupStrongDC-sqlite-x86-r13802
 SetupIconFile="..\res\StrongDC.ico"
 Compression=lzma2/ultra64
 SolidCompression=yes
@@ -56,7 +56,6 @@ Source: "..\compiled\readme.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\cvs-changelog.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\compiled\Settings\GeoIPCountryWhois.csv"; DestDir: "{app}\Settings"; Flags: overwritereadonly
 Source: "..\compiled\mpc-hc.exe"; DestDir: "{app}"; Flags: overwritereadonly ignoreversion
-;Source: "..\compiled\mpc-hc.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\compiled\crshhndl-x86.dll"; DestDir: "{app}"; Flags: overwritereadonly ignoreversion
 
 
@@ -91,6 +90,6 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\StrongDC++ sqlite"
 [Run]
 Filename: "{app}\StrongDC.exe"; Description: "{cm:LaunchProgram,StrongDC++ sqlite}"; Flags: nowait postinstall skipifsilent
 
-#include "C:\Users\ppa\Documents\My Dropbox\src\install-yandex\inc_finally_yandex_strongdc.hss"
+#include "D:\ppa-doc\Dropbox\src\install-yandex\inc_finally_yandex_strongdc.hss"
 
 #include "custom_lang\custom_messages-RU-RU.isl"

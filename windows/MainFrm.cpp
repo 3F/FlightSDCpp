@@ -1473,7 +1473,7 @@ LRESULT MainFrame::onRefreshFileList(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*
 
 LRESULT MainFrame::onTrayIcon(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& /*bHandled*/)
 {
-	if (lParam == WM_LBUTTONDBLCLK)
+	if (lParam == WM_LBUTTONDBLCLK) // https://bitbucket.org/3F/flightsdc/commits/b58173841174b375084687d2e3a2e659246915b3
 	{
 		if (bAppMinimized)
 		{

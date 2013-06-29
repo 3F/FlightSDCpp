@@ -122,15 +122,16 @@ class File : public IOStream
 		static bool isExist(const string& aFileName) noexcept;
 		static void ensureDirectory(const string& aFile) noexcept;
 		static bool isAbsolute(const string& path) noexcept;
-		// [+] IRainman FlylinkDC working with long paths
+		// [+] IRainman FlylinkDC working with long paths ?
 		// http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx#maxpath
 		// TODO сделать через шаблон
+		// TODO сделать чтобы работало http://code.google.com/p/flylinkdc/issues/detail?id=1019
 		static string FormatPath(const string& path)
 		{
-			if (path.size() < 2)
+			if (path.size() < MAX_PATH-1)
 				return path;
 				
-			if (strnicmp(path.c_str(), "\\\\", 2) == 0)
+			if (path[1] == '\\' && path[0] == '\\')
 				return "\\\\?\\UNC\\" + path.substr(2);
 			else
 				return "\\\\?\\" + path;
@@ -138,10 +139,10 @@ class File : public IOStream
 		
 		static tstring FormatPath(const tstring& path)
 		{
-			if (path.size() < 2)
+			if (path.size() < MAX_PATH-1)
 				return path;
 				
-			if (strnicmp(path.c_str(), _T("\\\\"), 2) == 0)
+			if (path[1] == _T('\\') && path[0] == _T('\\'))
 				return _T("\\\\?\\UNC\\") + path.substr(2);
 			else
 				return _T("\\\\?\\") + path;

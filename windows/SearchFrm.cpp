@@ -591,6 +591,8 @@ void SearchFrame::onEnter()
 
 void SearchFrame::on(SearchManagerListener::SR, const SearchResultPtr& aResult) noexcept
 {
+	if(closed)
+		return;
 	// Check that this is really a relevant search result...
 	{
 		Lock l(cs);

@@ -1,15 +1,10 @@
 #include "StdAfx.h"
-#include "BarShader.h"
+#define _USE_MATH_DEFINES // [+]IRainman
 #include "math.h"
-#include "../client/DCPlusPlus.h"
-#include "../client/StringTokenizer.h"
 #include "MainFrm.h"
+#include "../client/util_flylinkdc.h"
+#include "BarShader.h"
 
-#ifndef PI
-#define PI 3.14159265358979323846264338328
-#endif
-
-#define HALF(X) (((X) + 1) / 2)
 
 CBarShader::CBarShader(uint32_t dwHeight, uint32_t dwWidth, COLORREF crColor /*= 0*/, uint64_t qwFileSize /*= 1*/)
 {
@@ -18,7 +13,7 @@ CBarShader::CBarShader(uint32_t dwHeight, uint32_t dwWidth, COLORREF crColor /*=
 	m_qwFileSize = 0;
 	m_Spans.SetAt(0, crColor);
 	m_Spans.SetAt(qwFileSize, 0);
-	m_pdblModifiers = NULL;
+	m_pdblModifiers = nullptr;
 	m_bIsPreview = false;
 	m_used3dlevel = 0;
 	SetFileSize(qwFileSize);
@@ -31,38 +26,38 @@ CBarShader::~CBarShader(void)
 
 void CBarShader::BuildModifiers()
 {
-	if (m_pdblModifiers != NULL)
-	{
-		delete[] m_pdblModifiers;
-		m_pdblModifiers = NULL; // 'new' may throw an exception
-	}
-	
+	safe_delete_array(m_pdblModifiers);
 	static const double dDepths[5] = { 5.5, 4.0, 3.0, 2.50, 2.25 };     //aqua bar - smoother gradient jumps...
 	double  depth = dDepths[((m_used3dlevel > 5) ? (256 - m_used3dlevel) : m_used3dlevel) - 1];
-	uint32_t dwCount = HALF(static_cast<uint32_t>(m_iHeight));
-	double piOverDepth = PI / depth;
-	double base = PI / 2 - piOverDepth;
-	double increment = piOverDepth / (dwCount - 1);
+	uint32_t dwCount = CalcHalfHeight(m_iHeight);
+	double piOverDepth = M_PI / depth;
+	double base = M_PI_2 - piOverDepth;
+	double increment = piOverDepth / static_cast<double>(dwCount - 1);
 	
-	m_pdblModifiers = new double[dwCount];
+	m_pdblModifiers = new double[static_cast<size_t>(dwCount)];
 	for (uint32_t i = 0; i < dwCount; i++, base += increment)
 		m_pdblModifiers[i] = sin(base);
 }
+
+void CBarShader::CalcPerPixelandPerByte()
+{
+		if (m_qwFileSize)
+			m_dblPixelsPerByte = static_cast<double>(m_iWidth) / m_qwFileSize;
+		else
+			m_dblPixelsPerByte = 0.0;
+		if (m_iWidth)
+			m_dblBytesPerPixel = static_cast<double>(m_qwFileSize) / m_iWidth;
+		else
+			m_dblBytesPerPixel = 0.0;
+	}
 
 void CBarShader::SetWidth(uint32_t width)
 {
 	if (m_iWidth != width)
 	{
 		m_iWidth = width;
-		if (m_qwFileSize)
-			m_dblPixelsPerByte = (double)m_iWidth / m_qwFileSize;
-		else
-			m_dblPixelsPerByte = 0.0;
-		if (m_iWidth)
-			m_dblBytesPerPixel = (double)m_qwFileSize / m_iWidth;
-		else
-			m_dblBytesPerPixel = 0.0;
-	}
+		CalcPerPixelandPerByte();
+}
 }
 
 void CBarShader::SetFileSize(uint64_t qwFileSize)
@@ -72,14 +67,7 @@ void CBarShader::SetFileSize(uint64_t qwFileSize)
 	if (m_qwFileSize != qwFileSize)
 	{
 		m_qwFileSize = qwFileSize;
-		if (m_qwFileSize /*&& (m_qwFileSize < 10737418240)*/)
-			m_dblPixelsPerByte = static_cast<double>(m_iWidth) / m_qwFileSize;
-		else
-			m_dblPixelsPerByte = 0.0;
-		if (m_iWidth)
-			m_dblBytesPerPixel = static_cast<double>(m_qwFileSize) / m_iWidth;
-		else
-			m_dblBytesPerPixel = 0.0;
+		CalcPerPixelandPerByte();
 	}
 }
 
@@ -214,7 +202,7 @@ void CBarShader::FillRect(CDC& dc, LPCRECT rectSpan, COLORREF crColor)
 		dc.FillSolidRect(rectSpan, crColor);
 	else
 	{
-		if (m_pdblModifiers == NULL)
+		if (m_pdblModifiers == nullptr)
 			BuildModifiers();
 			
 		double  dblRed = GetRValue(crColor), dblGreen = GetGValue(crColor), dblBlue = GetBValue(crColor);
@@ -234,7 +222,8 @@ void CBarShader::FillRect(CDC& dc, LPCRECT rectSpan, COLORREF crColor)
 			
 		RECT        rect;
 		int         iTop = rectSpan->top, iBot = rectSpan->bottom;
-		double      *pdCurr = m_pdblModifiers, *pdLimit = pdCurr + HALF(m_iHeight);
+		double      *pdCurr  = m_pdblModifiers;
+		double      *pdLimit = pdCurr + static_cast<size_t>(CalcHalfHeight(m_iHeight));
 		
 		rect.right = rectSpan->right;
 		rect.left = rectSpan->left;
@@ -257,7 +246,6 @@ void CBarShader::FillRect(CDC& dc, LPCRECT rectSpan, COLORREF crColor)
 }
 
 // OperaColors
-#define MIN(a,b)            (((a) < (b)) ? (a) : (b))
 #define MIN3(a, b, c) (((a) < (b)) ? ((((a) < (c)) ? (a) : (c))) : ((((b) < (c)) ? (b) : (c))))
 #define MAX3(a, b, c) (((a) > (b)) ? ((((a) > (c)) ? (a) : (c))) : ((((b) > (c)) ? (b) : (c))))
 #define CENTER(a, b, c) ((((a) < (b)) && ((a) < (c))) ? (((b) < (c)) ? (b) : (c)) : ((((b) < (a)) && ((b) < (c))) ? (((a) < (c)) ? (a) : (c)) : (((a) < (b)) ? (a) : (b))))
@@ -450,7 +438,9 @@ void OperaColors::ClearCache()
 	}
 }
 
-OperaColors::FloodCacheItem::FloodCacheItem() : w(0), h(0), hDC(NULL) { }
+OperaColors::FloodCacheItem::FloodCacheItem() : w(0), h(0), hDC(NULL)
+{
+}
 
 OperaColors::FloodCacheItem::~FloodCacheItem()
 {

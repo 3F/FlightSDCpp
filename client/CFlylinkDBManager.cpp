@@ -1190,7 +1190,7 @@ CFlylinkDBManager::~CFlylinkDBManager()
 double CFlylinkDBManager::get_ratio() const
 {
 	if (m_global_ratio.m_download > 0)
-		return (double)m_global_ratio.m_upload / (double)m_global_ratio.m_download;
+		return static_cast<double>(m_global_ratio.m_upload) / static_cast<double>(m_global_ratio.m_download);
 	else
 		return 0;
 }
