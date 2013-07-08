@@ -283,12 +283,25 @@ LRESULT SearchFrame::onCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
 		SetWindowText(CTSTRING(SEARCH));
 		::EnableWindow(GetDlgItem(IDC_SEARCH_PAUSE), FALSE);
 	}
-	
+
 	for (int j = 0; j < COLUMN_LAST; j++)
 	{
 		ctrlFilterSel.AddString(CTSTRING_I(columnNames[j]));
 	}
-	ctrlFilterSel.SetCurSel(0);
+
+    // additionals filter option
+	for (int j = FILTER_ITEM_FIRST; j < FILTER_ITEM_LAST; j++)
+	{
+        LPCTSTR caption = _T("");
+        switch(j){
+            case FILTER_ITEM_PATHFILE:{
+                caption = CTSTRING_I(ResourceManager::SEARCH_FILTER_ITEM_FILEPATH);
+                break;
+            }
+        }
+		ctrlFilterSel.AddString(caption);
+	}
+	ctrlFilterSel.SetCurSel(FILTER_ITEM_PATHFILE);
 	
 	SettingsManager::getInstance()->addListener(this);
 	TimerManager::getInstance()->addListener(this);
@@ -1995,8 +2008,8 @@ void SearchFrame::updateSearchList(SearchInfo* si)
 	
 	if (si != NULL)
 	{
-//		if(!matchFilter(si, sel, doSizeCompare, mode, size))
-//			ctrlResults.deleteItem(si);
+		if(!matchFilter(si, sel, doSizeCompare, mode, size))
+			ctrlResults.deleteItem(si);
 	}
 	else
 	{

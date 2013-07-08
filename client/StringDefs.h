@@ -940,6 +940,7 @@ enum Strings   // @DontAdd
 	ENABLE_LAST_IP, // "Store IP in a SQLite database (Column Last IP)"
 	SQLITE_USE_JOURNAL_MEMORY, // "Keeps a SQLite log file in a memory. It may cause database corruption due an error in the program or system."
 	SQLITE_USE_EXCLUSIVE_LOCK_MODE, // "Use the exclusive lock on mode of SQLite database. This option improves performance."
+    SEARCH_FILTER_ITEM_FILEPATH, // "File & Path"
 	LAST // @DontAdd
 };
 

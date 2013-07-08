@@ -303,6 +303,13 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 			COLUMN_TTH,
 			COLUMN_LAST
 		};
+
+        enum
+        {
+            FILTER_ITEM_FIRST       = COLUMN_LAST,
+            FILTER_ITEM_PATHFILE    = FILTER_ITEM_FIRST,
+            FILTER_ITEM_LAST
+        };
 		
 		enum Images
 		{
@@ -488,6 +495,8 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 						}
 						case COLUMN_TTH:
 							return sr->getType() == SearchResult::TYPE_FILE ? Text::toT(sr->getTTH().toBase32()) : Util::emptyStringT;
+                        case FILTER_ITEM_PATHFILE:
+                            return Text::toT(sr->getFile());
 						default:
 							return Util::emptyStringT;
 					}
