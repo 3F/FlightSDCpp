@@ -128,7 +128,7 @@ void AdcHub::putUser(const uint32_t aSID, bool disconnect)
 	ou->dec();
 }
 
-void AdcHub::clearUsers()
+void AdcHub::clearUsers(bool quiet)
 {
 	SIDMap tmp;
 	{
@@ -136,7 +136,15 @@ void AdcHub::clearUsers()
 		users.swap(tmp);
 		availableBytes = 0;
 	}
-	
+
+    if(quiet){
+        Lock l(cs);
+	    for(SIDIter i = tmp.begin(); i != tmp.end(); ++i){
+		    i->second->dec();
+	    }
+        return;
+    }
+
 	for (SIDIter i = tmp.begin(); i != tmp.end(); ++i)
 	{
 		if (i->first != AdcCommand::HUB_SID)

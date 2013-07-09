@@ -79,7 +79,11 @@ class Client : public ClientBase, public Speaker<ClientListener>, public Buffere
 		virtual void privateMessage(const OnlineUserPtr& user, const string& aMessage, bool thirdPerson = false) = 0;
 		virtual void sendUserCmd(const UserCommand& command, const StringMap& params) = 0;
 
-        virtual void clearUsers() = 0;
+        /**
+         * -
+         * bool quiet - reduced clearance
+         */
+        virtual void clearUsers(bool quiet = false) = 0;
 		
 		uint64_t search(int aSizeMode, int64_t aSize, int aFileType, const string& aString, const string& aToken, const StringList& aExtList, void* owner);
 		void cancelSearch(void* aOwner)

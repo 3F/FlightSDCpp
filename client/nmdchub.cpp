@@ -156,15 +156,22 @@ void NmdcHub::putUser(const string& aNick)
 	ou->dec();
 }
 
-void NmdcHub::clearUsers()
+void NmdcHub::clearUsers(bool quiet)
 {
 	NickMap u2;
-	
 	{
 		Lock l(cs);
 		u2.swap(users);
 		availableBytes = 0;
 	}
+
+    if(quiet){
+        Lock l(cs);
+	    for(NickIter i = u2.begin(); i != u2.end(); ++i){
+		    i->second->dec();
+	    }
+        return;
+    }
 	
 	for (NickIter i = u2.begin(); i != u2.end(); ++i)
 	{

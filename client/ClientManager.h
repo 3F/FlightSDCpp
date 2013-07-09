@@ -240,6 +240,16 @@ class ClientManager : public Speaker<ClientManagerListener>,
 		// TimerManagerListener
 		void on(TimerManagerListener::Minute, uint64_t aTick) noexcept;
 
+        /**
+         * actions after SigKill
+         */
+        void killed() noexcept
+        {
+            //...
+            //onlineUsers.clear();
+            //...
+        };
+
         /** status of destroying app */
         static bool isSigKill;
 };

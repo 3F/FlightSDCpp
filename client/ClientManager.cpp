@@ -81,9 +81,7 @@ void ClientManager::putClient(Client* aClient)
 		clients.erase(aClient->getHubUrl());
 	}
 	aClient->shutdown();
-    if(!isSigKill){
-        aClient->clearUsers();
-    }
+    aClient->clearUsers(isSigKill);
 	delete aClient;
 }
 

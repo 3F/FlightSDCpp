@@ -46,8 +46,6 @@ class AdcHub : public Client, public CommandHandler<AdcHub>
 		void password(const string& pwd);
 		void info(bool alwaysSend);
 		void refreshUserList(bool);
-
-        void clearUsers();
 		
 		size_t getUserCount() const
 		{
@@ -147,6 +145,8 @@ class AdcHub : public Client, public CommandHandler<AdcHub>
 		}
 		
 		void putUser(const uint32_t sid, bool disconnect);
+
+        void clearUsers(bool quiet = false);
 						
 		void handle(AdcCommand::SUP, AdcCommand& c) noexcept;
 		void handle(AdcCommand::SID, AdcCommand& c) noexcept;
