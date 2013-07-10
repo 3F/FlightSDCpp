@@ -1991,12 +1991,59 @@ bool SearchFrame::matchFilter(SearchInfo* si, int sel, bool doSizeCompare, Filte
 			insert = true;
 		}
 #else
-		insert = Text::is_sub_tstring(si->getText(static_cast<uint8_t>(sel)), filter);
+		//insert = Text::is_sub_tstring(si->getText(static_cast<uint8_t>(sel)), filter);
+        return matchWildcards(si->getText(static_cast<uint8_t>(sel)), filter);
 #endif
 	}
 	return insert;
 }
 
+/**
+ * Reducing expensive operation.
+ * tested with other implementations:
+ *  - getline() + find()
+ *  - find() + find()
+ *  - iterator + find()
+ *  - iterator + substr
+ *  - iterator + iterator
+ *           see detail in commit
+ */
+inline bool SearchFrame::matchWildcards(const tstring& text, const tstring& filter)
+{
+    tstring _text   = Text::uppercase(text);   //<-also expensive
+    tstring _filter = Text::uppercase(filter); //<-also expensive
+
+    // to wildcards
+    tstring     item;
+    std::size_t itemPos     = 0;
+    std::size_t itemLeft    = 0;
+    std::size_t itemDelta   = 0;
+
+    // to words
+    std::size_t found;
+    std::size_t left        = 0;
+    for(auto it = _filter.begin(); it != _filter.end(); ++it){
+        item = *it;
+        ++itemLeft;
+        if(item == _T("*") || it + 1 == _filter.end() && ++itemLeft ){
+            if((itemDelta = itemLeft - 1 - itemPos) == 0){
+                ++itemPos;
+                continue;
+            }
+            item = _filter.substr(itemPos, itemDelta);
+
+            //find a part
+            found = _text.find(item, left);
+            if(found == std::string::npos){
+                return false;
+            }
+            left = found + item.length();
+
+            itemPos = itemLeft;
+        }
+    }
+    return true;
+}
 
 void SearchFrame::updateSearchList(SearchInfo* si)
 {
