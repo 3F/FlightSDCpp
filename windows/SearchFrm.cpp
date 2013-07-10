@@ -235,7 +235,7 @@ LRESULT SearchFrame::onCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
 	ctrlFiletype.AddString(CTSTRING(DIRECTORY));
 	ctrlFiletype.AddString(_T("TTH"));
 	ctrlFiletype.AddString(_T("CD-DVD Image"));
-	ctrlFiletype.SetCurSel(0);
+	ctrlFiletype.SetCurSel(SettingsManager::getInstance()->get(SettingsManager::SEARCH_FIELD_TYPE));
 	
 	// Create listview columns
 	WinUtil::splitTokens(columnIndexes, SETTING(SEARCHFRAME_ORDER), COLUMN_LAST);
@@ -525,6 +525,8 @@ void SearchFrame::onEnter()
 		mode = SearchManager::SIZE_DONTCARE;
 		
 	int ftype = ctrlFiletype.GetCurSel();
+    SettingsManager::getInstance()->set(SettingsManager::SEARCH_FIELD_TYPE, ftype);
+
 	exactSize1 = (mode == SearchManager::SIZE_EXACT);
 	exactSize2 = llsize;
 	

@@ -142,6 +142,7 @@ const string SettingsManager::settingTags[] =
 	"SqliteUseJournalMemory",
 	"SqliteUseExclusiveLockMode",
 	"AllowNATTraversal", "UseExplorerTheme", "AutoDetectIncomingConnection",
+    "SearchFieldType",
 	"SENTRY",
 	// Int64
 	"TotalUpload", "TotalDownload",
@@ -201,6 +202,7 @@ SettingsManager::SettingsManager()
 #ifdef PPA_INCLUDE_AUTO_FOLLOW
 	setDefault(AUTO_FOLLOW, true);
 #endif
+    setDefault(SEARCH_FIELD_TYPE, 0);
 	setDefault(CLEAR_SEARCH, true);
 	setDefault(SHARE_HIDDEN, false);
 	setDefault(FILTER_MESSAGES, true);

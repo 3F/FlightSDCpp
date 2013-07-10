@@ -162,6 +162,7 @@ class SettingsManager : public Singleton<SettingsManager>, public Speaker<Settin
 		                  SQLITE_USE_JOURNAL_MEMORY, //[+]PPA
 		                  SQLITE_USE_EXCLUSIVE_LOCK_MODE, //[+]PPA
 		                  ALLOW_NAT_TRAVERSAL, USE_EXPLORER_THEME, AUTO_DETECT_CONNECTION,
+                          SEARCH_FIELD_TYPE,
 		                  INT_LAST
 		                };
 		                
