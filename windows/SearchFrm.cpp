@@ -235,7 +235,7 @@ LRESULT SearchFrame::onCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
 	ctrlFiletype.AddString(CTSTRING(DIRECTORY));
 	ctrlFiletype.AddString(_T("TTH"));
 	ctrlFiletype.AddString(_T("CD-DVD Image"));
-	ctrlFiletype.SetCurSel(SettingsManager::getInstance()->get(SettingsManager::SEARCH_FIELD_TYPE));
+	ctrlFiletype.SetCurSel(SETTING(SEARCH_FIELD_TYPE));
 	
 	// Create listview columns
 	WinUtil::splitTokens(columnIndexes, SETTING(SEARCHFRAME_ORDER), COLUMN_LAST);
@@ -1835,18 +1835,36 @@ LRESULT SearchFrame::onCustomDraw(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled
 
 LRESULT SearchFrame::onFilterChar(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
 {
-	if (!BOOLSETTING(FILTER_ENTER) || (wParam == VK_RETURN))
-	{
-		TCHAR *buf = new TCHAR[ctrlFilter.GetWindowTextLength() + 1];
-		ctrlFilter.GetWindowText(buf, ctrlFilter.GetWindowTextLength() + 1);
-		filter = buf;
-		delete[] buf;
-		
-		updateSearchList();
-	}
-	
-	bHandled = false;
-	
+    bHandled = false;
+
+    if(BOOLSETTING(FILTER_ENTER) && wParam != VK_RETURN){
+        return 0;
+    }
+
+    if(GetKeyState(VK_CONTROL) &  0x8000){
+        if(wParam != 0x56){ // ctrl+v
+            return 0;
+        }
+    }
+    else{
+        switch(wParam){
+            case VK_LEFT: case VK_RIGHT: case VK_CONTROL/*single*/: case VK_SHIFT:{
+                return 0;
+            }
+        }
+    }
+
+	TCHAR *buf = new TCHAR[ctrlFilter.GetWindowTextLength() + 1];
+	ctrlFilter.GetWindowText(buf, ctrlFilter.GetWindowTextLength() + 1);
+	filter = buf;
+	delete[] buf;
+
+    //Lock l(cs);
+    updatePrevTimeFilter();
+    if(filterAllowRunning){
+        boost::thread t(boost::bind(&SearchFrame::updateSearchList, this, (SearchFrame::SearchInfo*)NULL));
+    }
+
 	return 0;
 }
 
@@ -2024,7 +2042,7 @@ inline bool SearchFrame::matchWildcards(const tstring& text, const tstring& filt
     // to words
     std::size_t found;
     std::size_t left        = 0;
-    for(auto it = _filter.begin(); it != _filter.end(); ++it){
+    for(tstring::const_iterator it = _filter.begin(); it != _filter.end(); ++it){
         item = *it;
         ++itemLeft;
         if(item == _T("*") || it + 1 == _filter.end() && ++itemLeft ){
@@ -2049,6 +2067,16 @@ inline bool SearchFrame::matchWildcards(const tstring& text, const tstring& filt
 
 void SearchFrame::updateSearchList(SearchInfo* si)
 {
+    filterAllowRunning = false;
+    #ifdef _DEBUG
+        dcdebug("updateSearchList: started\r\n");
+    #endif
+
+    waitPerformAllow();
+    #ifdef _DEBUG
+        dcdebug("updateSearchList: launched\r\n");
+    #endif
+
 	int64_t size = -1;
 	FilterModes mode = NONE;
 	
@@ -2068,6 +2096,9 @@ void SearchFrame::updateSearchList(SearchInfo* si)
 		for (SearchInfoList::ParentMap::const_iterator i = ctrlResults.getParents().begin(); i != ctrlResults.getParents().end(); ++i)
 		{
 			SearchInfo* si = (*i).second.parent;
+            if(ctrlResults.findItem(si) != -1){
+                continue;
+            }
 			si->collapsed = true;
 			if (matchFilter(si, sel, doSizeCompare, mode, size))
 			{
@@ -2094,6 +2125,11 @@ void SearchFrame::updateSearchList(SearchInfo* si)
 		}
 		ctrlResults.SetRedraw(TRUE);
 	}
+
+    filterAllowRunning = true;
+    #ifdef _DEBUG
+        dcdebug("updateSearchList: completed\r\n");
+    #endif
 }
 
 LRESULT SearchFrame::onSelChange(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& bHandled)

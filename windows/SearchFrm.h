@@ -291,6 +291,31 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 		}
 		
 	private:
+        /** time difference */
+        int _keypressPrevTime;
+
+        /** permission to perform */
+        bool filterAllowRunning;
+
+        void updatePrevTimeFilter()
+        {
+            _keypressPrevTime = clock();
+        };
+
+        /**
+         * delay after the last key press
+         * pause - in msec delay
+         */
+        void waitPerformAllow(int pause = 300)
+        {
+            while((clock() - _keypressPrevTime) < pause){
+                #ifdef _DEBUG
+                    dcdebug("filter: wait...\r\n");
+                #endif
+                Sleep(100);
+            }
+        };
+
 		enum
 		{
 			COLUMN_FIRST,
