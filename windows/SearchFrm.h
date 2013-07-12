@@ -42,6 +42,7 @@
 #define SEARCH_MESSAGE_MAP 6        // This could be any number, really...
 #define SHOWUI_MESSAGE_MAP 7
 #define FILTER_MESSAGE_MAP 8
+#define FILTER_EXCL_MESSAGE_MAP 9
 
 class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255), IDR_SEARCH>,
 	private SearchManagerListener, private ClientManagerListener,
@@ -107,15 +108,18 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 		CHAIN_COMMANDS(uicBase)
 		CHAIN_MSG_MAP(baseClass)
 		ALT_MSG_MAP(SEARCH_MESSAGE_MAP)
-		MESSAGE_HANDLER(WM_CHAR, onChar)
-		MESSAGE_HANDLER(WM_KEYDOWN, onChar)
-		MESSAGE_HANDLER(WM_KEYUP, onChar)
+		    MESSAGE_HANDLER(WM_CHAR, onChar)
+		    MESSAGE_HANDLER(WM_KEYDOWN, onChar)
+		    MESSAGE_HANDLER(WM_KEYUP, onChar)
 		ALT_MSG_MAP(SHOWUI_MESSAGE_MAP)
-		MESSAGE_HANDLER(BM_SETCHECK, onShowUI)
+		    MESSAGE_HANDLER(BM_SETCHECK, onShowUI)
 		ALT_MSG_MAP(FILTER_MESSAGE_MAP)
-		MESSAGE_HANDLER(WM_CTLCOLORLISTBOX, onCtlColor)
-		MESSAGE_HANDLER(WM_KEYUP, onFilterChar)
-		COMMAND_CODE_HANDLER(CBN_SELCHANGE, onSelChange)
+		    MESSAGE_HANDLER(WM_CTLCOLORLISTBOX, onCtlColor)
+		    MESSAGE_HANDLER(WM_KEYUP, onFilterChar)
+            COMMAND_CODE_HANDLER(CBN_SELCHANGE, onSelChange)
+        ALT_MSG_MAP(FILTER_EXCL_MESSAGE_MAP)
+            MESSAGE_HANDLER(WM_KEYUP, onFilterExclChar)
+		    COMMAND_CODE_HANDLER(CBN_SELCHANGE, onSelChangeExcl)
 		END_MSG_MAP()
 		
 		SearchFrame() :
@@ -135,6 +139,8 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 			hubsContainer(WC_LISTVIEW, this, SEARCH_MESSAGE_MAP),
 			ctrlFilterContainer(WC_EDIT, this, FILTER_MESSAGE_MAP),
 			ctrlFilterSelContainer(WC_COMBOBOX, this, FILTER_MESSAGE_MAP),
+			ctrlFilterContainerExcl(WC_EDIT, this, FILTER_EXCL_MESSAGE_MAP),
+			ctrlFilterSelContainerExcl(WC_COMBOBOX, this, FILTER_EXCL_MESSAGE_MAP),
 			initialSize(0), initialMode(SearchManager::SIZE_ATLEAST), initialType(SearchManager::TYPE_ANY),
 			showUI(true), onlyFree(false), closed(false), isHash(false), droppedResults(0), resultsCount(0),
 			expandSR(false), storeIP(false), exactSize1(false), exactSize2(0), searchEndTime(0), searchStartTime(0), waiting(false),
@@ -170,7 +176,9 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 		LRESULT onBitziLookup(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT onCustomDraw(int /*idCtrl*/, LPNMHDR pnmh, BOOL& bHandled);
 		LRESULT onFilterChar(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT onFilterExclChar(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 		LRESULT onSelChange(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onSelChangeExcl(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT onPurge(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT onGetList(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT onBrowseList(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
@@ -360,6 +368,12 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 			LESS,
 			NOT_EQUAL
 		};
+
+        tstring _filterExcl;
+        tstring getTextFromCEdit(CEdit& edit);
+
+        bool doFilter(WPARAM wParam);
+        void filtering();
 		
 		class SearchInfo : public UserInfoBase
 		{
@@ -680,9 +694,11 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 		CContainedWindow purgeContainer;
 		CContainedWindow ctrlFilterContainer;
 		CContainedWindow ctrlFilterSelContainer;
+		CContainedWindow ctrlFilterContainerExcl;
+		CContainedWindow ctrlFilterSelContainerExcl;
 		tstring filter;
 		
-		CStatic searchLabel, sizeLabel, optionLabel, typeLabel, hubsLabel, srLabel;
+		CStatic searchLabel, sizeLabel, optionLabel, typeLabel, hubsLabel, srLabel, srLabelExcl;
 		CButton ctrlSlots, ctrlShowUI, ctrlCollapsed;
 		CButton m_ctrlStoreIP;
 		bool showUI;
@@ -699,6 +715,9 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 		
 		CEdit ctrlFilter;
 		CComboBox ctrlFilterSel;
+
+		CEdit ctrlFilterExcl;
+		CComboBox ctrlFilterSelExcl;
 		
 		bool onlyFree;
 		bool isHash;
@@ -755,7 +774,7 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 		void onHubAdded(HubInfo* info);
 		void onHubChanged(HubInfo* info);
 		void onHubRemoved(HubInfo* info);
-		bool matchFilter(SearchInfo* si, int sel, bool doSizeCompare = false, FilterModes mode = NONE, int64_t size = 0);
+		bool matchFilter(tstring& filter, SearchInfo* si, int sel, bool doSizeCompare = false, FilterModes mode = NONE, int64_t size = 0);
 		bool parseFilter(FilterModes& mode, int64_t& size);
 		void updateSearchList(SearchInfo* si = NULL);
 		void addSearchResult(SearchInfo* si);

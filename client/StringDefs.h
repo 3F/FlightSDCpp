@@ -941,6 +941,7 @@ enum Strings   // @DontAdd
 	SQLITE_USE_JOURNAL_MEMORY, // "Keeps a SQLite log file in a memory. It may cause database corruption due an error in the program or system."
 	SQLITE_USE_EXCLUSIVE_LOCK_MODE, // "Use the exclusive lock on mode of SQLite database. This option improves performance."
     SEARCH_FILTER_ITEM_FILEPATH, // "File & Path"
+    SEARCH_FILTER_LBL_EXCLUDE, // "And exclude match"
 	LAST // @DontAdd
 };
 

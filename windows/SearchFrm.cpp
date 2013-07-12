@@ -138,6 +138,18 @@ LRESULT SearchFrame::onCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
 	                     
 	ctrlFilterSelContainer.SubclassWindow(ctrlFilterSel.m_hWnd);
 	ctrlFilterSel.SetFont(WinUtil::font);
+
+	ctrlFilterExcl.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |
+	                  ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
+	                  
+	ctrlFilterContainerExcl.SubclassWindow(ctrlFilterExcl.m_hWnd);
+	ctrlFilterExcl.SetFont(WinUtil::font);
+	
+	ctrlFilterSelExcl.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_HSCROLL |
+	                     WS_VSCROLL | CBS_DROPDOWNLIST, WS_EX_CLIENTEDGE);
+	                     
+	ctrlFilterSelContainerExcl.SubclassWindow(ctrlFilterSelExcl.m_hWnd);
+	ctrlFilterSelExcl.SetFont(WinUtil::font);
 	
 	searchLabel.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 	searchLabel.SetFont(WinUtil::systemFont, FALSE);
@@ -154,6 +166,10 @@ LRESULT SearchFrame::onCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
 	srLabel.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 	srLabel.SetFont(WinUtil::systemFont, FALSE);
 	srLabel.SetWindowText(CTSTRING(SEARCH_IN_RESULTS));
+
+	srLabelExcl.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+	srLabelExcl.SetFont(WinUtil::systemFont, FALSE);
+	srLabelExcl.SetWindowText(CTSTRING(SEARCH_FILTER_LBL_EXCLUDE));
 	
 	optionLabel.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 	optionLabel.SetFont(WinUtil::systemFont, FALSE);
@@ -287,6 +303,7 @@ LRESULT SearchFrame::onCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
 	for (int j = 0; j < COLUMN_LAST; j++)
 	{
 		ctrlFilterSel.AddString(CTSTRING_I(columnNames[j]));
+        ctrlFilterSelExcl.AddString(CTSTRING_I(columnNames[j]));
 	}
 
     // additionals filter option
@@ -295,13 +312,15 @@ LRESULT SearchFrame::onCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
         LPCTSTR caption = _T("");
         switch(j){
             case FILTER_ITEM_PATHFILE:{
-                caption = CTSTRING_I(ResourceManager::SEARCH_FILTER_ITEM_FILEPATH);
+                caption = CTSTRING(SEARCH_FILTER_ITEM_FILEPATH);
                 break;
             }
         }
 		ctrlFilterSel.AddString(caption);
+        ctrlFilterSelExcl.AddString(caption);
 	}
 	ctrlFilterSel.SetCurSel(FILTER_ITEM_PATHFILE);
+    ctrlFilterSelExcl.SetCurSel(FILTER_ITEM_PATHFILE);
 	
 	SettingsManager::getInstance()->addListener(this);
 	TimerManager::getInstance()->addListener(this);
@@ -1085,6 +1104,22 @@ void SearchFrame::UpdateLayout(BOOL bResizeBars)
 		rc.bottom -= comboH;
 		
 		srLabel.MoveWindow(lMargin * 2, rc.top - labelH, width - rMargin, labelH - 1);
+
+		// "Exclude-filter"
+		rc.left = lMargin;
+		rc.right = (width - rMargin) / 2 - 3;
+		rc.top += spacing;
+		rc.bottom = rc.top + 21;
+		
+		ctrlFilterExcl.MoveWindow(rc);
+		
+		rc.left = (width - rMargin) / 2 + 3;
+		rc.right = width - rMargin;
+		rc.bottom = rc.top + comboH + 21;
+		ctrlFilterSelExcl.MoveWindow(rc);
+		rc.bottom -= comboH;
+
+        srLabelExcl.MoveWindow(lMargin * 2, rc.top - labelH, width - rMargin, labelH - 1);
 		
 		// "Search options"
 		rc.left = lMargin + 4;
@@ -1208,7 +1243,7 @@ LRESULT SearchFrame::onCtlColor(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOO
 	if (hWnd == searchLabel.m_hWnd || hWnd == sizeLabel.m_hWnd || hWnd == optionLabel.m_hWnd || hWnd == typeLabel.m_hWnd
 	        || hWnd == hubsLabel.m_hWnd || hWnd == ctrlSlots.m_hWnd ||
 	        hWnd == m_ctrlStoreIP.m_hWnd ||
-	        hWnd == ctrlCollapsed.m_hWnd || hWnd == srLabel.m_hWnd)
+	        hWnd == ctrlCollapsed.m_hWnd || hWnd == srLabel.m_hWnd || hWnd == srLabelExcl.m_hWnd)
 	{
 		::SetBkColor(hDC, ::GetSysColor(COLOR_3DFACE));
 		::SetTextColor(hDC, ::GetSysColor(COLOR_BTNTEXT));
@@ -1833,39 +1868,65 @@ LRESULT SearchFrame::onCustomDraw(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled
 	}
 }
 
-LRESULT SearchFrame::onFilterChar(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
+inline tstring SearchFrame::getTextFromCEdit(CEdit& edit)
 {
-    bHandled = false;
+    boost::scoped_array<TCHAR> buf;
+    buf.reset(new TCHAR[edit.GetWindowTextLength() + 1]);
+    edit.GetWindowText(buf.get(), edit.GetWindowTextLength() + 1);
+	return buf.get();
+}
 
+
+inline bool SearchFrame::doFilter(WPARAM wParam)
+{
     if(BOOLSETTING(FILTER_ENTER) && wParam != VK_RETURN){
-        return 0;
+        return false;
     }
 
     if(GetKeyState(VK_CONTROL) &  0x8000){
         if(wParam != 0x56){ // ctrl+v
-            return 0;
+            return false;
         }
     }
     else{
         switch(wParam){
             case VK_LEFT: case VK_RIGHT: case VK_CONTROL/*single*/: case VK_SHIFT:{
-                return 0;
+                return false;
             }
         }
     }
+    return true;
+}
 
-	TCHAR *buf = new TCHAR[ctrlFilter.GetWindowTextLength() + 1];
-	ctrlFilter.GetWindowText(buf, ctrlFilter.GetWindowTextLength() + 1);
-	filter = buf;
-	delete[] buf;
-
+inline void SearchFrame::filtering()
+{
     //Lock l(cs);
     updatePrevTimeFilter();
     if(filterAllowRunning){
         boost::thread t(boost::bind(&SearchFrame::updateSearchList, this, (SearchFrame::SearchInfo*)NULL));
     }
+}
 
-	return 0;
+LRESULT SearchFrame::onFilterChar(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
+{
+    bHandled = false;
+    if(!doFilter(wParam)){
+        return 0;
+    }
+    filter = getTextFromCEdit(ctrlFilter);
+    filtering();
+    return 0;
+}
+
+LRESULT SearchFrame::onFilterExclChar(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
+{
+    bHandled = false;
+    if(!doFilter(wParam)){
+        return 0;
+    }
+    _filterExcl = getTextFromCEdit(ctrlFilterExcl);
+    filtering();
+    return 0;
 }
 
 bool SearchFrame::parseFilter(FilterModes& mode, int64_t& size)
@@ -1964,7 +2025,8 @@ bool SearchFrame::parseFilter(FilterModes& mode, int64_t& size)
 	return true;
 }
 
-bool SearchFrame::matchFilter(SearchInfo* si, int sel, bool doSizeCompare, FilterModes mode, int64_t size)
+//TODO: refactoring
+bool SearchFrame::matchFilter(tstring& filter, SearchInfo* si, int sel, bool doSizeCompare, FilterModes mode, int64_t size)
 {
 	bool insert = false;
 	
@@ -2082,11 +2144,22 @@ void SearchFrame::updateSearchList(SearchInfo* si)
 	
 	int sel = ctrlFilterSel.GetCurSel();
 	bool doSizeCompare = sel == COLUMN_SIZE && parseFilter(mode, size);
+
+    //TODO: refactoring
+	int64_t sizeExcl = -1;
+	FilterModes modeExcl = NONE;
+	int selExcl = ctrlFilterSel.GetCurSel();
+	bool doSizeCompareExcl = selExcl == COLUMN_SIZE && parseFilter(modeExcl, sizeExcl);
 	
 	if (si != NULL)
 	{
-		if(!matchFilter(si, sel, doSizeCompare, mode, size))
+		if(!(
+            matchFilter(filter, si, sel, doSizeCompare, mode, size) && 
+            (_filterExcl.empty() || !matchFilter(_filterExcl, si, selExcl, doSizeCompareExcl, modeExcl, sizeExcl))
+            ))
+        {
 			ctrlResults.deleteItem(si);
+        }
 	}
 	else
 	{
@@ -2100,7 +2173,8 @@ void SearchFrame::updateSearchList(SearchInfo* si)
                 continue;
             }
 			si->collapsed = true;
-			if (matchFilter(si, sel, doSizeCompare, mode, size))
+            if( matchFilter(filter, si, sel, doSizeCompare, mode, size) && 
+                 (_filterExcl.empty() || !matchFilter(_filterExcl, si, selExcl, doSizeCompareExcl, modeExcl, sizeExcl)) )
 			{
 				dcassert(ctrlResults.findItem(si) == -1);
 				int k = ctrlResults.insertItem(si, si->getImageIndex());
@@ -2134,17 +2208,22 @@ void SearchFrame::updateSearchList(SearchInfo* si)
 
 LRESULT SearchFrame::onSelChange(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& bHandled)
 {
-	TCHAR *buf = new TCHAR[ctrlFilter.GetWindowTextLength() + 1];
-	ctrlFilter.GetWindowText(buf, ctrlFilter.GetWindowTextLength() + 1);
-	filter = buf;
-	delete[] buf;
-	
+    filter = getTextFromCEdit(ctrlFilter);	
 	updateSearchList();
 	
 	bHandled = false;
-	
 	return 0;
 }
+
+LRESULT SearchFrame::onSelChangeExcl(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& bHandled)
+{
+    _filterExcl = getTextFromCEdit(ctrlFilterExcl);	
+	updateSearchList();
+	
+	bHandled = false;
+	return 0;
+}
+
 // This and related changes taken from apex-sppedmod by SMT
 LRESULT SearchFrame::onEditChange(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
