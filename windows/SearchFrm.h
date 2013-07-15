@@ -285,8 +285,13 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
     protected:
         /**
          * fast comparison with wildcards characters
+         * see detail: 0fc7354 (~7ms - 10000rc) & current: ~5ms
          */
         bool matchWildcards(const tstring& text, const tstring& filter);
+        /** support ^ */
+        #ifdef _DEBUG
+            void matchWildcardsTests();
+        #endif
 		
 	private:
 		class SearchInfo;
