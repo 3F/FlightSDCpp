@@ -2105,7 +2105,7 @@ bool SearchFrame::matchWildcards(const tstring& text, const tstring& filter)
         START   = 8,
         END     = 16,
         EOL     = 32,
-    } mask;
+    } mask, prevMask = FLUSH;
 
     enum MetaSymbols{
         MS_ANY      = _T('*'),
@@ -2120,6 +2120,7 @@ bool SearchFrame::matchWildcards(const tstring& text, const tstring& filter)
 
     // to wildcards
     tstring     item;
+    tstring     itemPrev;
     std::size_t itemPos     = 0;
     std::size_t itemLeft    = 0;
     std::size_t itemDelta   = 0;
@@ -2139,10 +2140,10 @@ bool SearchFrame::matchWildcards(const tstring& text, const tstring& filter)
                 mask = SPLIT;
                 break;
             }
-            //case MS_ONE:{
-            //    mask = ONE;
-            //    break;
-            //}
+            case MS_ONE:{
+                mask = ONE;
+                break;
+            }
             //case MS_START:{
             //    mask = START;
             //    break;
@@ -2163,10 +2164,8 @@ bool SearchFrame::matchWildcards(const tstring& text, const tstring& filter)
         }
         
         if((itemDelta = itemLeft - 1 - itemPos) == 0){
-            if(split){
-                if(mask & SPLIT || mask & EOL){
-                    return true;
-                }                
+            if(mask & SPLIT || mask & EOL){
+                return true;
             }
             ++itemPos;
             continue;
@@ -2176,6 +2175,16 @@ bool SearchFrame::matchWildcards(const tstring& text, const tstring& filter)
 
         //find a part
         found = _text.find(item, left);
+
+        //compare delta -> w?ord
+        // TODO: [optimize perfomance]: pre-combination - "item?item"
+        if(prevMask & ONE && found != tstring::npos && (found - left) != 1){
+            std::size_t itemPrevLen = itemPrev.length();
+            std::size_t lPos        = found - itemPrevLen - 1;
+            if(lPos == tstring::npos || _text.substr(lPos, itemPrevLen).compare(itemPrev) != 0){
+                found = tstring::npos;
+            }
+        }
 
         if(found == tstring::npos){
             if(!split || mask & EOL){ //TODO: [optimize perfomance]: ...or last block
@@ -2199,14 +2208,14 @@ bool SearchFrame::matchWildcards(const tstring& text, const tstring& filter)
         }
 
         if(found != tstring::npos){
-            if(split){
-                if(mask & SPLIT || mask & EOL){
-                    return true;
-                }                
+            if(mask & SPLIT || mask & EOL){
+                return true;
             }
 
-            itemPos = itemLeft;
-            left = found + item.length();
+            itemPos     = itemLeft;
+            left        = found + itemDelta;
+            prevMask    = mask;
+            itemPrev    = item;
         }
     }
     return true;
@@ -2442,6 +2451,20 @@ void SearchFrame::matchWildcardsTests()
         dcassert(matchWildcards(data, _T("some project|let*various")) == false);   // _x_ __ | _x_* __
         dcassert(matchWildcards(data, _T("some project|various*zoom")) == false);  // _x_ __ | __ * _x_
         dcassert(matchWildcards(data, _T("be|pen*and*star|*my*system")) == false); // _x_ | _x_ * __ * _x_ | * _x_ * __
+
+    // test of "?"
+        // should be found:
+        dcassert(matchWildcards(data, _T("new*pro?ection")) == true);              // __ * [pro]ject ... [pro]t[ection]
+        dcassert(matchWildcards(data, _T("????")) == true);
+        dcassert(matchWildcards(data, _T("project?12")) == true);
+        dcassert(matchWildcards(_T("system-17 fee also offers protection"), _T("system?17")) == true);
+
+        // should not be found:
+        dcassert(matchWildcards(data, _T("?pro?12?|seems?7")) == false);
+        dcassert(matchWildcards(_T("system, installments range from 2 to 17"), _T("system?17")) == false);
+        dcassert(matchWildcards(_T("system17 fee also"), _T("system?17")) == false);
+        dcassert(matchWildcards(_T("my system17 fee also"), _T("system?17")) == false);
+        dcassert(matchWildcards(_T("system_-17 fee also"), _T("system?17")) == false);
 }
 #endif
 
