@@ -431,6 +431,24 @@ const TTHValue HashManager::getTTH(const string& fname, const string& fpath, int
 	return *tth;
 }
 
+TTHValue HashManager::getTTHByStr(const string& str)
+{
+    if(str.length() < 1){
+        return TTHValue();
+    }
+
+    try{
+        size_t len = str.length();
+        TigerTree tth(TigerTree::calcBlockSize(len, 1));
+        tth.update(str.c_str(), len);
+        tth.finalize();
+
+        return tth.getRoot();
+    }
+    catch(...){}
+    return TTHValue();
+}
+
 void HashManager::hashDone(const string& aFileName, uint64_t aTimeStamp, const TigerTree& tth, int64_t speed,
                            bool p_is_ntfs, int64_t p_size)
 {

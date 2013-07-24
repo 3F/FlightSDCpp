@@ -90,6 +90,7 @@ class HashManager : public Singleton<HashManager>, public Speaker<HashManagerLis
 		
 		/** @return TTH root */
 		const TTHValue getTTH(const string& fname, const string& fpath, int64_t aSize) throw(HashException);
+        static TTHValue getTTHByStr(const string& str);
 		
 		void addTree(const string& aFileName, uint64_t aTimeStamp, const TigerTree& tt, int64_t p_Size)
 		{

@@ -514,7 +514,9 @@ void SearchFrame::onEnter()
 	for_each(pausedResults.begin(), pausedResults.end(), DeleteFunction());
 	pausedResults.clear();
 	
+    ctrlResults.SetRedraw(FALSE);
 	ctrlResults.deleteAllItems();
+    ctrlResults.SetRedraw(TRUE);
 	
 	::EnableWindow(GetDlgItem(IDC_SEARCH_PAUSE), TRUE);
 	ctrlPauseSearch.SetWindowText(CTSTRING(PAUSE_SEARCH));
@@ -1399,19 +1401,11 @@ void SearchFrame::addSearchResult(SearchInfo* si)
 			resort = true;
 		}
 		
-		if (!si->getText(COLUMN_TTH).empty() && useGrouping)
-		{
-			ctrlResults.insertGroupedItem(si, expandSR);
-		}
-		else
-		{
-			SearchInfoList::ParentPair pp = { si, SearchInfoList::emptyVector };
-			ctrlResults.insertItem(si, si->getImageIndex());
-			ctrlResults.getParents().insert(make_pair(const_cast<TTHValue*>(&sr->getTTH()), pp));
-		}
+        ctrlResults.insertGroupedItem(si, expandSR);
 		
-		if (!filter.empty())
-			updateSearchList(si);
+		if(!filter.empty() || !_filterExcl.empty()){
+            boost::thread t(boost::bind(&SearchFrame::updateSearchList, this, si));
+        }
 			
 		if (BOOLSETTING(BOLD_SEARCH))
 		{

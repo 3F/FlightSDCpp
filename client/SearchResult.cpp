@@ -35,16 +35,31 @@ SearchResult::SearchResult(const UserPtr& aUser, Types aType, uint8_t aSlots, ui
                            const string& aHubURL, const string& ip, const TTHValue& aTTH, const string& aToken) :
 	file(aFile), hubName(aHubName), hubURL(aHubURL), user(aUser),
 	size(aSize), type(aType), slots(aSlots), freeSlots(aFreeSlots), IP(ip),
-	tth(aTTH), token(aToken)
+	token(aToken)
 {
-	init(aTTH, aType);
+    if(aType != SearchResult::TYPE_FILE){
+        // [fix] memory-leaks & loss directories :: see detail https://bitbucket.org/3F/flightsdc/issue/8/
+        tth = HashManager::getTTHByStr(Util::getLastDir(aFile));
+    }
+    else{
+        tth = aTTH;
+    }
+
+	init(tth, aType);
 }
 
 SearchResult::SearchResult(Types aType, int64_t aSize, const string& aFile, const TTHValue& aTTH) :
 	file(aFile), user(ClientManager::getInstance()->getMe()), size(aSize), type(aType), slots(UploadManager::getInstance()->getSlots()),
-	freeSlots(UploadManager::getInstance()->getFreeSlots()),
-	tth(aTTH)
+	freeSlots(UploadManager::getInstance()->getFreeSlots())
 {
+    if(aType != SearchResult::TYPE_FILE){
+        // [fix] memory-leaks & loss directories :: see detail https://bitbucket.org/3F/flightsdc/issue/8/
+        tth = HashManager::getTTHByStr(Util::getLastDir(aFile));
+    }
+    else{
+        tth = aTTH;
+    }
+
 	m_is_tth_download = false;
 	m_is_tth_remembrance = false;
 	m_is_tth_share = aType == TYPE_FILE; // Constructor for ShareManager
