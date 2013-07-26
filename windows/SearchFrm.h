@@ -779,10 +779,25 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
 		void onHubAdded(HubInfo* info);
 		void onHubChanged(HubInfo* info);
 		void onHubRemoved(HubInfo* info);
-		bool matchFilter(tstring& filter, SearchInfo* si, int sel, bool doSizeCompare = false, FilterModes mode = NONE, int64_t size = 0);
-		bool parseFilter(FilterModes& mode, int64_t& size);
+		bool parseFilter(const tstring& filter, FilterModes& mode, int64_t& size);
 		void updateSearchList(SearchInfo* si = NULL);
 		void addSearchResult(SearchInfo* si);
+
+        /** 
+         * wrapper match
+         * @param filter - textual value of the filter
+         * @param type   - type of filter
+         * @param si
+         */
+		bool matchFilter(const tstring& filter, int type, SearchInfo* si);
+        /** size comparison */
+        bool matchFilter(const tstring& filter, int64_t size);
+        /** any textual comparison */
+        bool matchFilter(const tstring& filter, const tstring& str);
+        /** default filter */
+        bool matchFilter(SearchInfo* si);
+        /** excluding filter */
+        bool matchFilterExcl(SearchInfo* si);
 		
 		LRESULT onItemChangedHub(int idCtrl, LPNMHDR pnmh, BOOL& bHandled);
 		

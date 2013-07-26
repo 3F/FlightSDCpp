@@ -445,7 +445,19 @@ TTHValue HashManager::getTTHByStr(const string& str)
 
         return tth.getRoot();
     }
-    catch(...){}
+    catch(...){
+        dcassert(false); //allert
+
+        try{
+            throw;
+        }
+        catch(const std::exception& e){
+            dcdebug("getTTHByStr: %s\n", e.what());
+        }
+        catch(...){
+            dcdebug("getTTHByStr: unknown exception\n");
+        }
+    }
     return TTHValue();
 }
 

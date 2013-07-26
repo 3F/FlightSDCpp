@@ -1927,8 +1927,14 @@ LRESULT SearchFrame::onFilterExclChar(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lPa
     return 0;
 }
 
-bool SearchFrame::parseFilter(FilterModes& mode, int64_t& size)
+bool SearchFrame::parseFilter(const tstring& filter, FilterModes& mode, int64_t& size)
 {
+    if(filter.empty()){
+        return false;
+    }
+
+    //TODO: refactoring
+
 	tstring::size_type start = (tstring::size_type)tstring::npos;
 	tstring::size_type end = (tstring::size_type)tstring::npos;
 	int64_t multiplier = 1;
@@ -2023,59 +2029,51 @@ bool SearchFrame::parseFilter(FilterModes& mode, int64_t& size)
 	return true;
 }
 
-//TODO: refactoring
-bool SearchFrame::matchFilter(tstring& filter, SearchInfo* si, int sel, bool doSizeCompare, FilterModes mode, int64_t size)
+bool SearchFrame::matchFilter(const tstring& filter, int type, SearchInfo* si)
 {
-	bool insert = false;
-	
-	if (filter.empty())
-	{
-		insert = true;
+    if(filter.empty()){
+        return true;
+    }
+
+    if(type == COLUMN_SIZE){
+        return matchFilter(filter, si->sr->getSize());
+    }
+    return matchWildcards(si->getText(static_cast<uint8_t>(type)), filter);
+}
+
+inline bool SearchFrame::matchFilter(const tstring& filter, int64_t size)
+{
+	int64_t cmp         = -1;
+	FilterModes mode    = NONE;
+
+	if(!parseFilter(filter, mode, cmp)){
+        return false;
+    }
+
+	switch (mode){
+		case EQUAL:         { return cmp == size;   }
+        case GREATER_EQUAL: { return cmp <=  size;  }
+		case LESS_EQUAL:    { return cmp >=  size;  }
+		case GREATER:       { return cmp < size;    }
+		case LESS:          { return cmp > size;    }
+		case NOT_EQUAL:     { return cmp != size;   }
 	}
-	else if (doSizeCompare)
-	{
-		switch (mode)
-		{
-			case EQUAL:
-				insert = (size == si->sr->getSize());
-				break;
-			case GREATER_EQUAL:
-				insert = (size <=  si->sr->getSize());
-				break;
-			case LESS_EQUAL:
-				insert = (size >=  si->sr->getSize());
-				break;
-			case GREATER:
-				insert = (size < si->sr->getSize());
-				break;
-			case LESS:
-				insert = (size > si->sr->getSize());
-				break;
-			case NOT_EQUAL:
-				insert = (size != si->sr->getSize());
-				break;
-		}
-	}
-	else
-	{
-#ifdef PPA_INCLUDE_BOOST_REGEXP
-		try
-		{
-			boost::wregex reg(filter, std::tr1::regex_constants::icase);
-			tstring s = si->getText(static_cast<uint8_t>(sel));
-			
-			insert = std::tr1::regex_search(s.begin(), s.end(), reg);
-		}
-		catch (...)
-		{
-			insert = true;
-		}
-#else
-		//insert = Text::is_sub_tstring(si->getText(static_cast<uint8_t>(sel)), filter);
-        return matchWildcards(si->getText(static_cast<uint8_t>(sel)), filter);
-#endif
-	}
-	return insert;
+    return false;
+}
+
+inline bool SearchFrame::matchFilter(const tstring& filter, const tstring& str)
+{
+    return matchWildcards(str, filter);
+}
+
+inline bool SearchFrame::matchFilter(SearchInfo* si)
+{
+    return matchFilter(filter, ctrlFilterSel.GetCurSel(), si);
+}
+
+inline bool SearchFrame::matchFilterExcl(SearchInfo* si)
+{
+    return _filterExcl.empty() || !matchFilter(_filterExcl, ctrlFilterSelExcl.GetCurSel(), si);
 }
 
 /**
@@ -2226,25 +2224,10 @@ void SearchFrame::updateSearchList(SearchInfo* si)
     #ifdef _DEBUG
         dcdebug("updateSearchList: launched\r\n");
     #endif
-
-	int64_t size = -1;
-	FilterModes mode = NONE;
-	
-	int sel = ctrlFilterSel.GetCurSel();
-	bool doSizeCompare = sel == COLUMN_SIZE && parseFilter(mode, size);
-
-    //TODO: refactoring
-	int64_t sizeExcl = -1;
-	FilterModes modeExcl = NONE;
-	int selExcl = ctrlFilterSel.GetCurSel();
-	bool doSizeCompareExcl = selExcl == COLUMN_SIZE && parseFilter(modeExcl, sizeExcl);
 	
 	if (si != NULL)
 	{
-		if(!(
-            matchFilter(filter, si, sel, doSizeCompare, mode, size) && 
-            (_filterExcl.empty() || !matchFilter(_filterExcl, si, selExcl, doSizeCompareExcl, modeExcl, sizeExcl))
-            ))
+		if(!(matchFilter(si) && matchFilterExcl(si)))
         {
 			ctrlResults.deleteItem(si);
         }
@@ -2261,9 +2244,8 @@ void SearchFrame::updateSearchList(SearchInfo* si)
                 continue;
             }
 			si->collapsed = true;
-            if( matchFilter(filter, si, sel, doSizeCompare, mode, size) && 
-                 (_filterExcl.empty() || !matchFilter(_filterExcl, si, selExcl, doSizeCompareExcl, modeExcl, sizeExcl)) )
-			{
+            if(matchFilter(si) && matchFilterExcl(si))
+            {
 				dcassert(ctrlResults.findItem(si) == -1);
 				int k = ctrlResults.insertItem(si, si->getImageIndex());
 				
