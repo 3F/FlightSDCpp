@@ -1172,7 +1172,9 @@ LRESULT MainFrame::onEndSession(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lPara
 #ifdef PPA_INCLUDE_VERSION_CHECK
 	if (c != NULL)
 	{
-		c->removeListener(this);
+        if(!BOOLSETTING(DONT_ANNOUNCE_NEW_VERSIONS)){
+		    c->removeListener(this);
+        }
 		delete c;
 		c = NULL;
 	}
@@ -1205,7 +1207,9 @@ LRESULT MainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, 
 #ifdef PPA_INCLUDE_VERSION_CHECK
 	if (c != NULL)
 	{
-		c->removeListener(this);
+        if(!BOOLSETTING(DONT_ANNOUNCE_NEW_VERSIONS)){
+		    c->removeListener(this);
+        }
 		delete c;
 		c = NULL;
 	}

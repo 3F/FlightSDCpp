@@ -2268,7 +2268,7 @@ void SearchFrame::updateSearchList(SearchInfo* si)
 				}
 			}
 		}
-		ctrlResults.SetRedraw(TRUE);
+    ctrlResults.SetRedraw(TRUE);
 	}
 
     filterAllowRunning = true;
@@ -2279,8 +2279,10 @@ void SearchFrame::updateSearchList(SearchInfo* si)
 
 LRESULT SearchFrame::onSelChange(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& bHandled)
 {
-    filter = getTextFromCEdit(ctrlFilter);	
-	updateSearchList();
+    filter = getTextFromCEdit(ctrlFilter);
+    if(!filter.empty()){
+	    updateSearchList();
+    }
 	
 	bHandled = false;
 	return 0;
@@ -2288,8 +2290,10 @@ LRESULT SearchFrame::onSelChange(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWnd
 
 LRESULT SearchFrame::onSelChangeExcl(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& bHandled)
 {
-    _filterExcl = getTextFromCEdit(ctrlFilterExcl);	
-	updateSearchList();
+    _filterExcl = getTextFromCEdit(ctrlFilterExcl);
+    if(!_filterExcl.empty()){
+	    updateSearchList();
+    }
 	
 	bHandled = false;
 	return 0;

@@ -133,7 +133,7 @@ void shutdown()
 {
 	TimerManager::getInstance()->shutdown();
 	HashManager::getInstance()->shutdown();
-	ConnectionManager::getInstance()->shutdown();
+	//ConnectionManager::getInstance()->shutdown(); //called twice
 	MappingManager::getInstance()->close();
 	BufferedSocket::waitShutdown();
 	
