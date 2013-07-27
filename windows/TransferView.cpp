@@ -180,7 +180,7 @@ LRESULT TransferView::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam,
 					transferMenu.SetMenuDefaultItem(IDC_ADD_TO_FAVORITES);
 					break;
 				case 5:
-					transferMenu.SetMenuDefaultItem(IDC_BROWSELIST);
+					transferMenu.SetMenuDefaultItem(IDC_GETLIST);
 					break;
 					
 			}
@@ -599,7 +599,7 @@ LRESULT TransferView::onDoubleClickTransfers(int /*idCtrl*/, LPNMHDR pnmh, BOOL&
 					i->addFav();
 					break;
 				case 5:
-					i->browseList(Util::emptyString);
+					i->getList(Util::emptyString);
 					break;
 			}
 		}
@@ -1517,7 +1517,7 @@ void TransferView::on(QueueManagerListener::StatusUpdated, const QueueItem* qi) 
 				
 				ui->setStatusString(TSTRING(DOWNLOAD_STARTING));
 				if ((!SETTING(BEGINFILE).empty()) && (!BOOLSETTING(SOUNDS_DISABLED)))
-					PlaySound(Text::toT(SETTING(BEGINFILE)).c_str(), NULL, SND_FILENAME | SND_ASYNC);
+					PlaySound(Text::toT(SETTING(BEGINFILE)).c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 					
 				if (BOOLSETTING(POPUP_DOWNLOAD_START))
 				{

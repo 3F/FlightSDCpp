@@ -1,20 +1,9 @@
-// File_Vc1 - Info for MPEG Video files
-// Copyright (C) 2004-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //
 // Information about MPEG Video files
@@ -48,6 +37,7 @@ public :
 
     //Constructor/Destructor
     File_Vc1();
+    ~File_Vc1();
 
 private :
     //Streams management
@@ -158,6 +148,12 @@ private :
 
     //Error controls
     std::vector<int8u> Frame_ShouldBe;
+
+    #if MEDIAINFO_DEMUX
+        int8u* InitData_Buffer;
+        size_t InitData_Buffer_Size;
+    #endif //MEDIAINFO_DEMUX
+
 };
 
 } //NameSpace

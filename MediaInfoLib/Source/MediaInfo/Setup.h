@@ -1,20 +1,9 @@
-// Config - Config file for MediaInfo
-// Copyright (C) 2006-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //
 // All compilation definitions
@@ -409,6 +398,9 @@
 #if !defined(MEDIAINFO_MULTI_NO) && !defined(MEDIAINFO_P2_NO) && !defined(MEDIAINFO_P2_YES)
     #define MEDIAINFO_P2_YES
 #endif
+#if !defined(MEDIAINFO_MULTI_NO) && !defined(MEDIAINFO_PMP_NO) && !defined(MEDIAINFO_PMP_YES)
+    #define MEDIAINFO_PMP_YES
+#endif
 #if !defined(MEDIAINFO_MULTI_NO) && !defined(MEDIAINFO_RIFF_NO) && !defined(MEDIAINFO_RIFF_YES)
     #define MEDIAINFO_RIFF_YES
 #endif
@@ -454,6 +446,9 @@
 #if !defined(MEDIAINFO_VIDEO_NO) && !defined(MEDIAINFO_AVSV_NO) && !defined(MEDIAINFO_AVSV_YES)
     #define MEDIAINFO_AVSV_YES
 #endif
+#if !defined(MEDIAINFO_VIDEO_NO) && !defined(MEDIAINFO_CANOPUS_NO) && !defined(MEDIAINFO_CANOPUS_YES)
+    #define MEDIAINFO_CANOPUS_YES
+#endif
 #if !defined(MEDIAINFO_VIDEO_NO) && !defined(MEDIAINFO_DIRAC_NO) && !defined(MEDIAINFO_DIRAC_YES)
     #define MEDIAINFO_DIRAC_YES
 #endif
@@ -465,6 +460,9 @@
 #endif
 #if !defined(MEDIAINFO_VIDEO_NO) && !defined(MEDIAINFO_H263_NO) && !defined(MEDIAINFO_H263_YES)
     #define MEDIAINFO_H263_YES
+#endif
+#if !defined(MEDIAINFO_VIDEO_NO) && !defined(MEDIAINFO_HEVC_NO) && !defined(MEDIAINFO_HEVC_YES)
+    #define MEDIAINFO_HEVC_YES
 #endif
 #if !defined(MEDIAINFO_VIDEO_NO) && !defined(MEDIAINFO_LAGARITH_NO) && !defined(MEDIAINFO_LAGARITH_YES)
     #define MEDIAINFO_LAGARITH_YES
@@ -654,6 +652,9 @@
 #endif
 #if !defined(MEDIAINFO_TEXT_NO) && !defined(MEDIAINFO_TELETEXT_NO) && !defined(MEDIAINFO_TELETEXT_YES)
     #define MEDIAINFO_TELETEXT_YES
+#endif
+#if !defined(MEDIAINFO_TEXT_NO) && !defined(MEDIAINFO_TIMEDTEXT_NO) && !defined(MEDIAINFO_TIMEDTEXT_YES)
+    #define MEDIAINFO_TIMEDTEXT_YES
 #endif
 #if !defined(MEDIAINFO_TEXT_NO) && !defined(MEDIAINFO_TTML_NO) && !defined(MEDIAINFO_TTML_YES)
     #define MEDIAINFO_TTML_YES

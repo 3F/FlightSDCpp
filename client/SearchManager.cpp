@@ -322,7 +322,7 @@ int SearchManager::UdpQueue::run()
 			if (l_isTTH)
 			{
 				tth = hubName.substr(4);
-				StringList names = ClientManager::getInstance()->getHubNames(user->getCID(), Util::emptyString);
+				const StringList names = ClientManager::getInstance()->getHubNames(user->getCID(), Util::emptyString);
 				hubName = names.empty() ? STRING(OFFLINE) : Util::toString(names);
 			}
 			
@@ -426,18 +426,18 @@ void SearchManager::onRES(const AdcCommand& cmd, const UserPtr& from, const stri
 	{
 	
 		/// @todo get the hub this was sent from, to be passed as a hint? (eg by using the token?)
-		StringList names = ClientManager::getInstance()->getHubNames(from->getCID(), Util::emptyString);
-		string hubName = names.empty() ? STRING(OFFLINE) : Util::toString(names);
-		StringList hubs = ClientManager::getInstance()->getHubs(from->getCID(), Util::emptyString);
-		string hub = hubs.empty() ? STRING(OFFLINE) : Util::toString(hubs);
+		const StringList names = ClientManager::getInstance()->getHubNames(from->getCID(), Util::emptyString);
+		const string hubName = names.empty() ? STRING(OFFLINE) : Util::toString(names);
+		const StringList hubs = ClientManager::getInstance()->getHubs(from->getCID(), Util::emptyString);
+		const string hub = hubs.empty() ? STRING(OFFLINE) : Util::toString(hubs);
 		
-		SearchResult::Types type = (file[file.length() - 1] == '\\' ? SearchResult::TYPE_DIRECTORY : SearchResult::TYPE_FILE);
+		const SearchResult::Types type = (file[file.length() - 1] == '\\' ? SearchResult::TYPE_DIRECTORY : SearchResult::TYPE_FILE);
 		if (type == SearchResult::TYPE_FILE && tth.empty())
 			return;
 			
-		uint8_t slots = ClientManager::getInstance()->getSlots(from->getCID());
-		SearchResultPtr sr(new SearchResult(from, type, slots, (uint8_t)freeSlots, size,
-		                                    file, hubName, hub, remoteIp, TTHValue(tth), token));
+		const uint8_t slots = ClientManager::getInstance()->getSlots(from->getCID());
+		const SearchResultPtr sr(new SearchResult(from, type, slots, (uint8_t)freeSlots, size,
+		                                          file, hubName, hub, remoteIp, TTHValue(tth), token));
 		fire(SearchManagerListener::SR(), sr);
 	}
 }

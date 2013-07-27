@@ -58,8 +58,9 @@ int reqType(const Mapper::Protocol protocol)
 			return NATPMP_PROTOCOL_TCP;
 		case Mapper::PROTOCOL_UDP:
 			return NATPMP_PROTOCOL_UDP;
-	}
+		default:
 	dcassert(0);
+}
 }
 
 int respType(const Mapper::Protocol protocol)
@@ -70,8 +71,9 @@ int respType(const Mapper::Protocol protocol)
 			return NATPMP_RESPTYPE_TCPPORTMAPPING;
 		case Mapper::PROTOCOL_UDP:
 			return NATPMP_RESPTYPE_UDPPORTMAPPING;
-	}
+		default:
 	dcassert(0);
+}
 }
 
 bool sendRequest(const unsigned short port, const Mapper::Protocol protocol, uint32_t lifetime)

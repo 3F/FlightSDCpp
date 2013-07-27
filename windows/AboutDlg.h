@@ -26,6 +26,8 @@
 static const TCHAR g_thanks[] =
     _T("http://www.flockline.ru (logo)\r\n")
     _T("http://code.google.com/p/flylinkdc/people/list (FlylinkDC++ Team)\r\n")
+    _T("reg <entry.reg@gmail.com>\r\n")
+
     ;
 class AboutDlg : public CDialogImpl<AboutDlg>
 {
@@ -64,7 +66,8 @@ class AboutDlg : public CDialogImpl<AboutDlg>
 			if (SETTING(TOTAL_DOWNLOAD) > 0)
 			{
 				TCHAR buf[64];
-				snwprintf(buf, sizeof(buf), _T("Ratio (up/down): %.2f"), ((double)SETTING(TOTAL_UPLOAD)) / ((double)SETTING(TOTAL_DOWNLOAD)));
+				buf[0] = 0;
+				snwprintf(buf, _countof(buf), _T("Ratio (up/down): %.2f"), ((double)SETTING(TOTAL_UPLOAD)) / ((double)SETTING(TOTAL_DOWNLOAD)));
 				
 				SetDlgItemText(IDC_RATIO, buf);
 				/*  sprintf(buf, "Uptime: %s", Util::formatTime(Util::getUptime()));

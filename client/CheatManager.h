@@ -139,7 +139,8 @@ void checkCheating(const UserPtr& p, DirectoryListing* dl)
 			{
 				double qwe = (double)((double)statedSize / (double)realSize);
 				char buf[128];
-				snprintf(buf, sizeof(buf), CSTRING(CHECK_INFLATED), Util::toString(qwe).c_str());
+				buf[0] = 0;
+				snprintf(buf, _countof(buf), CSTRING(CHECK_INFLATED), Util::toString(qwe).c_str());
 				inflationString = buf;
 				detectString += inflationString;
 			}

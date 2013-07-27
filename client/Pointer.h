@@ -41,9 +41,17 @@ class intrusive_ptr_base
 			intrusive_ptr_release(this);
 		}
 		
+		bool is_last() const noexcept
+		{
+		    return ref == 1;
+		}
 		bool unique(int val = 1) const noexcept
 		{
-		    return (ref <= val);
+		    return ref <= val;
+		}
+		int getRefs() const noexcept
+		{
+		    return ref;
 		}
 		
 	protected:

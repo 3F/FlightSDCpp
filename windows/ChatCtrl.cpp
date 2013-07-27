@@ -327,7 +327,7 @@ void ChatCtrl::FormatChatLine(const tstring& sMyNick, tstring& sText, CHARFORMAT
 		if (!SETTING(CHATNAMEFILE).empty() && !BOOLSETTING(SOUNDS_DISABLED) &&
 		        !sAuthor.empty() && (stricmp(sAuthor.c_str(), sNick) != 0))
 		{
-			::PlaySound(Text::toT(SETTING(CHATNAMEFILE)).c_str(), NULL, SND_FILENAME | SND_ASYNC);
+			::PlaySound(Text::toT(SETTING(CHATNAMEFILE)).c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 		}
 	}
 	
@@ -1177,7 +1177,7 @@ string ChatCtrl::escapeUnicode(tstring str)
 	while ((i = std::find_if(str.begin() + dist, str.end(), std::bind2nd(std::greater<TCHAR>(), 0x7f))) != str.end())
 	{
 		dist = (i + 1) - str.begin(); // Random Acess iterators FTW
-		snwprintf(buf, sizeof(buf), _T("%hd"), int(*i));
+		snwprintf(buf, _countof(buf), _T("%hd"), int(*i));
 		str.replace(i, i + 1, _T("\\ud\\u") + tstring(buf) + _T("?"));
 		memzero(buf, sizeof(buf));
 	}

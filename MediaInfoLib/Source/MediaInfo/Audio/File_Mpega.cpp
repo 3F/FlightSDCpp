@@ -1,20 +1,9 @@
-// File_Mpega - Info for MPEG Audio files
-// Copyright (C) 2002-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //
 // A good start : http://www.codeproject.com/audio/MPEGAudioInfo.asp
@@ -645,7 +634,11 @@ bool File_Mpega::Synchronize()
                     if (!File__Tags_Helper::Synchronize(Tag_Found0, Size0))
                         return false;
                     if (Tag_Found0)
+                    {
+                        if (!Status[IsAccepted])
+                            File__Tags_Helper::Accept("MPEG Audio");
                         return true;
+                    }
                     if (File_Offset+Buffer_Offset+Size0==File_Size-File_EndTagSize)
                         break;
 
@@ -702,7 +695,11 @@ bool File_Mpega::Synchronize()
                                 if (!File__Tags_Helper::Synchronize(Tag_Found1, Size0+Size1))
                                     return false;
                                 if (Tag_Found1)
+                                {
+                                    if (!Status[IsAccepted])
+                                        File__Tags_Helper::Accept("MPEG Audio");
                                     return true;
+                                }
                                 if (File_Offset+Buffer_Offset+Size0+Size1==File_Size-File_EndTagSize)
                                     break;
 
@@ -744,7 +741,11 @@ bool File_Mpega::Synchronize()
                                             if (!File__Tags_Helper::Synchronize(Tag_Found2, Size0+Size1+Size2))
                                                 return false;
                                             if (Tag_Found2)
+                                            {
+                                                if (!Status[IsAccepted])
+                                                    File__Tags_Helper::Accept("MPEG Audio");
                                                 return true;
+                                            }
                                             if (File_Offset+Buffer_Offset+Size0+Size1+Size2==File_Size-File_EndTagSize)
                                                 break;
 
@@ -889,6 +890,11 @@ void File_Mpega::Header_Parse()
 
     //Filling
     int64u Size=(Mpega_Coefficient[ID][layer]*Mpega_BitRate[ID][layer][bitrate_index]*1000/Mpega_SamplingRate[ID][sampling_frequency]+(padding_bit?1:0))*Mpega_SlotSize[layer];
+
+    //Special case: tags is inside the last frame
+    if (File_Offset+Buffer_Offset+Size>=File_Size-File_EndTagSize)
+        Size=File_Size-File_EndTagSize-(File_Offset+Buffer_Offset);
+
     Header_Fill_Size(Size);
     Header_Fill_Code(0, "audio_data");
 
@@ -1135,10 +1141,12 @@ void File_Mpega::Data_Parse()
             Fill("MPEG Audio");
 
             //Jumping
-            if (!IsSub && MediaInfoLib::Config.ParseSpeed_Get()<1.0)
+            if (!IsSub && MediaInfoLib::Config.ParseSpeed_Get()<1.0 && File_Offset+Buffer_Offset<File_Size/2)
             {
                 File__Tags_Helper::GoToFromEnd(16*1024, "MPEG-A");
                 LastSync_Offset=(int64u)-1;
+                if (File_GoTo!=(int64u)-1)
+                    Open_Buffer_Unsynch();
             }
         }
 

@@ -30,6 +30,17 @@
 
 namespace dcpp
 {
+MappingManager::MappingManager() : renewal(0), m_listeners_count(0)
+{
+	busy.clear();
+	/* Зовется из main.cpp
+	    addMapper<Mapper_NATPMP>();
+	    addMapper<Mapper_MiniUPnPc>();
+	#ifdef HAVE_NATUPNP_H
+	    addMapper<Mapper_WinUPnP>();
+	#endif
+	*/
+}
 
 StringList MappingManager::getMappers() const
 {
@@ -63,7 +74,11 @@ bool MappingManager::open()
 
 void MappingManager::close()
 {
+	if (m_listeners_count)
+	{
 	TimerManager::getInstance()->removeListener(this);
+		--m_listeners_count;
+	}
 	
 	if (working.get())
 	{
@@ -122,7 +137,11 @@ int MappingManager::run()
 		}
 		else
 		{
+			if (m_listeners_count)
+			{
 			TimerManager::getInstance()->removeListener(this);
+				--m_listeners_count;
+		}
 		}
 		
 		return 0;
@@ -130,11 +149,11 @@ int MappingManager::run()
 	
 	// move the preferred mapper to the top of the stack.
 	const auto& setting = SETTING(MAPPER);
-	for (auto i = mappers.begin(); i != mappers.end(); ++i)
+	for (auto i = mappers.cbegin(); i != mappers.cend(); ++i)
 	{
 		if (i->first == setting)
 		{
-			if (i != mappers.begin())
+			if (i != mappers.cbegin())
 			{
 				auto mapper = *i;
 				mappers.erase(i);
@@ -144,7 +163,7 @@ int MappingManager::run()
 		}
 	}
 	
-	for (auto i = mappers.begin(); i != mappers.end(); ++i)
+	for (auto i = mappers.cbegin(); i != mappers.cend(); ++i)
 	{
 		unique_ptr<Mapper> pMapper(i->second());
 		Mapper& mapper = *pMapper;
@@ -197,7 +216,11 @@ int MappingManager::run()
 		if (minutes)
 		{
 			renewal = GET_TICK() + std::max(minutes, 10u) * 60 * 1000;
+			if (m_listeners_count == 0)
+			{
 			TimerManager::getInstance()->addListener(this);
+				++m_listeners_count;
+		}
 		}
 		break;
 	}

@@ -1,21 +1,8 @@
-// File_SmpteSt0302 - Info for SMPTE ST0302
-// Copyright (C) 2008-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -87,6 +74,7 @@ void File_SmpteSt0302::Streams_Accept()
         File_SmpteSt0337* SmpteSt0337=new File_SmpteSt0337();
         SmpteSt0337->Container_Bits=(4+bits_per_sample)*4;
         SmpteSt0337->Endianness='L';
+        SmpteSt0337->Aligned=true;
         #if MEDIAINFO_DEMUX
             if (Config->Demux_Unpacketize_Get())
             {
@@ -137,7 +125,6 @@ void File_SmpteSt0302::Streams_Fill()
 
     if (Count_Get(Stream_Audio)==1)
     {
-        Fill(Stream_Audio, 0, Audio_BitRate_Encoded, (5+bits_per_sample)*(1+number_channels)*8*48000);
         if (Retrieve(Stream_Audio, 0, Audio_BitRate).empty())
            Fill(Stream_Audio, 0, Audio_BitRate, (4+bits_per_sample)*(1+number_channels)*8*48000);
         if (Retrieve(Stream_Audio, 0, Audio_Format)==__T("PCM"))
@@ -147,6 +134,10 @@ void File_SmpteSt0302::Streams_Fill()
             Clear(Stream_Audio, 0, Audio_Codec_Family);
         }
     }
+
+    Fill(Stream_Audio, 0, Audio_BitRate_Encoded, (5+bits_per_sample)*(1+number_channels)*8*48000);
+    for (size_t Pos=1; Pos<Count_Get(Stream_Audio); Pos++)
+        Fill(Stream_Audio, Pos, Audio_BitRate_Encoded, 0);
 }
 
 //***************************************************************************
@@ -272,18 +263,20 @@ void File_SmpteSt0302::Read_Buffer_Continue()
     {
         Parsers[Pos]->FrameInfo=FrameInfo;
         Open_Buffer_Continue(Parsers[Pos], Info, Info_Offset, true, Ratio);
-        Element_Offset=Element_Size;
 
         if (Parsers.size()>1 && Parsers[Pos]->Status[IsAccepted])
         {
             for (size_t Pos2=0; Pos2<Pos; Pos2++)
                 delete Parsers[Pos2]; //Parsers[Pos2]=NULL;
-            for (size_t Pos2=Pos+1; Pos2<Parsers.size()-1; Pos2++)
+            for (size_t Pos2=Pos+1; Pos2<Parsers.size(); Pos2++)
                 delete Parsers[Pos2]; //Parsers[Pos2]=NULL;
             Parsers.resize(Pos+1);
             Parsers.erase(Parsers.begin(), Parsers.begin()+Parsers.size()-1);
         }
     }
+    Element_Offset=Element_Size;
+
+    delete[] Info;
 
     FrameInfo.DTS+=FrameInfo.DUR;
 

@@ -1,21 +1,8 @@
-// MediaInfo_Config_MediaInfo - Configuration class
-// Copyright (C) 2005-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -284,6 +271,15 @@ Ztring MediaInfo_Config_MediaInfo::Option (const String &Option, const String &V
     else if (Option_Lower==__T("file_id_onlyroot_get"))
     {
         return File_ID_OnlyRoot_Get()?"1":"0";
+    }
+    else if (Option_Lower==__T("file_ignoresequencefilesize"))
+    {
+        #if MEDIAINFO_MD5
+            File_IgnoreSequenceFileSize_Set(!(Value==__T("0") || Value.empty()));
+            return Ztring();
+        #else //MEDIAINFO_MD5
+            return __T("Disabled due to compilation options");
+        #endif //MEDIAINFO_MD5
     }
     else if (Option_Lower==__T("file_ignoresequencefilesize"))
     {
@@ -1162,7 +1158,11 @@ Ztring MediaInfo_Config_MediaInfo::File_ForceParser_Get ()
 }
 
 //***************************************************************************
-// File_Buffer_Size_Hint_Pointer
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 //***************************************************************************
 
 //---------------------------------------------------------------------------
@@ -1656,7 +1656,11 @@ void MediaInfo_Config_MediaInfo::Event_Send (File__Analyze* Source, const int8u*
 
         // Copying buffers
         int32u* EventCode=(int32u*)Data_Content;
-        if (((*EventCode)&0x00FFFFFF)==((MediaInfo_Event_Global_Demux<<8)|4) && Data_Size==sizeof(MediaInfo_Event_Global_Demux_4)) // MediaInfo_Event_Global_Demux_4
+        if (((*EventCode)&0x00FFFFFF)==((MediaInfo_Event_Global_Demux<<8)|4) && Data_Size==sizeof(MediaInfo_Event_Global_Demux_4)) /*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
         {
             MediaInfo_Event_Global_Demux_4* Old=(MediaInfo_Event_Global_Demux_4*)Data_Content;
             MediaInfo_Event_Global_Demux_4* New=(MediaInfo_Event_Global_Demux_4*)Event->Data_Content;
@@ -1729,6 +1733,14 @@ void MediaInfo_Config_MediaInfo::Event_Send (File__Analyze* Source, const int8u*
 
 void MediaInfo_Config_MediaInfo::Event_Accepted (File__Analyze* Source)
 {
+    #if MEDIAINFO_DEMUX && MEDIAINFO_NEXTPACKET
+        if (Demux_EventWasSent && NextPacket_Get())
+        {
+            Events_Delayed_CurrentSource=Source;
+            return;
+        }
+    #endif //MEDIAINFO_DEMUX && MEDIAINFO_NEXTPACKET
+
     for (events_delayed::iterator Event=Events_Delayed.begin(); Event!=Events_Delayed.end(); ++Event)
         if (Event->first==Source)
         {

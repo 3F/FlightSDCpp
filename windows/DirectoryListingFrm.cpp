@@ -379,9 +379,9 @@ void DirectoryListingFrame::changeDir(DirectoryListing::Directory* d, BOOL enabl
 	{
 		ctrlList.insertItem(ctrlList.GetItemCount(), new ItemInfo(*i), (*i)->getComplete() ? WinUtil::getDirIconIndex() : WinUtil::getDirMaskedIndex());
 	}
-	for (DirectoryListing::File::Iter j = d->files.begin(); j != d->files.end(); ++j)
+	for (auto j = d->files.cbegin(); j != d->files.cend(); ++j)
 	{
-		ItemInfo* ii = new ItemInfo(*j);
+		const ItemInfo* ii = new ItemInfo(*j);
 		ctrlList.insertItem(ctrlList.GetItemCount(), ii, WinUtil::getIconIndex(ii->getText(COLUMN_FILENAME)));
 	}
 	ctrlList.resort();
@@ -754,7 +754,7 @@ LRESULT DirectoryListingFrame::onMatchQueue(WORD /*wNotifyCode*/, WORD /*wID*/, 
 	
 	tstring buf;
 	buf.resize(STRING(MATCHED_FILES).length() + 32);
-	_stprintf(&buf[0], CTSTRING(MATCHED_FILES), x);
+	_sntprintf(&buf[0], buf.size(), CTSTRING(MATCHED_FILES), x);
 	ctrlStatus.SetText(STATUS_TEXT, &buf[0]);
 	
 	return 0;
@@ -904,7 +904,7 @@ LRESULT DirectoryListingFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARA
 			
 			//Append Favorite download dirs
 			StringPairList spl = FavoriteManager::getInstance()->getFavoriteDirs();
-			if (spl.size() > 0)
+			if (!spl.empty())
 			{
 				for (StringPairIter i = spl.begin(); i != spl.end(); ++i)
 				{
@@ -919,7 +919,7 @@ LRESULT DirectoryListingFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARA
 			targets.clear();
 			QueueManager::getInstance()->getTargets(ii->file->getTTH(), targets);
 			
-			if (targets.size() > 0)
+			if (!targets.empty())
 			{
 				targetMenu.AppendMenu(MF_SEPARATOR);
 				for (StringIter i = targets.begin(); i != targets.end(); ++i)
@@ -927,7 +927,7 @@ LRESULT DirectoryListingFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARA
 					targetMenu.AppendMenu(MF_STRING, IDC_DOWNLOAD_TARGET + (++n), Text::toT(*i).c_str());
 				}
 			}
-			if (WinUtil::lastDirs.size() > 0)
+			if (!WinUtil::lastDirs.empty())
 			{
 				targetMenu.AppendMenu(MF_SEPARATOR);
 				for (TStringIter i = WinUtil::lastDirs.begin(); i != WinUtil::lastDirs.end(); ++i)
@@ -949,7 +949,7 @@ LRESULT DirectoryListingFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARA
 			fileMenu.EnableMenuItem(IDC_SEARCH_ALTERNATES, MF_BYCOMMAND | MFS_DISABLED);
 			//Append Favorite download dirs
 			StringPairList spl = FavoriteManager::getInstance()->getFavoriteDirs();
-			if (spl.size() > 0)
+			if (!spl.empty())
 			{
 				for (StringPairIter i = spl.begin(); i != spl.end(); ++i)
 				{
@@ -961,7 +961,7 @@ LRESULT DirectoryListingFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARA
 			
 			n = 0;
 			targetMenu.AppendMenu(MF_STRING, IDC_DOWNLOADTO, CTSTRING(BROWSE));
-			if (WinUtil::lastDirs.size() > 0)
+			if (!WinUtil::lastDirs.empty())
 			{
 				targetMenu.AppendMenu(MF_SEPARATOR);
 				for (TStringIter i = WinUtil::lastDirs.begin(); i != WinUtil::lastDirs.end(); ++i)
@@ -1025,7 +1025,7 @@ LRESULT DirectoryListingFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARA
 		int n = 0;
 		//Append Favorite download dirs
 		StringPairList spl = FavoriteManager::getInstance()->getFavoriteDirs();
-		if (spl.size() > 0)
+		if (!spl.empty())
 		{
 			for (StringPairIter i = spl.begin(); i != spl.end(); ++i)
 			{
@@ -1038,7 +1038,7 @@ LRESULT DirectoryListingFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARA
 		n = 0;
 		targetDirMenu.AppendMenu(MF_STRING, IDC_DOWNLOADDIRTO, CTSTRING(BROWSE));
 		
-		if (WinUtil::lastDirs.size() > 0)
+		if (!WinUtil::lastDirs.empty())
 		{
 			targetDirMenu.AppendMenu(MF_SEPARATOR);
 			for (TStringIter i = WinUtil::lastDirs.begin(); i != WinUtil::lastDirs.end(); ++i)

@@ -57,7 +57,7 @@ class ClientManager : public Speaker<ClientManagerListener>,
 		StringList getNicks(const HintedUser& user) const
 		{
 			dcassert(user.user);
-			if (user.user)
+			if (user.user && !isSigKill())
 				return getNicks(user.user->getCID(), user.hint);
 			else
 				return StringList();
@@ -65,7 +65,7 @@ class ClientManager : public Speaker<ClientManagerListener>,
 		StringList getHubNames(const HintedUser& user) const
 		{
 			dcassert(user.user);
-			if (user.user)
+			if (user.user && !isSigKill())
 				return getHubNames(user.user->getCID(), user.hint);
 			else
 				return StringList();
@@ -176,7 +176,12 @@ class ClientManager : public Speaker<ClientManagerListener>,
 		
         static void setSigKill(bool status)
         {
-            isSigKill = status;
+            _isSigKill = status;
+        }
+
+        static bool isSigKill()
+        {
+            return _isSigKill;
         }
 
 	private:
@@ -239,19 +244,9 @@ class ClientManager : public Speaker<ClientManagerListener>,
 		void on(AdcSearch, const Client* c, const AdcCommand& adc, const CID& from) noexcept;
 		// TimerManagerListener
 		void on(TimerManagerListener::Minute, uint64_t aTick) noexcept;
-
-        /**
-         * actions after SigKill
-         */
-        void killed() noexcept
-        {
-            //...
-            //onlineUsers.clear();
-            //...
-        };
-
+        
         /** status of destroying app */
-        static bool isSigKill;
+        static bool _isSigKill;
 };
 
 } // namespace dcpp

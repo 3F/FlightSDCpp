@@ -581,6 +581,9 @@
     <ClCompile Include="Source\MediaInfo\Video\File_H263.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
+    <ClCompile Include="Source\MediaInfo\Video\File_Hevc.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
     <ClCompile Include="Source\MediaInfo\Multiple\File_Hls.cpp">
       <Filter>Source Files\Multiple</Filter>
     </ClCompile>
@@ -625,6 +628,15 @@
     </ClCompile>
     <ClCompile Include="Source\MediaInfo\Text\File_Ttml.cpp">
       <Filter>Source Files\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MediaInfo\Text\File_TimedText.cpp">
+      <Filter>Source Files\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MediaInfo\Multiple\File_Pmp.cpp">
+      <Filter>Source Files\Multiple</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MediaInfo\Video\File_Canopus.cpp">
+      <Filter>Source Files\Video</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1155,6 +1167,21 @@
     </ClInclude>
     <ClInclude Include="Source\MediaInfo\Text\File_Ttml.h">
       <Filter>Header Files\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MediaInfo\Text\File_TimedText.h">
+      <Filter>Header Files\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MediaInfo\Video\File_Hevc.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MediaInfo\Multiple\File_Pmp.h">
+      <Filter>Header Files\Multiple</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MediaInfo\Video\File_Canopus.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MediaInfo\MediaInfo_Const.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

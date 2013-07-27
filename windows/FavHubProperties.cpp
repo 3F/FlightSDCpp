@@ -90,16 +90,16 @@ LRESULT FavHubProperties::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
 	};
 	
 	const wchar_t* l_Vperf = l_isADC ? _T("") : _T("V:");
-	LocalArray<wchar_t, 100> buf;
+	LocalArray<TCHAR, 100> l_buf;
 	for (size_t i = 0; i < _countof(l_MimicryTag); i++)
 	{
-		snwprintf(buf, buf.size(), _T("%s %s%s"), l_MimicryTag[i].tag, l_Vperf, l_MimicryTag[i].version);
-		IdCombo.AddString(buf);
+		snwprintf(l_buf, l_buf.size(), _T("%s %s%s"), l_MimicryTag[i].tag, l_Vperf, l_MimicryTag[i].version);
+		IdCombo.AddString(l_buf);
 	}
 	
 	SetDlgItemText(IDC_CLIENT_ID_BOX, Text::toT(entry->getClientId()).c_str());
 	CheckDlgButton(IDC_CLIENT_ID, entry->getOverrideId() ? BST_CHECKED : BST_UNCHECKED);
-	BOOL x;
+	BOOL x = FALSE;
 	OnChangeId(BN_CLICKED, IDC_CLIENT, 0, x);
 	// end !SMT!-S
 	

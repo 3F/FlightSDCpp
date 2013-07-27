@@ -89,7 +89,7 @@ bool IpGuard::check(const string& aIP, string& reason)
 {
 	Lock l(cs);
 	
-	if (aIP.empty() || ranges.size() == 0)
+	if (aIP.empty() || ranges.empty())
 		return false;
 		
 	unsigned int a, b, c, d;
@@ -116,7 +116,7 @@ void IpGuard::check(uint32_t aIP, Socket* socket /*= NULL*/) throw(SocketExcepti
 {
 	Lock l(cs);
 	
-	if (aIP == 0 || ranges.size() == 0)
+	if (aIP == 0 || ranges.empty())
 		return;
 		
 	RangeIter find;

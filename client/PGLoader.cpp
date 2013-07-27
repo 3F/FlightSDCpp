@@ -16,7 +16,7 @@ PGLoader::PGLoader()
 bool PGLoader::getIPBlockBool(const string& p_IP) const
 {
 	Lock l(m_cs);
-	if (m_IPTrust.size() == 0)
+	if (m_IPTrust.empty())
 		return false;
 	unsigned u1, u2, u3, u4;
 	const int iItems = sscanf_s(p_IP.c_str(), "%u.%u.%u.%u", &u1, &u2, &u3, &u4);

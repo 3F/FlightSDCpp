@@ -62,12 +62,16 @@ void QueueItem::calcBlockSize()
 #endif
 }
 
-size_t QueueItem::countOnlineUsers() const
+size_t QueueItem::countOnlineUsers(size_t p_stop_value /* = 0xFFFFFFFF */) const
 {
 	size_t l_count = 0;
 	for (SourceConstIter i = sources.begin(); i != sources.end(); ++i)
+	{
 		if (i->getUser().user->isOnline())
 			l_count++;
+		if (l_count > p_stop_value) // Для условных операций не обязательно считать полное кол-во
+			break;
+	}
 	return l_count;
 }
 

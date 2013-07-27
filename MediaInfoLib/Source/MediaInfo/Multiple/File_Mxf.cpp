@@ -1,21 +1,8 @@
-// File_Mxf - Info for MXF files
-// Copyright (C) 2006-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -306,7 +293,7 @@ const char* Mxf_MPEG2_CodedContentType(int8u CodedContentType)
 }
 
 //---------------------------------------------------------------------------
-const char* Mxf_OperationalPattern(int128u OperationalPattern)
+const char* Mxf_OperationalPattern(const int128u &OperationalPattern)
 {
     //Item and Package Complexity
     int32u Code_Compare4=(int32u)OperationalPattern.lo;
@@ -339,7 +326,7 @@ const char* Mxf_OperationalPattern(int128u OperationalPattern)
 }
 
 //---------------------------------------------------------------------------
-const char* Mxf_EssenceElement(int128u EssenceElement)
+const char* Mxf_EssenceElement(const int128u &EssenceElement)
 {
     if ((EssenceElement.hi&0xFFFFFFFFFFFFFF00LL)!=0x060E2B3401020100LL)
         return "";
@@ -409,7 +396,7 @@ const char* Mxf_EssenceElement(int128u EssenceElement)
 }
 
 //---------------------------------------------------------------------------
-const char* Mxf_EssenceContainer(int128u EssenceContainer)
+const char* Mxf_EssenceContainer(const int128u &EssenceContainer)
 {
     if ((EssenceContainer.hi&0xFFFFFFFFFFFFFF00LL)!=0x060E2B3404010100LL)
         return "";
@@ -568,7 +555,7 @@ const char* Mxf_EssenceContainer_Mapping(int8u Code6, int8u Code7, int8u Code8)
 }
 
 //---------------------------------------------------------------------------
-const char* Mxf_EssenceCompression(int128u EssenceCompression)
+const char* Mxf_EssenceCompression(const int128u &EssenceCompression)
 {
     if ((EssenceCompression.hi&0xFFFFFFFFFFFFFF00LL)!=0x060E2B3404010100LL || !((EssenceCompression.lo&0xFF00000000000000LL)==0x0400000000000000LL || (EssenceCompression.lo&0xFF00000000000000LL)==0x0E00000000000000LL))
         return "";
@@ -726,7 +713,7 @@ const char* Mxf_EssenceCompression(int128u EssenceCompression)
 }
 
 //---------------------------------------------------------------------------
-const char* Mxf_EssenceCompression_Version(int128u EssenceCompression)
+const char* Mxf_EssenceCompression_Version(const int128u &EssenceCompression)
 {
     int8u Code2=(int8u)((EssenceCompression.lo&0x00FF000000000000LL)>>48);
     int8u Code3=(int8u)((EssenceCompression.lo&0x0000FF0000000000LL)>>40);
@@ -795,7 +782,7 @@ const char* Mxf_EssenceCompression_Version(int128u EssenceCompression)
 }
 
 //---------------------------------------------------------------------------
-const char* Mxf_Sequence_DataDefinition(int128u DataDefinition)
+const char* Mxf_Sequence_DataDefinition(const int128u &DataDefinition)
 {
     int8u Code4=(int8u)((DataDefinition.lo&0x000000FF00000000LL)>>32);
     int8u Code5=(int8u)((DataDefinition.lo&0x00000000FF000000LL)>>24);
@@ -924,6 +911,9 @@ File_Mxf::File_Mxf()
     SystemScheme1_TimeCodeArray_StartTimecode_ms=(int64u)-1;
     SystemScheme1_FrameRateFromDescriptor=0;
     Essences_FirstEssence_Parsed=false;
+    #if MEDIAINFO_ADVANCED
+        Footer_Position=(int64u)-1;
+    #endif //MEDIAINFO_ADVANCED
     ReferenceFiles=NULL;
     #if MEDIAINFO_NEXTPACKET
         ReferenceFiles_IsParsing=false;
@@ -1106,6 +1096,12 @@ void File_Mxf::Streams_Finish()
         }
     #endif //MEDIAINFO_NEXTPACKET
 
+    //Sizes
+    #if MEDIAINFO_ADVANCED
+        if (Footer_Position!=(int64u)-1)
+            Fill(Stream_General, 0, General_FooterSize, File_Size-Footer_Position);
+    #endif //MEDIAINFO_ADVANCED
+
     //Commercial names
     Streams_Finish_CommercialNames();
 
@@ -1123,7 +1119,7 @@ void File_Mxf::Streams_Finish()
 }
 
 //---------------------------------------------------------------------------
-void File_Mxf::Streams_Finish_Preface (int128u PrefaceUID)
+void File_Mxf::Streams_Finish_Preface (const int128u &PrefaceUID)
 {
     prefaces::iterator Preface=Prefaces.find(PrefaceUID);
     if (Preface==Prefaces.end())
@@ -1138,7 +1134,7 @@ void File_Mxf::Streams_Finish_Preface (int128u PrefaceUID)
 }
 
 //---------------------------------------------------------------------------
-void File_Mxf::Streams_Finish_ContentStorage (int128u ContentStorageUID)
+void File_Mxf::Streams_Finish_ContentStorage (const int128u &ContentStorageUID)
 {
     contentstorages::iterator ContentStorage=ContentStorages.find(ContentStorageUID);
     if (ContentStorage==ContentStorages.end())
@@ -1149,7 +1145,7 @@ void File_Mxf::Streams_Finish_ContentStorage (int128u ContentStorageUID)
 }
 
 //---------------------------------------------------------------------------
-void File_Mxf::Streams_Finish_Package (int128u PackageUID)
+void File_Mxf::Streams_Finish_Package (const int128u &PackageUID)
 {
     packages::iterator Package=Packages.find(PackageUID);
     if (Package==Packages.end() || !Package->second.IsSourcePackage)
@@ -1162,7 +1158,7 @@ void File_Mxf::Streams_Finish_Package (int128u PackageUID)
 }
 
 //---------------------------------------------------------------------------
-void File_Mxf::Streams_Finish_Track(int128u TrackUID)
+void File_Mxf::Streams_Finish_Track(const int128u &TrackUID)
 {
     tracks::iterator Track=Tracks.find(TrackUID);
     if (Track==Tracks.end() || Track->second.Stream_Finish_Done)
@@ -1181,7 +1177,7 @@ void File_Mxf::Streams_Finish_Track(int128u TrackUID)
 }
 
 //---------------------------------------------------------------------------
-void File_Mxf::Streams_Finish_Essence(int32u EssenceUID, int128u TrackUID)
+void File_Mxf::Streams_Finish_Essence(int32u EssenceUID, const int128u& TrackUID)
 {
     essences::iterator Essence=Essences.find(EssenceUID);
     if (Essence==Essences.end() || Essence->second.Stream_Finish_Done)
@@ -1203,7 +1199,7 @@ void File_Mxf::Streams_Finish_Essence(int32u EssenceUID, int128u TrackUID)
             if (DMSegment->second.TrackIDs[Pos]==TrackID)
                 DMScheme1s_List.push_back(DMSegment->second.Framework);
 
-    if (Config->ParseSpeed<=1.0)
+    if (Config->ParseSpeed<1.0)
     {
         Fill(*Parser);
         (*Parser)->Open_Buffer_Unsynch();
@@ -1240,9 +1236,7 @@ void File_Mxf::Streams_Finish_Essence(int32u EssenceUID, int128u TrackUID)
         if (Descriptor->second.LinkedTrackID==Essence->second.TrackID)
         {
             if (Descriptor->second.StreamKind!=Stream_Max)
-            {
                 Descriptor->second.StreamPos=StreamPos_Last;
-            }
             break;
         }
 
@@ -1261,7 +1255,8 @@ void File_Mxf::Streams_Finish_Essence(int32u EssenceUID, int128u TrackUID)
     if (SDTI_TimeCode_StartTimecode_ms!=(int64u)-1)
     {
         Fill(StreamKind_Last, StreamPos_Last, "Delay_SDTI", SDTI_TimeCode_StartTimecode_ms);
-        (*Stream_More)[StreamKind_Last][StreamPos_Last](Ztring().From_Local("Delay_SDTI"), Info_Options)=__T("N NT");
+        if (StreamKind_Last!=Stream_Max)
+            (*Stream_More)[StreamKind_Last][StreamPos_Last](Ztring().From_Local("Delay_SDTI"), Info_Options)=__T("N NT");
 
         //Fill(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_TimeCode_FirstFrame), SDTI_TimeCode_StartTimecode.c_str());
         //Fill(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_TimeCode_Source), "SDTI");
@@ -1269,7 +1264,8 @@ void File_Mxf::Streams_Finish_Essence(int32u EssenceUID, int128u TrackUID)
     if (SystemScheme1_TimeCodeArray_StartTimecode_ms!=(int64u)-1)
     {
         Fill(StreamKind_Last, StreamPos_Last, "Delay_SystemScheme1", SystemScheme1_TimeCodeArray_StartTimecode_ms);
-        (*Stream_More)[StreamKind_Last][StreamPos_Last](Ztring().From_Local("Delay_SystemScheme1"), Info_Options)=__T("N NT");
+        if (StreamKind_Last!=Stream_Max)
+            (*Stream_More)[StreamKind_Last][StreamPos_Last](Ztring().From_Local("Delay_SystemScheme1"), Info_Options)=__T("N NT");
 
         //Fill(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_TimeCode_FirstFrame), SystemScheme1_TimeCodeArray_StartTimecode.c_str());
         //Fill(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_TimeCode_Source), "System scheme 1");
@@ -1279,7 +1275,6 @@ void File_Mxf::Streams_Finish_Essence(int32u EssenceUID, int128u TrackUID)
     if ((*Parser)->Retrieve(Stream_General, 0, General_Format)==__T("ChannelGrouping") && (*Parser)->Count_Get(Stream_Audio))
     {
         //Before
-        Clear(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_StreamSize));
         if (StreamKind_Last==Stream_Audio)
         {
             Clear(Stream_Audio, StreamPos_Last, Audio_Format_Settings_Sign);
@@ -1321,10 +1316,22 @@ void File_Mxf::Streams_Finish_Essence(int32u EssenceUID, int128u TrackUID)
             Ztring Parser_ID=Retrieve(StreamKind_Last, StreamPos_Last, General_ID);
             Fill(StreamKind_Last, StreamPos_Last, General_ID, ID+(Parser_ID.empty()?Ztring():(__T("-")+Parser_ID)), true);
             for (size_t Pos=0; Pos<StreamSave.size(); Pos++)
-                if (Retrieve(StreamKind_Last, StreamPos_Last, Pos).empty())
+            {
+                if (Pos==Fill_Parameter(StreamKind_Last, Generic_BitRate) && (*Parser)->Count_Get(NewKind)>1 && (!StreamSave[Pos].empty() || StreamPos))
+                    Fill(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_BitRate_Encoded), StreamPos?0:(StreamSave[Pos].To_int64u()*2));
+                else if (Pos==Fill_Parameter(StreamKind_Last, Generic_StreamSize) && (*Parser)->Count_Get(NewKind)>1 && (!StreamSave[Pos].empty() || StreamPos))
+                    Fill(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_StreamSize_Encoded), StreamPos?0:(StreamSave[Pos].To_int64u()*2));
+                else if (Retrieve(StreamKind_Last, StreamPos_Last, Pos).empty())
                     Fill(StreamKind_Last, StreamPos_Last, Pos, StreamSave[Pos]);
+            }
             for (size_t Pos=0; Pos<StreamMoreSave.size(); Pos++)
+            {
                 Fill(StreamKind_Last, StreamPos_Last, StreamMoreSave(Pos, 0).To_Local().c_str(), StreamMoreSave(Pos, 1));
+                if (StreamMoreSave(Pos, Info_Name)==__T("Delay_SDTI"))
+                    (*Stream_More)[StreamKind_Last][StreamPos_Last](Ztring().From_Local("Delay_SDTI"), Info_Options)=__T("N NT");
+                if (StreamMoreSave(Pos, Info_Name)==__T("Delay_SystemScheme1"))
+                    (*Stream_More)[StreamKind_Last][StreamPos_Last](Ztring().From_Local("Delay_SystemScheme1"), Info_Options)=__T("N NT");
+            }
 
             for (size_t Pos=0; Pos<DMScheme1s_List.size(); Pos++)
             {
@@ -1346,6 +1353,15 @@ void File_Mxf::Streams_Finish_Essence(int32u EssenceUID, int128u TrackUID)
     }
     else //Normal
     {
+        //From descriptor
+        if ((*Parser)->Retrieve(Stream_Audio, StreamPos_Last, Audio_Format)==__T("PCM")) // MXF handles channel count only with PCM, not with compressed data
+            for (descriptors::iterator Descriptor=Descriptors.begin(); Descriptor!=Descriptors.end(); ++Descriptor)
+                if (Descriptor->second.LinkedTrackID==Essence->second.TrackID && Descriptor->second.StreamKind==Stream_Audio && StreamKind_Last==Stream_Audio && Descriptor->second.ChannelCount!=(int32u)-1)
+                {
+                    Fill(Stream_Audio, StreamPos_Last, Audio_Channel_s_, Descriptor->second.ChannelCount);
+                    break;
+                }
+
         Merge(*(*Parser), StreamKind_Last, 0, StreamPos_Last);
 
         for (size_t Pos=0; Pos<DMScheme1s_List.size(); Pos++)
@@ -1512,7 +1528,7 @@ void File_Mxf::Streams_Finish_Essence(int32u EssenceUID, int128u TrackUID)
 }
 
 //---------------------------------------------------------------------------
-void File_Mxf::Streams_Finish_Descriptor(int128u DescriptorUID, int128u PackageUID)
+void File_Mxf::Streams_Finish_Descriptor(const int128u &DescriptorUID, const int128u &PackageUID)
 {
     descriptors::iterator Descriptor=Descriptors.find(DescriptorUID);
     if (Descriptor==Descriptors.end())
@@ -1585,13 +1601,17 @@ void File_Mxf::Streams_Finish_Descriptor(int128u DescriptorUID, int128u PackageU
                                                 }
                                         if (StreamPos_Last==(size_t)-1 && !Descriptor->second.Locators.empty()) //TODO: 1 file has a TimeCode stream linked to a video stream, and it is displayed if Locator test is removed. Why? AS02 files streams are not filled if I remove completely this block, why?
                                         {
-                                            Stream_Prepare(Descriptor->second.StreamKind);
+                                            if (Descriptor->second.StreamKind!=Stream_Max)
+                                                Stream_Prepare(Descriptor->second.StreamKind);
                                             if (Track->second.TrackID!=(int32u)-1)
                                             {
                                                 if (Descriptor->second.LinkedTrackID==(int32u)-1)
                                                     Descriptor->second.LinkedTrackID=Track->second.TrackID;
-                                                Fill(StreamKind_Last, StreamPos_Last, General_ID, ID);
-                                                Fill(StreamKind_Last, StreamPos_Last, "Title", Track->second.TrackName);
+                                                if (Descriptor->second.StreamKind!=Stream_Max)
+                                                {
+                                                    Fill(StreamKind_Last, StreamPos_Last, General_ID, ID);
+                                                    Fill(StreamKind_Last, StreamPos_Last, "Title", Track->second.TrackName);
+                                                }
                                             }
                                         }
                                     }
@@ -1685,7 +1705,18 @@ void File_Mxf::Streams_Finish_Descriptor(int128u DescriptorUID, int128u PackageU
         //Info
         for (std::map<std::string, Ztring>::iterator Info=Descriptor->second.Infos.begin(); Info!=Descriptor->second.Infos.end(); ++Info)
             if (Retrieve(StreamKind_Last, StreamPos_Last, Info->first.c_str()).empty())
-                Fill(StreamKind_Last, StreamPos_Last, Info->first.c_str(), Info->second, true);
+            {
+                Ztring A=Retrieve(StreamKind_Last, StreamPos_Last, General_ID);
+                if (Info->first=="BitRate" && Retrieve(StreamKind_Last, StreamPos_Last, General_ID).find(__T(" / "))!=string::npos)
+                {
+                    if (Retrieve(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_BitRate)).empty() || Retrieve(StreamKind_Last, StreamPos_Last, General_ID).find(__T("-"))!=string::npos)
+                        Fill(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_BitRate_Encoded), Info->second.To_int64u()*2, 10, true);
+                    else
+                        Fill(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_BitRate), Info->second.To_int64u()*2, 10, true);
+                }
+                else
+                    Fill(StreamKind_Last, StreamPos_Last, Info->first.c_str(), Info->second, true);
+            }
 
         //Bitrate (PCM)
         if (StreamKind_Last==Stream_Audio && Retrieve(Stream_Audio, StreamPos_Last, Audio_BitRate).empty() && Retrieve(Stream_Audio, StreamPos_Last, Audio_Format)==__T("PCM") && Retrieve(Stream_Audio, StreamPos_Last, Audio_Format_Settings_Wrapping).find(__T("D-10"))!=string::npos)
@@ -1818,7 +1849,7 @@ void File_Mxf::Streams_Finish_Descriptor(int128u DescriptorUID, int128u PackageU
 }
 
 //---------------------------------------------------------------------------
-void File_Mxf::Streams_Finish_Locator(int128u DescriptorUID, int128u LocatorUID)
+void File_Mxf::Streams_Finish_Locator(const int128u &DescriptorUID, const int128u &LocatorUID)
 {
     descriptors::iterator Descriptor=Descriptors.find(DescriptorUID);
     if (Descriptor==Descriptors.end())
@@ -1906,7 +1937,7 @@ void File_Mxf::Streams_Finish_CommercialNames ()
 }
 
 //---------------------------------------------------------------------------
-void File_Mxf::Streams_Finish_Component(int128u ComponentUID, float64 EditRate, int32u TrackID, int64u Origin)
+void File_Mxf::Streams_Finish_Component(const int128u &ComponentUID, float64 EditRate, int32u TrackID, int64u Origin)
 {
     components::iterator Component=Components.find(ComponentUID);
     if (Component==Components.end())
@@ -1914,7 +1945,23 @@ void File_Mxf::Streams_Finish_Component(int128u ComponentUID, float64 EditRate, 
 
     //Duration
     if (EditRate && StreamKind_Last!=Stream_Max && Component->second.Duration!=(int64u)-1)
+    {
         Fill(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_Duration), Component->second.Duration*1000/EditRate, 0, true);
+        size_t ID_SubStreamInfo_Pos=Retrieve(StreamKind_Last, StreamPos_Last, General_ID).find(__T("-"));
+        if (ID_SubStreamInfo_Pos!=string::npos)
+        {
+            Ztring ID=Retrieve(StreamKind_Last, StreamPos_Last, General_ID);
+            ID.resize(ID_SubStreamInfo_Pos+1);
+            size_t StreamPos_Last_Temp=StreamPos_Last;
+            while (StreamPos_Last_Temp)
+            {
+                StreamPos_Last_Temp--;
+                if (Retrieve(StreamKind_Last, StreamPos_Last_Temp, General_ID).find(ID)!=0)
+                    break;
+                Fill(StreamKind_Last, StreamPos_Last_Temp, Fill_Parameter(StreamKind_Last, Generic_Duration), Component->second.Duration*1000/EditRate, 0, true);
+            }
+        }
+    }
 
     //For the sequence, searching Structural componenents
     for (size_t Pos=0; Pos<Component->second.StructuralComponents.size(); Pos++)
@@ -1942,7 +1989,7 @@ void File_Mxf::Streams_Finish_Component(int128u ComponentUID, float64 EditRate, 
 }
 
 //---------------------------------------------------------------------------
-void File_Mxf::Streams_Finish_Identification (int128u IdentificationUID)
+void File_Mxf::Streams_Finish_Identification (const int128u &IdentificationUID)
 {
     identifications::iterator Identification=Identifications.find(IdentificationUID);
     if (Identification==Identifications.end())
@@ -2002,12 +2049,13 @@ void File_Mxf::Read_Buffer_Continue()
     {
         if (Config->ParseSpeed>=1.0)
         {
-            if (Config->File_IsGrowing)
+            bool Buffer_End_IsUpdated=false;
+            if (Config->File_IsGrowing && !Config->File_IsNotGrowingAnymore)
             {
                 File F;
                 F.Open(File_Name);
                 std::vector<int8u> SearchingPartitionPack(65536);
-		size_t SearchingPartitionPack_Size=F.Read(&SearchingPartitionPack[0], SearchingPartitionPack.size());
+                size_t SearchingPartitionPack_Size=F.Read(&SearchingPartitionPack[0], SearchingPartitionPack.size());
                 for (size_t Pos=0; Pos+16<SearchingPartitionPack_Size; Pos++)
                     if (SearchingPartitionPack[Pos   ]==0x06
                      && SearchingPartitionPack[Pos+ 1]==0x0E
@@ -2045,6 +2093,11 @@ void File_Mxf::Read_Buffer_Continue()
                                             Fill(Stream_General, 0, General_Format_Settings, MI.Get(Stream_General, 0, General_Format_Settings), true);
                                             Fill(Stream_General, 0, General_Duration, MI.Get(Stream_General, 0, General_Duration), true);
                                             Fill(Stream_General, 0, General_FileSize, MI.Get(Stream_General, 0, General_FileSize), true);
+                                            if (Buffer_End_Unlimited)
+                                            {
+                                                Buffer_End=MI.Get(Stream_General, 0, General_FileSize).To_int64u()-MI.Get(Stream_General, 0, General_FooterSize).To_int64u();
+                                                Buffer_End_IsUpdated=true;
+                                            }
                                         }
                                         }
                                         break;
@@ -2052,7 +2105,7 @@ void File_Mxf::Read_Buffer_Continue()
                         }
                     }
 
-                if (Buffer_End && Buffer_End_Unlimited)
+                if (Buffer_End && Buffer_End_Unlimited && !Buffer_End_IsUpdated)
                     Buffer_End=Config->File_Size; //Updating Clip end in case the
             }
 
@@ -2943,6 +2996,31 @@ void File_Mxf::Header_Parse()
     if (Element_IsWaitingForMoreData())
         return;
 
+    if (Length==0
+     && ((int32u)Code.hi)==Elements::GenericContainer_Aaf2
+     && (((int32u)(Code.lo>>32))==Elements::GenericContainer_Aaf3 || ((int32u)(Code.lo>>32))==Elements::GenericContainer_Avid3)
+     && Retrieve(Stream_General, 0, General_Format_Settings).find(__T(" / Incomplete"))!=string::npos
+     )
+    {
+        if (Buffer_Offset+Element_Offset+4>Buffer_Size)
+        {
+            Element_WaitForMoreData();
+            return;
+        }
+
+        if (BigEndian2int32u(Buffer+Buffer_Offset+(size_t)Element_Offset)!=0x060E2B34)
+        {
+            Buffer_End_Unlimited=true;
+            Length=File_Size-(File_Offset+Buffer_Offset+Element_Offset);
+        }
+    }
+
+    if (Config->File_IsGrowing && File_Offset+Buffer_Offset+Element_Offset+Length>File_Size)
+    {
+        Element_WaitForMoreData();
+        return;
+    }
+
     if (Length==0 && Essences.empty() && Retrieve(Stream_General, 0, General_Format_Settings).find(__T(" / Incomplete"))!=string::npos)
     {
         if (Buffer_Offset+Element_Offset+4>Buffer_Size)
@@ -3370,10 +3448,10 @@ void File_Mxf::Data_Parse()
                 {
                     Essence->second.Frame_Count_NotParsedIncluded=Frame_Count_NotParsedIncluded;
                     Essence->second.FrameInfo.DTS=float64_int64s(DTS_Delay)*1000000000+FrameInfo.DTS;
-                    if (!IndexTables.empty() && IndexTables[0].IndexEditRate)
-                        Essence->second.FrameInfo.DUR=float64_int64s(1000000000/IndexTables[0].IndexEditRate);
-                    else if (!Tracks.empty() && Tracks.begin()->second.EditRate) //TODO: use the corresponding track instead of the first one
+                    if (!Tracks.empty() && Tracks.begin()->second.EditRate) //TODO: use the corresponding track instead of the first one
                         Essence->second.FrameInfo.DUR=float64_int64s(1000000000/Tracks.begin()->second.EditRate);
+                    else if (!IndexTables.empty() && IndexTables[0].IndexEditRate)
+                        Essence->second.FrameInfo.DUR=float64_int64s(1000000000/IndexTables[0].IndexEditRate);
                     #if MEDIAINFO_DEMUX
                         if (Buffer_End && Demux_UnpacketizeContainer && Essences.size()==1 && !Essences.begin()->second.Parsers.empty() && !(*(Essences.begin()->second.Parsers.begin()))->Demux_UnpacketizeContainer)
                             for (parsers::iterator Parser=Essence->second.Parsers.begin(); Parser!=Essence->second.Parsers.end(); ++Parser)
@@ -4148,6 +4226,8 @@ void File_Mxf::MaterialPackage()
 //---------------------------------------------------------------------------
 void File_Mxf::MPEG2VideoDescriptor()
 {
+    Descriptors[InstanceUID].Infos["Format"]="MPEG Video";
+    
     std::map<int16u, int128u>::iterator Primer_Value=Primer_Values.find(Code2);
     if (Primer_Value==Primer_Values.end()) //if not a standard code or unknown user defined code
     {
@@ -6443,6 +6523,23 @@ void File_Mxf::PartitionMetadata()
             default   : ;
         }
 
+    if ((Code.lo&0xFF0000)==0x040000) //If Footer Partition Pack
+    {
+        switch ((Code.lo>>8)&0xFF)
+        {
+            case 0x02 :
+            case 0x04 :
+                        Config->File_IsGrowing=false;
+                        break;
+            default   : ;
+        }
+
+        #if MEDIAINFO_ADVANCED
+            if (Footer_Position==(int64u)-1)
+                Footer_Position=File_Offset+Buffer_Offset-Header_Size;
+        #endif //MEDIAINFO_ADVANCED
+    }
+
     PartitionPack_AlreadyParsed.insert(File_Offset+Buffer_Offset-Header_Size);
 }
 
@@ -7125,7 +7222,7 @@ void File_Mxf::Info_Rational()
 }
 
 //---------------------------------------------------------------------------
-void File_Mxf::Get_UL(int128u &Value, const char* Name, const char* (*Param) (int128u))
+void File_Mxf::Get_UL(int128u &Value, const char* Name, const char* (*Param) (const int128u&))
 {
     #ifdef MEDIAINFO_MINIMIZE_SIZE
         Skip_UUID();
@@ -8715,7 +8812,14 @@ void File_Mxf::ChooseParser(const essences::iterator &Essence, const descriptors
                                     switch (Code4)
                                     {
                                         case 0x01 : //Uncompressed Sound Coding
-                                                    return ChooseParser_Pcm(Essence, Descriptor);
+                                                    switch (Code5)
+                                                    {
+                                                        case 0x7F : if (Descriptor->second.ChannelCount==1) //PCM, but one file is found with Dolby E in it
+                                                                        ChooseParser_ChannelGrouping(Essence, Descriptor);
+                                                                    if (Descriptor->second.ChannelCount==2) //PCM, but one file is found with Dolby E in it
+                                                                        ChooseParser_SmpteSt0337(Essence, Descriptor);
+                                                        default   : return ChooseParser_Pcm(Essence, Descriptor);
+                                                    }
                                         case 0x02 : //Compressed coding
                                                     switch (Code5)
                                                     {
@@ -9256,7 +9360,8 @@ void File_Mxf::ChooseParser_Vc3(const essences::iterator &Essence, const descrip
     //Filling
     #if defined(MEDIAINFO_VC3_YES)
         File_Vc3* Parser=new File_Vc3;
-        Parser->FrameRate=Descriptor->second.Infos["FrameRate"].To_float32();
+        if (Descriptor!=Descriptors.end())
+            Parser->FrameRate=Descriptor->second.Infos["FrameRate"].To_float32();
     #else
         //Filling
         File__Analyze* Parser=new File_Unknown();
@@ -9446,7 +9551,7 @@ void File_Mxf::ChooseParser_SmpteSt0331(const essences::iterator &Essence, const
     //Filling
     #if defined(MEDIAINFO_SMPTEST0331_YES)
         File_SmpteSt0331* Parser=new File_SmpteSt0331;
-        if (Descriptor->second.QuantizationBits!=(int32u)-1)
+        if (Descriptor!=Descriptors.end() && Descriptor->second.QuantizationBits!=(int32u)-1)
             Parser->QuantizationBits=Descriptor->second.QuantizationBits;
 
         #if MEDIAINFO_DEMUX
@@ -9487,6 +9592,7 @@ void File_Mxf::ChooseParser_SmpteSt0337(const essences::iterator &Essence, const
         }
         else
             Parser->Endianness='L';
+        Parser->Aligned=true;
 
         #if MEDIAINFO_DEMUX
             if (Demux_UnpacketizeContainer)
@@ -9528,7 +9634,7 @@ void File_Mxf::ChooseParser_Jpeg2000(const essences::iterator &Essence, const de
 //---------------------------------------------------------------------------
 void File_Mxf::Subsampling_Compute(descriptors::iterator Descriptor)
 {
-    if (Descriptor->second.SubSampling_Horizontal==(int32u)-1 || Descriptor->second.SubSampling_Vertical==(int32u)-1)
+    if (Descriptor!=Descriptors.end() && (Descriptor->second.SubSampling_Horizontal==(int32u)-1 || Descriptor->second.SubSampling_Vertical==(int32u)-1))
         return;
 
     switch (Descriptor->second.SubSampling_Horizontal)
@@ -9638,6 +9744,11 @@ void File_Mxf::Locators_Test()
                 }
 
                 ReferenceFiles->References.push_back(ReferenceFile);
+            }
+            else
+            {
+                Fill(Stream_General, 0, "UnsupportedSources", Locator->second.EssenceLocator);
+                (*Stream_More)[Stream_General][0](Ztring().From_Local("UnsupportedSources"), Info_Options)=__T("N NT");
             }
 
         ReferenceFiles->ParseReferences();

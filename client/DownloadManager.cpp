@@ -106,7 +106,7 @@ void DownloadManager::on(TimerManagerListener::Second, uint64_t aTick) noexcept
 			}
 		}
 		
-		if (tickList.size() > 0)
+		if (!tickList.empty())
 			fire(DownloadManagerListener::Tick(), tickList);
 	}
 	
@@ -479,7 +479,7 @@ void DownloadManager::onFailed(UserConnection* aSource, const string& aError)
 void DownloadManager::failDownload(UserConnection* aSource, const string& reason)
 {
 	Download* d = aSource->getDownload();
-	
+	//dcassert(d);
 	if (d)
 	{
 		removeDownload(d);

@@ -1,25 +1,12 @@
-// File_Tiff - Info for TIFF files
-// Copyright (C) 2005-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// TIFF - Format
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// TIFF Format
 //
 // From
 // http://partners.adobe.com/public/developer/en/tiff/TIFF6.pdf
@@ -306,7 +293,7 @@ void File_Tiff::Data_Parse()
         Infos[Tiff_Tag::BitsPerSample]=__T("1");
 
         //Parsing new IFD
-        while (Element_Offset+4<Element_Size)
+        while (Element_Offset+8+4<Element_Size)
             Read_Directory();
         Get_X4 (IFDOffset,                                          "IFDOffset");
     }
@@ -327,7 +314,10 @@ void File_Tiff::Data_Parse()
         if (IFDOffset)
             GoTo(IFDOffset, "TIFF");
         else
+        {
             Finish(); //No more IFDs
+            GoToFromEnd(0);
+        }
     }
 }
 
@@ -408,7 +398,12 @@ void File_Tiff::Read_Directory()
         GetValueOffsetu(IfdItem);
 
         /* Padding up, skip dummy bytes */
-        if (Tiff_Type_Size(IfdItem.Type)*IfdItem.Count<4)
+        if (Tiff_Type_Size(IfdItem.Type)==0)
+        {
+            if (Element_Offset+4<Element_Size)
+                Skip_XX(Element_Size-(Element_Offset+4),        "Unknown");
+        }
+        else if (Tiff_Type_Size(IfdItem.Type)*IfdItem.Count<4)
             Skip_XX(Tiff_Type_Size(IfdItem.Type)*IfdItem.Count, "Padding");
     }
     else
@@ -451,7 +446,7 @@ void File_Tiff::GetValueOffsetu(ifditem &IfdItem)
     if (IfdItem.Count>=10)
     {
         //Too many data, we don't currently need it and we skip it
-        Skip_XX(Element_Size,                       Name);
+        Skip_XX(Element_Size-(Element_Offset+4),                Name);
         Info.clear();
         return;
     }

@@ -1,21 +1,8 @@
-// MediaInfo_Internal - All info about media files
-// Copyright (C) 2002-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // For user: you can disable or enable it
@@ -72,6 +59,8 @@ size_t Reader_File::Format_Test(MediaInfo_Internal* MI, String File_Name)
             Event.EventSize=sizeof(struct MediaInfo_Event_General_Start_0);
             Event.StreamIDs_Size=0;
             Event.Stream_Size=File::Size_Get(File_Name);
+            Event.FileName=NULL;
+            Event.FileName_Unicode=NULL;
             MI->Config.Event_Send(NULL, (const int8u*)&Event, sizeof(MediaInfo_Event_General_Start_0));
         }
     #endif //MEDIAINFO_EVENTS
@@ -280,7 +269,7 @@ size_t Reader_File::Format_Test_PerParser_Continue (MediaInfo_Internal* MI)
                     size_t Pos;
                     for (Pos=0; Pos<MI->Config.File_Sizes.size(); Pos++)
                     {
-                        if (GoTo>MI->Config.File_Sizes[Pos])
+                        if (GoTo>=MI->Config.File_Sizes[Pos])
                         {
                             GoTo-=MI->Config.File_Sizes[Pos];
                             MI->Config.File_Current_Offset+=MI->Config.File_Sizes[Pos];
@@ -373,8 +362,7 @@ size_t Reader_File::Format_Test_PerParser_Continue (MediaInfo_Internal* MI)
                 {
                     if (MI->Config.File_Names.size()==1)
                     {
-                        if (Growing_Temp==(int64u)-1)
-                            Growing_Temp=F.Size_Get();
+                        Growing_Temp=F.Size_Get();
                         if (MI->Config.File_Size!=Growing_Temp)
                         {
                             MI->Config.File_Current_Size=MI->Config.File_Size=Growing_Temp;
@@ -384,11 +372,8 @@ size_t Reader_File::Format_Test_PerParser_Continue (MediaInfo_Internal* MI)
                     }
                     else
                     {
-                        if (Growing_Temp==(int64u)-1)
-                        {
-                            Growing_Temp=MI->Config.File_Names.size();
-                            MI->TestContinuousFileNames();
-                        }
+                        Growing_Temp=MI->Config.File_Names.size();
+                        MI->TestContinuousFileNames();
                         if (MI->Config.File_Names.size()!=Growing_Temp)
                         {
                             MI->Open_Buffer_Init(MI->Config.File_Size, MI->Config.File_Current_Offset+F.Position_Get()-MI->Config.File_Buffer_Size);
@@ -427,6 +412,10 @@ size_t Reader_File::Format_Test_PerParser_Continue (MediaInfo_Internal* MI)
                 break; //Termination is requested
         }
     }
+
+    //Deleting buffer
+    delete[] MI->Config.File_Buffer; MI->Config.File_Buffer=NULL;
+    MI->Config.File_Buffer_Size_Max=0;
 
     #ifdef MEDIAINFO_DEBUG
         std::cout<<std::hex<<Reader_File_Offset<<" - "<<Reader_File_Offset+Reader_File_BytesRead<<" : "<<std::dec<<Reader_File_BytesRead<<" bytes"<<std::endl;

@@ -664,7 +664,7 @@ void mainQSort3 ( UInt32* ptr,
       while (True) {
          while (True) {
             if (unLo > unHi) break;
-            n = ((Int32)block[ptr[unLo]+d]) - med;
+            n = ((Int32)block[ptr[unLo]+d]) - med;  // https://www.box.net/shared/0fb2654eed08cffc8e40
             if (n == 0) { 
                mswap(ptr[unLo], ptr[ltLo]); 
                ltLo++; unLo++; continue; 

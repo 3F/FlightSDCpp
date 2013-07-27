@@ -1,21 +1,8 @@
-// File_MpegPs - Info for MPEG files
-// Copyright (C) 2002-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -38,6 +25,9 @@
 #include "MediaInfo/Multiple/File_Mpeg_Psi.h"
 #if defined(MEDIAINFO_AVC_YES)
     #include "MediaInfo/Video/File_Avc.h"
+#endif
+#if defined(MEDIAINFO_HEVC_YES)
+    #include "MediaInfo/Video/File_Hevc.h"
 #endif
 #if defined(MEDIAINFO_MPEG4V_YES)
     #include "MediaInfo/Video/File_Mpeg4v.h"
@@ -836,7 +826,7 @@ void File_MpegPs::Synched_Init()
     FirstPacketOrder_Last=0;
 
     //Case of extraction from MPEG-TS files
-    if (File_Offset==0 && Buffer_Size>=4 && ((CC4(Buffer)&0xFFFFFFF0)==0x000001E0 || (CC4(Buffer)&0xFFFFFFE0)==0x000001C0 || CC4(Buffer)==0x000001BD || CC4(Buffer)==0x000001FA || CC4(Buffer)==0x000001FD))
+    if (File_Offset==0 && Buffer_Size>=4 && ((CC4(Buffer)&0xFFFFFFF0)==0x000001E0 || (CC4(Buffer)&0xFFFFFFE0)==0x000001C0 || CC4(Buffer)==0x000001BD || CC4(Buffer)==0x000001FA || CC4(Buffer)==0x000001FD || CC4(Buffer)==0x000001FE))
     {
         FromTS=true; //We want to anlyze this kind of file
         MPEG_Version=2; //By default, MPEG-TS is version 2
@@ -864,6 +854,9 @@ void File_MpegPs::Synched_Init()
         Streams[0xFD].Searching_Payload=true;            //extension_stream
         Streams[0xFD].Searching_TimeStamp_Start=true;    //extension_stream
         Streams[0xFD].Searching_TimeStamp_End=true;      //extension_stream
+        Streams[0xFE].Searching_Payload=true;            //extension_stream?
+        Streams[0xFE].Searching_TimeStamp_Start=true;    //extension_stream?
+        Streams[0xFE].Searching_TimeStamp_End=true;      //extension_stream?
     }
 }
 
@@ -1288,7 +1281,6 @@ void File_MpegPs::Header_Parse()
 {
     PES_FirstByte_IsAvailable=true;
     PES_FirstByte_Value=true;
-    HasCcis=false;
 
     //Reinit
     FrameInfo.PTS=(int64u)-1;
@@ -1997,23 +1989,33 @@ void File_MpegPs::Header_Parse_PES_packet_MPEG2(int8u stream_id)
 
         if (PES_private_data_flag)
         {
-            Element_Begin1("PES_private_data_flag");
+            Element_Begin1("PES_private_data");
             int32u Code;
             Peek_B4(Code);
             if (Code==0x43434953) // "CCIS"
             {
-                Skip_C4(                                        "CCIS_code");
-                Skip_B1(                                        "Caption_conversion_type");
-                BS_Begin();
-                Skip_S1(2,                                      "DRCS_conversion_type");
-                Skip_S1(6,                                      "reserved");
-                BS_End();
-                BS_End();
-                Skip_B2(                                        "reserved");
-                Skip_B8(                                        "reserved");
+                if (Streams_Private1[private_stream_1_ID].Parsers.size()>1)
+                {
+                    //Should not happen, this is only in case the previous packet was without CCIS
+                    Streams_Private1[private_stream_1_ID].Parsers.clear();
+                    Streams_Private1[private_stream_1_ID].StreamIsRegistred=false;
+                }
+                if (!Streams_Private1[private_stream_1_ID].StreamIsRegistred)
+                {
+                    Streams_Private1[private_stream_1_ID].Parsers.push_back(ChooseParser_AribStdB24B37(true));
+                    Open_Buffer_Init(Streams_Private1[private_stream_1_ID].Parsers[0]);
+                    Streams_Private1[private_stream_1_ID].StreamIsRegistred=true;
+                }
 
-                HasCcis=true;
-            }
+                if (Streams_Private1[private_stream_1_ID].Parsers.size()==1)
+                {
+                    File_AribStdB24B37* Parser=(File_AribStdB24B37*)Streams_Private1[private_stream_1_ID].Parsers[0];
+                    Parser->ParseCcis=true;
+                    Parser->Open_Buffer_Continue(Buffer+Buffer_Offset+(size_t)Element_Offset, 16);
+                }
+                else
+                    Skip_B16(                                   "PES_private_data");
+           }
             else
                 Skip_B16(                                       "PES_private_data");
             Element_End0();
@@ -2122,6 +2124,7 @@ void File_MpegPs::Data_Parse()
         case 0xFB : Element_Name("FlexMux_stream"); Skip_XX(Element_Size, "Data"); break;
         case 0xFC : Element_Name("descriptive data stream"); Skip_XX(Element_Size, "Data"); break;
         case 0xFD : extension_stream(); break;
+        case 0xFE : video_stream(); break;
         case 0xFF : Element_Name("program_stream_directory"); Skip_XX(Element_Size, "Data"); break;
         default:
                  if ((stream_id&0xE0)==0xC0) audio_stream();
@@ -3258,6 +3261,7 @@ void File_MpegPs::video_stream()
         {
             case 0x10 : Streams[stream_id].Parsers.push_back(ChooseParser_Mpeg4v()); break;
             case 0x1B : Streams[stream_id].Parsers.push_back(ChooseParser_Avc()   ); break;
+            case 0x27 : Streams[stream_id].Parsers.push_back(ChooseParser_Hevc()  ); break;
             case 0x01 :
             case 0x02 :
             case 0x80 : Streams[stream_id].Parsers.push_back(ChooseParser_Mpegv() ); break;
@@ -3267,6 +3271,9 @@ void File_MpegPs::video_stream()
                         #endif
                         #if defined(MEDIAINFO_AVC_YES)
                             Streams[stream_id].Parsers.push_back(ChooseParser_Avc());
+                        #endif
+                        #if defined(MEDIAINFO_HEVC_YES)
+                            Streams[stream_id].Parsers.push_back(ChooseParser_Hevc());
                         #endif
                         #if defined(MEDIAINFO_MPEG4V_YES)
                             Streams[stream_id].Parsers.push_back(ChooseParser_Mpeg4v());
@@ -4239,6 +4246,31 @@ File__Analyze* File_MpegPs::ChooseParser_Avc()
 }
 
 //---------------------------------------------------------------------------
+File__Analyze* File_MpegPs::ChooseParser_Hevc()
+{
+    //Filling
+    #if defined(MEDIAINFO_HEVC_YES)
+        File_Hevc* Parser=new File_Hevc;
+        #if MEDIAINFO_DEMUX
+            if (Config->Demux_Unpacketize_Get())
+            {
+                Demux_UnpacketizeContainer=false; //No demux from this parser
+                Demux_Level=4; //Intermediate
+                Parser->Demux_Level=2; //Container
+                Parser->Demux_UnpacketizeContainer=true;
+            }
+        #endif //MEDIAINFO_DEMUX
+    #else
+        //Filling
+        File__Analyze* Parser=new File_Unknown();
+        Open_Buffer_Init(Parser);
+        Parser->Stream_Prepare(Stream_Video);
+        Parser->Fill(Stream_Video, 0, Video_Codec,  "HEVC");
+        Parser->Fill(Stream_Video, 0, Video_Format, "HEVC");
+    #endif
+    return Parser;
+}
+//---------------------------------------------------------------------------
 File__Analyze* File_MpegPs::ChooseParser_VC1()
 {
     //Filling
@@ -4526,7 +4558,7 @@ File__Analyze* File_MpegPs::ChooseParser_RLE()
 }
 
 //---------------------------------------------------------------------------
-File__Analyze* File_MpegPs::ChooseParser_AribStdB24B37()
+File__Analyze* File_MpegPs::ChooseParser_AribStdB24B37(bool HasCcis)
 {
     //Filling
     #if defined(MEDIAINFO_ARIBSTDB24B37_YES)

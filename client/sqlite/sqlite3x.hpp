@@ -140,7 +140,7 @@ namespace sqlite3x {
 		void bind(int index);
 		void bind(int index, int data);
 		void bind(int index, long long data);
-		bool is_no_data_found() //[+]PPA
+		bool is_no_data_found() const//[+]PPA
 		{
 			return m_no_data_found;
 		}
@@ -203,7 +203,7 @@ namespace sqlite3x {
 	};
 	class database_error : public Exception {
 	public:
-		database_error(const char *msg, const string p_add_info = ""): Exception(string(msg) + p_add_info) {}
+		database_error(const char *msg, const string& p_add_info = ""): Exception(string(msg) + p_add_info) {}
 		database_error(const sqlite3_connection* p_con)
 			:Exception(sqlite3_errmsg(p_con->db)){}
 	};

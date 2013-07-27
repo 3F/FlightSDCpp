@@ -160,7 +160,7 @@ void AdcHub::handle(AdcCommand::INF, AdcCommand& c) noexcept
 		
 	string cid;
 	
-	OnlineUser* u = 0;
+	OnlineUser* u = nullptr;
 	if (c.getParam("ID", 0, cid))
 	{
 		u = findUser(CID(cid));
@@ -212,14 +212,10 @@ void AdcHub::handle(AdcCommand::INF, AdcCommand& c) noexcept
 				// can be safely removed after update
 			case 'IN':
 			{
-				string l_nick;
-				if (c.getParam("NI", 0, l_nick))
-				{
-					//[+]FlylinkDC
+				const string l_nick = i->c_str() + 2;
+				u->getUser()->setFirstNick(l_nick);
 					u->getUser()->LoadRatio(getHubUrl(), l_nick);
-					//[~]FlylinkDC
 				}
-			}
 			break;
 		}
 		
@@ -273,7 +269,7 @@ void AdcHub::handle(AdcCommand::SUP, AdcCommand& c) noexcept
 		return;
 	bool baseOk = false;
 	bool tigrOk = false;
-	for (StringIter i = c.getParameters().begin(); i != c.getParameters().end(); ++i)
+	for (auto i = c.getParameters().cbegin(); i != c.getParameters().cend(); ++i)
 	{
 		if (*i == BAS0_SUPPORT)
 		{
@@ -326,7 +322,7 @@ void AdcHub::handle(AdcCommand::MSG, AdcCommand& c) noexcept
 	if (c.getParameters().empty())
 		return;
 		
-	ChatMessage message = { c.getParam(0), findUser(c.getFrom()) };
+	ChatMessage message(c.getParam(0), findUser(c.getFrom())); // [!] IRainman fix.
 	
 	if (!message.from)
 		return;
@@ -372,7 +368,7 @@ void AdcHub::handle(AdcCommand::QUI, AdcCommand& c) noexcept
 		string tmp;
 		if (c.getParam("MS", 1, tmp))
 		{
-			OnlineUser* source = 0;
+			OnlineUser* source = nullptr;
 			string tmp2;
 			if (c.getParam("ID", 1, tmp2))
 			{
@@ -628,8 +624,7 @@ void AdcHub::handle(AdcCommand::STA, AdcCommand& c) noexcept
 			return;
 		}
 	}
-	
-	ChatMessage message = { c.getParam(1), u };
+	ChatMessage message(c.getParam(1), u); // [!] IRainman fix.
 	fire(ClientListener::Message(), this, message);
 }
 
@@ -671,7 +666,7 @@ void AdcHub::handle(AdcCommand::GET, AdcCommand& c) noexcept
 {
 	if (c.getParameters().size() < 5)
 	{
-		if (c.getParameters().size() > 0)
+		if (!c.getParameters().empty())
 		{
 			if (c.getParam(0) == "blom")
 			{
@@ -716,8 +711,8 @@ void AdcHub::handle(AdcCommand::GET, AdcCommand& c) noexcept
 		
 		size_t n = ShareManager::getInstance()->getSharedFiles();
 		
-		// Ideal size for m is n * k / ln(2), but we allow some slack
-		if (m > (static_cast<size_t>(5 * Util::roundUp((int64_t)(n * k / log(2.)), (int64_t)64))) || m > static_cast<size_t>(1 << h))
+		// When h >= 32, m can't go above 2^h anyway since it's stored in a size_t.
+		if (m > (static_cast<size_t>(5 * Util::roundUp((int64_t)(n * k / log(2.)), (int64_t)64))) || (h < 32 && m > static_cast<size_t>(1U << h)))
 		{
 			send(AdcCommand(AdcCommand::SEV_FATAL, AdcCommand::ERROR_TRANSFER_GENERIC,
 			                "Unsupported m", AdcCommand::TYPE_HUB));
@@ -734,7 +729,7 @@ void AdcHub::handle(AdcCommand::GET, AdcCommand& c) noexcept
 		cmd.addParam(c.getParam(3));
 		cmd.addParam(c.getParam(4));
 		send(cmd);
-		if (m > 0)  //[+] http://bazaar.launchpad.net/~dcplusplus-team/dcplusplus/trunk/revision/2282
+		if (m > 0 && !v.empty())  //[+] http://bazaar.launchpad.net/~dcplusplus-team/dcplusplus/trunk/revision/2282
 		{
 			send((char*)&v[0], v.size());
 		}
@@ -1345,7 +1340,7 @@ void AdcHub::info(bool /*alwaysSend*/)
 	
 	addParam(lastInfoMap, c, "SU", su);
 	
-	if (c.getParameters().size() > 0)
+	if (!c.getParameters().empty())
 	{
 		send(c);
 	}
@@ -1353,15 +1348,16 @@ void AdcHub::info(bool /*alwaysSend*/)
 
 void AdcHub::refreshUserList(bool)
 {
-	Lock l(cs);
-	
 	OnlineUserList v;
-	for (SIDIter i = users.begin(); i != users.end(); ++i)
 	{
+		Lock l(cs);
+		for (auto i = users.begin(); i != users.end(); ++i)
+		{
 		if (i->first != AdcCommand::HUB_SID)
 		{
 			v.push_back(i->second);
 		}
+	}
 	}
 	fire(ClientListener::UsersUpdated(), this, v);
 }

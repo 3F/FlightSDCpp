@@ -86,3 +86,4 @@ vcxproj.user
 .svn
 developer.key
 setup
+tth-history.leveldb

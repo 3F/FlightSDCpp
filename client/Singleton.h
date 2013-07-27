@@ -51,33 +51,30 @@ class Singleton
 		
 		static void newInstance()
 		{
+			// [!] PVS V809 Verifying that a pointer value is not NULL is not required. The 'if (instance)' check can be removed. singleton.h 50
+#ifdef _DEBUG
 			if (instance)
 			{
-#ifdef _DEBUG
 				::MessageBoxA(nullptr, typeid(T).name(), "recreate instance!", MB_OK);
 				dcassert(0);
-#endif
-				delete instance;
 			}
-			
+#endif
+			delete instance;
 			instance = new T();
 		}
 		
 		static void deleteInstance()
 		{
 			dcassert(instance); // [+] PPA найдем места попытки двойного уничтожения
-			if (instance)
-			{
-				delete instance;
-				instance = nullptr;
-			}
 #ifdef _DEBUG
-			else
+			if (!instance)
 			{
 				::MessageBoxA(nullptr, typeid(T).name(), "attempt to delete the deleted object!", MB_OK);
 				dcassert(0);
 			}
 #endif
+			delete instance;
+			instance = nullptr;
 		}
 	protected:
 		static T* instance;

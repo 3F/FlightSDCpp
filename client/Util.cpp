@@ -1466,11 +1466,21 @@ string Util::translateError(int aError)
 	const string l_error_code = "[error: " + toString(aError) + "]";
 #ifdef _WIN32
 	LPTSTR lpMsgBuf = 0;
+	DWORD l_wininet_flag = 0;
+	LPCVOID lpSource = NULL;
+	// http://code.google.com/p/flylinkdc/issues/detail?id=1077
+	// http://stackoverflow.com/questions/2159458/why-is-formatmessage-failing-to-find-a-message-for-wininet-errors/2159488#2159488
+	if (aError >= INTERNET_ERROR_BASE && aError < INTERNET_ERROR_LAST)
+	{
+		l_wininet_flag = FORMAT_MESSAGE_FROM_HMODULE;
+		lpSource = GetModuleHandle(_T("wininet.dll"));
+	}
 	DWORD chars = FormatMessage(
 	                  FORMAT_MESSAGE_ALLOCATE_BUFFER |
 	                  FORMAT_MESSAGE_FROM_SYSTEM |
-	                  FORMAT_MESSAGE_IGNORE_INSERTS,
-	                  NULL,
+	                  FORMAT_MESSAGE_IGNORE_INSERTS |
+	                  l_wininet_flag,
+	                  lpSource,
 	                  aError,
 #if defined (_CONSOLE) || defined (_DEBUG)
 	                  MAKELANGID(LANG_NEUTRAL, SUBLANG_ENGLISH_US), // US
@@ -1494,7 +1504,7 @@ string Util::translateError(int aError)
 	{
 		tmp.erase(i, 1);
 	}
-	return tmp + l_error_code;;
+	return tmp + l_error_code;
 #else // _WIN32
 	return Text::toUtf8(strerror(aError));
 #endif // _WIN32

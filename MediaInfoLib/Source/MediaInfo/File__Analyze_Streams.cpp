@@ -1,21 +1,8 @@
-// File__Analyze - Base for analyze files
-// Copyright (C) 2007-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -699,7 +686,12 @@ void File__Analyze::Fill (stream_t StreamKind, size_t StreamPos, size_t Paramete
         }
         if (StreamKind==Stream_Text && Parameter==Text_Delay && Count_Get(Stream_Video) && !Retrieve(Stream_Text, StreamPos, Text_Delay).empty() && !Retrieve(Stream_Video, 0, Video_Delay).empty())
         {
-            Fill(Stream_Text, StreamPos, Text_Video_Delay, Value.To_int64s()-Retrieve(Stream_Video, 0, Video_Delay).To_int64s(), 10, true);
+            Ztring MuxingMode_MoreInfo=Get(Stream_Text, StreamPos, "MuxingMode_MoreInfo");
+            Ztring StreamID=MuxingMode_MoreInfo.SubString(__T("Muxed in Video #"), Ztring());
+            size_t StreamID_Int=(size_t)StreamID.To_int64u();
+            if (StreamID_Int)
+                StreamID_Int--;
+            Fill(Stream_Text, StreamPos, Text_Video_Delay, Value.To_int64s()-Retrieve(Stream_Video, StreamID_Int, Video_Delay).To_int64s(), 10, true);
             if (Retrieve(Stream_Text, StreamPos, Text_Video_Delay).To_int64u()==0)
                 for (size_t Pos=Text_Video_Delay+1; Pos<=Text_Video_Delay+4; Pos++)
                     if (Pos<(*Stream)[Stream_Text][StreamPos].size())
@@ -745,7 +737,12 @@ void File__Analyze::Fill (stream_t StreamKind, size_t StreamPos, size_t Paramete
         }
         if (StreamKind==Stream_Text && Parameter==Text_Delay && Count_Get(Stream_Video) && !Retrieve(Stream_Text, StreamPos, Text_Delay).empty() && !Retrieve(Stream_Video, 0, Video_Delay).empty())
         {
-            Fill(Stream_Text, StreamPos, Text_Video0_Delay, Value.To_int64s()-Retrieve(Stream_Video, 0, Video_Delay).To_int64s(), 10, true);
+            Ztring MuxingMode_MoreInfo=Get(Stream_Text, StreamPos, "MuxingMode_MoreInfo");
+            Ztring StreamID=MuxingMode_MoreInfo.SubString(__T("Muxed in Video #"), Ztring());
+            size_t StreamID_Int=(size_t)StreamID.To_int64u();
+            if (StreamID_Int)
+                StreamID_Int--;
+            Fill(Stream_Text, StreamPos, Text_Video0_Delay, Value.To_int64s()-Retrieve(Stream_Video, StreamID_Int, Video_Delay).To_int64s(), 10, true);
             if (Retrieve(Stream_Text, StreamPos, Text_Video0_Delay).To_int64u()==0)
                 for (size_t Pos=Text_Video0_Delay+1; Pos<=Text_Video0_Delay+4; Pos++)
                     if (Pos<(*Stream)[Stream_Text][StreamPos].size())
@@ -908,6 +905,7 @@ void File__Analyze::Fill (stream_t StreamKind, size_t StreamPos, size_t Paramete
                  if (F1>=(float)1.23 && F1<(float)1.27) C1=__T("5:4");
             else if (F1>=(float)1.30 && F1<(float)1.37) C1=__T("4:3");
             else if (F1>=(float)1.45 && F1<(float)1.55) C1=__T("3:2");
+            else if (F1>=(float)1.55 && F1<(float)1.65) C1=__T("16:10");
             else if (F1>=(float)1.74 && F1<(float)1.82) C1=__T("16:9");
             else if (F1>=(float)1.82 && F1<(float)1.88) C1=__T("1.85:1");
             else if (F1>=(float)2.15 && F1<(float)2.22) C1=__T("2.2:1");
@@ -929,6 +927,7 @@ void File__Analyze::Fill (stream_t StreamKind, size_t StreamPos, size_t Paramete
                  if (F1>=(float)1.23 && F1<(float)1.27) C1=__T("5:4");
             else if (F1>=(float)1.30 && F1<(float)1.37) C1=__T("4:3");
             else if (F1>=(float)1.45 && F1<(float)1.55) C1=__T("3:2");
+            else if (F1>=(float)1.55 && F1<(float)1.65) C1=__T("16:10");
             else if (F1>=(float)1.74 && F1<(float)1.82) C1=__T("16:9");
             else if (F1>=(float)1.82 && F1<(float)1.88) C1=__T("1.85:1");
             else if (F1>=(float)2.15 && F1<(float)2.22) C1=__T("2.2:1");
@@ -950,6 +949,7 @@ void File__Analyze::Fill (stream_t StreamKind, size_t StreamPos, size_t Paramete
                  if (F1>=(float)1.23 && F1<(float)1.27) C1=__T("5:4");
             else if (F1>=(float)1.30 && F1<(float)1.37) C1=__T("4:3");
             else if (F1>=(float)1.45 && F1<(float)1.55) C1=__T("3:2");
+            else if (F1>=(float)1.55 && F1<(float)1.65) C1=__T("16:10");
             else if (F1>=(float)1.74 && F1<(float)1.82) C1=__T("16:9");
             else if (F1>=(float)1.82 && F1<(float)1.88) C1=__T("1.85:1");
             else if (F1>=(float)2.15 && F1<(float)2.22) C1=__T("2.2:1");
@@ -971,6 +971,7 @@ void File__Analyze::Fill (stream_t StreamKind, size_t StreamPos, size_t Paramete
                  if (F1>=(float)1.23 && F1<(float)1.27) C1=__T("5:4");
             else if (F1>=(float)1.30 && F1<(float)1.37) C1=__T("4:3");
             else if (F1>=(float)1.45 && F1<(float)1.55) C1=__T("3:2");
+            else if (F1>=(float)1.55 && F1<(float)1.65) C1=__T("16:10");
             else if (F1>=(float)1.74 && F1<(float)1.82) C1=__T("16:9");
             else if (F1>=(float)1.82 && F1<(float)1.88) C1=__T("1.85:1");
             else if (F1>=(float)2.15 && F1<(float)2.22) C1=__T("2.2:1");
@@ -1368,7 +1369,7 @@ size_t File__Analyze::Merge(File__Analyze &ToAdd, stream_t StreamKind, size_t St
         Stream_Prepare(StreamKind);
 
     //Specific stuff
-    Ztring Width_Temp, Height_Temp, PixelAspectRatio_Temp, DisplayAspectRatio_Temp, FrameRate_Temp, FrameRate_Mode_Temp, ScanType_Temp, ScanOrder_Temp, Delay_Temp, Delay_DropFrame_Temp, Delay_Source_Temp, Delay_Settings_Temp, Source_Temp, Source_Kind_Temp, Source_Info_Temp;
+    Ztring Width_Temp, Height_Temp, PixelAspectRatio_Temp, DisplayAspectRatio_Temp, FrameRate_Temp, FrameRate_Mode_Temp, ScanType_Temp, ScanOrder_Temp, Channels_Temp, Delay_Temp, Delay_DropFrame_Temp, Delay_Source_Temp, Delay_Settings_Temp, Source_Temp, Source_Kind_Temp, Source_Info_Temp;
     if (StreamKind==Stream_Video)
     {
         Width_Temp=Retrieve(Stream_Video, StreamPos_To, Video_Width);
@@ -1379,6 +1380,10 @@ size_t File__Analyze::Merge(File__Analyze &ToAdd, stream_t StreamKind, size_t St
         FrameRate_Mode_Temp=Retrieve(Stream_Video, StreamPos_To, Video_FrameRate_Mode); //We want to keep the FrameRate_Mode of AVI 120 fps
         ScanType_Temp=Retrieve(Stream_Video, StreamPos_To, Video_ScanType);
         ScanOrder_Temp=Retrieve(Stream_Video, StreamPos_To, Video_ScanOrder);
+    }
+    if (StreamKind==Stream_Audio)
+    {
+        Channels_Temp=Retrieve(Stream_Audio, StreamPos_To, Audio_Channel_s_);
     }
     if (ToAdd.Retrieve(StreamKind, StreamPos_From, Fill_Parameter(StreamKind, Generic_Delay_Source))==__T("Container"))
     {
@@ -1477,6 +1482,28 @@ size_t File__Analyze::Merge(File__Analyze &ToAdd, stream_t StreamKind, size_t St
                 Fill(Stream_Video, StreamPos_To, Video_ScanOrder, ScanOrder_Temp, true);
         }
     }
+    if (StreamKind==Stream_Audio)
+    {
+        if (!Channels_Temp.empty())
+        {
+            //Test with legacy streams information
+            bool IsOk=(Channels_Temp==Retrieve(Stream_Audio, StreamPos_To, Audio_Channel_s_));
+            if (!IsOk)
+            {
+                ZtringList Temp; Temp.Separator_Set(0, __T(" / "));
+                Temp.Write(Retrieve(Stream_Audio, StreamPos_To, Audio_Channel_s_));
+                for (size_t Pos=0; Pos<Temp.size(); Pos++)
+                    if (Channels_Temp==Temp[Pos])
+                        IsOk=true;
+            }
+
+            if (!IsOk)
+            {
+                Fill(Stream_Audio, StreamPos_To, Audio_Channel_s__Original, (*Stream)[Stream_Audio][StreamPos_To][Audio_Channel_s_], true);
+                Fill(Stream_Audio, StreamPos_To, Audio_Channel_s_, Channels_Temp, true);
+            }
+        }
+    }
     if (!Delay_Source_Temp.empty() && Delay_Source_Temp!=Retrieve(StreamKind, StreamPos_To, "Delay_Source"))
     {
         Fill(StreamKind, StreamPos_To, "Delay_Original", Retrieve(StreamKind, StreamPos_To, "Delay"), true);
@@ -1514,16 +1541,16 @@ void File__Analyze::Video_FrameRate_Rounding(size_t Pos, video Parameter)
 
          if (FrameRate> 9.990 && FrameRate<=10.010) FrameRate=10.000;
     else if (FrameRate>14.990 && FrameRate<=15.010) FrameRate=15.000;
-    else if (FrameRate>23.964 && FrameRate<=23.988) FrameRate=23.976;
-    else if (FrameRate>23.988 && FrameRate<=24.012) FrameRate=24.000;
-    else if (FrameRate>24.988 && FrameRate<=25.012) FrameRate=25.000;
-    else if (FrameRate>29.955 && FrameRate<=29.985) FrameRate=29.970;
-    else if (FrameRate>29.985 && FrameRate<=30.015) FrameRate=30.000;
-    else if (FrameRate>23.964*2 && FrameRate<=23.988*2) FrameRate=23.976*2;
-    else if (FrameRate>23.988*2 && FrameRate<=24.012*2) FrameRate=24.000*2;
-    else if (FrameRate>24.988*2 && FrameRate<=25.012*2) FrameRate=25.000*2;
-    else if (FrameRate>29.955*2 && FrameRate<=29.985*2) FrameRate=29.970*2;
-    else if (FrameRate>29.985*2 && FrameRate<=30.015*2) FrameRate=30.000*2;
+    else if (FrameRate>23.952 && FrameRate<=23.988) FrameRate=23.976;
+    else if (FrameRate>23.988 && FrameRate<=24.024) FrameRate=24.000;
+    else if (FrameRate>24.975 && FrameRate<=25.025) FrameRate=25.000;
+    else if (FrameRate>29.940 && FrameRate<=29.985) FrameRate=29.970;
+    else if (FrameRate>29.970 && FrameRate<=30.030) FrameRate=30.000;
+    else if (FrameRate>23.952*2 && FrameRate<=23.988*2) FrameRate=23.976*2;
+    else if (FrameRate>23.988*2 && FrameRate<=24.024*2) FrameRate=24.000*2;
+    else if (FrameRate>24.975*2 && FrameRate<=25.025*2) FrameRate=25.000*2;
+    else if (FrameRate>29.940*2 && FrameRate<=29.985*2) FrameRate=29.970*2;
+    else if (FrameRate>29.970*2 && FrameRate<=30.030*2) FrameRate=30.000*2;
 
     if (FrameRate!=FrameRate_Sav)
         Fill(Stream_Video, Pos, Parameter, FrameRate, 3, true);

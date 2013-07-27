@@ -1,21 +1,8 @@
-// File_Riff - Info for RIFF files
-// Copyright (C) 2002-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -181,6 +168,11 @@ void File_Riff::Streams_Finish ()
     if (IsRIFF64)
         Fill(Stream_General, 0, General_Format_Profile, "RF64");
 
+    //Time codes
+    TimeCode_Fill(__T("ISMP"), INFO_ISMP);
+    TimeCode_Fill(__T("Adobe tc_A"), Tdat_tc_A);
+    TimeCode_Fill(__T("Adobe tc_O"), Tdat_tc_O);
+
     //For each stream
     std::map<int32u, stream>::iterator Temp=Stream.begin();
     while (Temp!=Stream.end())
@@ -247,6 +239,16 @@ void File_Riff::Streams_Finish ()
                     }
                     Fill(StreamKind_Last, StreamPos_Last, General_ID, Temp_ID, true);
                     Fill(StreamKind_Last, StreamPos_Last, General_StreamOrder, Temp_ID_String, true);
+
+                    //Special case: Compressed audio hidden in PCM
+                    if (StreamKind_Last==Stream_Audio
+                     && Temp->second.Compression==1
+                     && Retrieve(Stream_General, 0, General_Format)==__T("Wave") //Some DTS or SMPTE ST 337 streams are coded "1"
+                     && !Retrieve(Stream_Audio, StreamPos_Last, Audio_Channel_s__Original).empty())
+                    {
+                        Clear(Stream_Audio, StreamPos_Last, Audio_Channel_s__Original);
+                        Fill(Stream_Audio, StreamPos_Last, Audio_Channel_s_, 6, 10, true); //The PCM channel count is fake
+                    }
                 }
             else
             {
@@ -498,11 +500,6 @@ void File_Riff::Streams_Finish ()
     if (Interleaved0_1 && Interleaved0_10 && Interleaved1_1 && Interleaved1_10)
         Fill(Stream_General, 0, General_Interleaved, ((Interleaved0_1<Interleaved1_1 && Interleaved0_10>Interleaved1_1)
                                                    || (Interleaved1_1<Interleaved0_1 && Interleaved1_10>Interleaved0_1))?"Yes":"No");
-
-    //Time codes
-    TimeCode_Fill(__T("ISMP"), INFO_ISMP);
-    TimeCode_Fill(__T("tc_A"), Tdat_tc_A);
-    TimeCode_Fill(__T("tc_O"), Tdat_tc_O);
 
     //MD5
     size_t Pos=0;
@@ -943,7 +940,17 @@ bool File_Riff::BookMark_Needed()
 
     Stream_Structure_Temp=Stream_Structure.begin();
     if (!Stream_Structure.empty())
-        GoTo(Stream_Structure_Temp->first);
+    {
+        #if MEDIAINFO_MD5
+            if (Config->File_Md5_Get())
+            {
+                GoTo(0);
+                Md5_ParseUpTo=Stream_Structure_Temp->first;
+            }
+            else
+        #endif //MEDIAINFO_MD5
+                GoTo(Stream_Structure_Temp->first);
+    }
     NeedOldIndex=false;
     SecondPass=true;
     Index_Pos.clear(); //We didn't succeed to find theses indexes :(
@@ -957,29 +964,13 @@ bool File_Riff::BookMark_Needed()
 //---------------------------------------------------------------------------
 void File_Riff::TimeCode_Fill(const Ztring &Name, const Ztring &Value)
 {
-    float64 FrameRate=Retrieve(Stream_Video, 0, Video_FrameRate).To_float64();
-    if (Value.size()==11 && FrameRate)
+    if (Value.empty())
+        return;
+
+    for (size_t StreamPos=0; StreamPos<Count_Get(Stream_Video); StreamPos++)
     {
-        for (size_t StreamKind=Stream_General+1; StreamKind<Stream_Max; StreamKind++)
-            for (size_t StreamPos=0; StreamPos<Count_Get((stream_t)StreamKind); StreamPos++)
-            {
-                int64u Delay=0;
-                Delay+=(Value[0]-__T('0'))*10*60*60*1000;
-                Delay+=(Value[1]-__T('0'))   *60*60*1000;
-                Delay+=(Value[3]-__T('0'))   *10*60*1000;
-                Delay+=(Value[4]-__T('0'))      *60*1000;
-                Delay+=(Value[6]-__T('0'))      *10*1000;
-                Delay+=(Value[7]-__T('0'))         *1000;
-
-                int64u Frames=0;
-                Frames+=(Value[ 9]-__T('0'))*10;
-                Frames+=(Value[10]-__T('0'));
-                Delay+=float64_int64s((1000/FrameRate)*Frames);
-
-                Fill((stream_t)StreamKind, StreamPos, Fill_Parameter((stream_t)StreamKind, Generic_Delay), Delay);
-                Fill((stream_t)StreamKind, StreamPos, Fill_Parameter((stream_t)StreamKind, Generic_Delay_Source), __T("Container (")+Name+__T(")"));
-                Fill((stream_t)StreamKind, StreamPos, Fill_Parameter((stream_t)StreamKind, Generic_Delay_String4), Value);
-            }
+        Fill(Stream_Video, StreamPos, Video_TimeCode_FirstFrame, Value);
+        Fill(Stream_Video, StreamPos, Video_TimeCode_Source, Name);
     }
 }
 

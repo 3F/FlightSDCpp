@@ -32,7 +32,7 @@ inline void CDECL debugTrace(const char* format, ...)
 #if defined _WIN32 && defined _MSC_VER
 	char buf[512];
 	buf[0] = 0;
-	_vsnprintf(buf, sizeof(buf), format, args);
+	_vsnprintf(buf, _countof(buf), format, args);
 	OutputDebugStringA(buf);
 #else // _WIN32
 	vprintf(format, args);

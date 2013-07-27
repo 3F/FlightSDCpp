@@ -80,7 +80,7 @@ MainFrame::MainFrame() : trayMessage(0), maximized(false), lastUpload(-1), lastU
 #ifdef PPA_INCLUDE_VERSION_CHECK
 	c(new HttpConnection()),
 #endif
-	closing(false), awaybyminimize(false), missedAutoConnect(false), lastTTHdir(Util::emptyStringT), tabPos(1),
+	m_closing(false), awaybyminimize(false), missedAutoConnect(false), lastTTHdir(Util::emptyStringT), tabPos(1),
 	bTrayIcon(false), bAppMinimized(false), bIsPM(false), m_bDisableAutoComplete(false),
 	QuickSearchBoxContainer(WC_COMBOBOX, this, QUICK_SEARCH_MAP), QuickSearchEditContainer(WC_EDIT , this, QUICK_SEARCH_MAP)
 {
@@ -1177,7 +1177,7 @@ LRESULT MainFrame::onEndSession(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lPara
 		c = NULL;
 	}
 #endif
-	WINDOWPLACEMENT wp;
+	WINDOWPLACEMENT wp = {0};
 	wp.length = sizeof(wp);
 	GetWindowPlacement(&wp);
 	
@@ -1210,14 +1210,16 @@ LRESULT MainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, 
 		c = NULL;
 	}
 #endif
-	if (!closing)
+	if (!m_closing)
 	{
 		if (oldshutdown || (!BOOLSETTING(CONFIRM_EXIT)) || (MessageBox(CTSTRING(REALLY_EXIT), _T(APPNAME) _T(" ") T_VERSIONSTRING, MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES))
 		{
-            ClientManager::setSigKill(true);
+			m_closing = true;
+			ShareManager::getInstance()->shutdown(); // http://code.google.com/p/flylinkdc/issues/detail?id=1107
+			ClientManager::setSigKill(true);
 			updateTray(false);
 			
-			WINDOWPLACEMENT wp;
+			WINDOWPLACEMENT wp = {0};
 			wp.length = sizeof(wp);
 			GetWindowPlacement(&wp);
 			
@@ -1250,7 +1252,6 @@ LRESULT MainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, 
 			
 			DWORD id;
 			stopperThread = CreateThread(NULL, 0, stopper, this, 0, &id);
-			closing = true;
 		}
 		bHandled = TRUE;
 	}
@@ -1636,7 +1637,7 @@ LRESULT MainFrame::onQuickConnect(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWn
 
 void MainFrame::on(TimerManagerListener::Second, uint64_t aTick) noexcept
 {
-	if (closing) //[+]PPA
+	if (m_closing) //[+]PPA
 		return;
 	if (aTick == lastUpdate) // FIXME: temp fix for new TimerManager
 		return;

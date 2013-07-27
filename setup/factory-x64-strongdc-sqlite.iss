@@ -60,5 +60,5 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\StrongDC++ sqlite"
 
 [Run]
 Filename: "{app}\StrongDC.exe"; Description: "{cm:LaunchProgram,StrongDC++ sqlite}"; Flags: nowait postinstall skipifsilent
-#include "C:\Users\ppa\Documents\My Dropbox\src\install-yandex\inc_finally_yandex_strongdc.hss"
+#include "C:\Users\ppa\Dropbox\src\install-yandex\inc_finally_yandex_strongdc.hss"
 #include "factory-strongdc-sqlite-code.hss"

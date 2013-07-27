@@ -81,9 +81,11 @@ class Client : public ClientBase, public Speaker<ClientListener>, public Buffere
 
         /**
          * -
-         * bool quiet - reduced clearance
+         * @param quiet - reduced clearance
          */
         virtual void clearUsers(bool quiet = false) = 0;
+		
+		//  virtual void clearUsers() = 0;
 		
 		uint64_t search(int aSizeMode, int64_t aSize, int aFileType, const string& aString, const string& aToken, const StringList& aExtList, void* owner);
 		void cancelSearch(void* aOwner)
@@ -161,7 +163,8 @@ class Client : public ClientBase, public Speaker<ClientListener>, public Buffere
 		static string getCounts()
 		{
 			char buf[128];
-			return string(buf, snprintf(buf, sizeof(buf), "%ld/%ld/%ld",
+			buf[0] = 0;
+			return string(buf, snprintf(buf, _countof(buf), "%ld/%ld/%ld",
 			                            counts[COUNT_NORMAL].load(), counts[COUNT_REGISTERED].load(), counts[COUNT_OP].load()));
 		}
 		

@@ -17,6 +17,14 @@
       <Configuration>ReleaseFullOpt</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseHE|Win32">
+      <Configuration>ReleaseHE</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseHE|x64">
+      <Configuration>ReleaseHE</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -45,6 +53,12 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v110_xp</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
@@ -62,6 +76,12 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v110_xp</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
@@ -76,6 +96,9 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFullOpt|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -83,6 +106,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFullOpt|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
@@ -97,18 +123,24 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseFullOpt|Win32'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|Win32'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseFullOpt|Win32'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|Win32'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseFullOpt|x64'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|x64'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseFullOpt|x64'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|x64'">$(SolutionDir)vc11\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MediaInfo</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MediaInfo</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseFullOpt|Win32'">MediaInfo</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|Win32'">MediaInfo</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MediaInfo</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MediaInfo</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseFullOpt|x64'">MediaInfo</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|x64'">MediaInfo</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(WindowsSdkDir)\Include\shared;$(WindowsSdkDir)\Include\um;$(IncludePath)</IncludePath>
@@ -116,7 +148,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;$(ProjectDir)Source/ThirdParty/tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;MEDIAINFO_TRACE_NO;MEDIAINFO_EVENTS_NO;MEDIAINFO_DEMUX_NO;MEDIAINFO_DVDIF_ANALYZE_NO;MEDIAINFO_MPEGTS_DUPLICATE_NO;MEDIAINFO_NEXTPACKET_NO;MEDIAINFO_SEEK_NO;MEDIAINFO_IBI_NO;MEDIAINFO_LIBCURL_NO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -140,7 +172,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;$(ProjectDir)Source/ThirdParty/tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;MEDIAINFO_LIBCURL_DLL_RUNTIME;MEDIAINFO_DVDIF_ANALYZE_NO;MEDIAINFO_MPEGTS_DUPLICATE_NO;MEDIAINFO_LIBMMS_NO;MEDIAINFO_TRACEx_NO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -165,7 +197,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;$(ProjectDir)Source/ThirdParty/tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -193,7 +225,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;$(ProjectDir)Source/ThirdParty/tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -211,8 +243,38 @@
       <PrecompiledHeaderFile>MediaInfo/PreComp.h</PrecompiledHeaderFile>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <OptimizeForWindowsApplication>true</OptimizeForWindowsApplication>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)MediaInfo.lib</OutputFile>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Full</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;$(ProjectDir)Source/ThirdParty/tinyxml2%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DisableSpecificWarnings>4100;4127;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>WIN32;NDEBUG;MEDIAINFO_TRACE_NO;MEDIAINFO_EVENTS_NO;MEDIAINFO_DEMUX_NO;MEDIAINFO_DVDIF_ANALYZE_NO;MEDIAINFO_MPEGTS_DUPLICATE_NO;MEDIAINFO_NEXTPACKET_NO;MEDIAINFO_SEEK_NO;MEDIAINFO_IBI_NO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <PrecompiledHeaderFile>MediaInfo/PreComp.h</PrecompiledHeaderFile>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <OptimizeForWindowsApplication>true</OptimizeForWindowsApplication>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)MediaInfo.lib</OutputFile>
@@ -223,7 +285,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;$(ProjectDir)Source/ThirdParty/tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;MEDIAINFO_TRACE_NO;MEDIAINFO_EVENTS_NO;MEDIAINFO_DEMUX_NO;MEDIAINFO_DVDIF_ANALYZE_NO;MEDIAINFO_MPEGTS_DUPLICATE_NO;MEDIAINFO_NEXTPACKET_NO;MEDIAINFO_SEEK_NO;MEDIAINFO_IBI_NO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -250,7 +312,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;$(ProjectDir)Source/ThirdParty/tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;MEDIAINFO_TRACE_NO;MEDIAINFO_EVENTS_NO;MEDIAINFO_DEMUX_NO;MEDIAINFO_DVDIF_ANALYZE_NO;MEDIAINFO_MPEGTS_DUPLICATE_NO;MEDIAINFO_NEXTPACKET_NO;MEDIAINFO_SEEK_NO;MEDIAINFO_IBI_NO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -268,7 +330,37 @@
       <OptimizeForWindowsApplication>true</OptimizeForWindowsApplication>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <StringPooling>true</StringPooling>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)MediaInfo.lib</OutputFile>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|x64'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Full</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;$(ProjectDir)Source/ThirdParty/tinyxml2%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;MEDIAINFO_TRACE_NO;MEDIAINFO_EVENTS_NO;MEDIAINFO_DEMUX_NO;MEDIAINFO_DVDIF_ANALYZE_NO;MEDIAINFO_MPEGTS_DUPLICATE_NO;MEDIAINFO_NEXTPACKET_NO;MEDIAINFO_SEEK_NO;MEDIAINFO_IBI_NO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DisableSpecificWarnings>4100;4127;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <OmitFramePointers>true</OmitFramePointers>
+      <PrecompiledHeaderFile>MediaInfo/PreComp.h</PrecompiledHeaderFile>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <OptimizeForWindowsApplication>true</OptimizeForWindowsApplication>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Lib>
@@ -366,6 +458,7 @@
     <ClCompile Include="Source\MediaInfo\Multiple\File_Ivf.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_Lxf.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_P2_Clip.cpp" />
+    <ClCompile Include="Source\MediaInfo\Multiple\File_Pmp.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_SequenceInfo.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_Xdcam_Clip.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File__ReferenceFilesHelper.cpp" />
@@ -373,9 +466,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseFullOpt|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseFullOpt|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseHE|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\MediaInfo\Text\File_AribStdB24B37.cpp" />
     <ClCompile Include="Source\MediaInfo\Text\File_DtvccTransport.cpp" />
@@ -383,6 +478,7 @@
     <ClCompile Include="Source\MediaInfo\Text\File_Scc.cpp" />
     <ClCompile Include="Source\MediaInfo\Text\File_SubRip.cpp" />
     <ClCompile Include="Source\MediaInfo\Text\File_Teletext.cpp" />
+    <ClCompile Include="Source\MediaInfo\Text\File_TimedText.cpp" />
     <ClCompile Include="Source\MediaInfo\Text\File_Ttml.cpp" />
     <ClCompile Include="Source\MediaInfo\TimeCode.cpp" />
     <ClCompile Include="Source\MediaInfo\Video\File_Aic.cpp" />
@@ -390,10 +486,12 @@
     <ClCompile Include="Source\MediaInfo\Video\File_Avc_Duplicate.cpp" />
     <ClCompile Include="Source\MediaInfo\Video\File_AvsV.cpp" />
     <ClCompile Include="Source\MediaInfo\Video\File_AfdBarData.cpp" />
+    <ClCompile Include="Source\MediaInfo\Video\File_Canopus.cpp" />
     <ClCompile Include="Source\MediaInfo\Video\File_Dirac.cpp" />
     <ClCompile Include="Source\MediaInfo\Video\File_Flic.cpp" />
     <ClCompile Include="Source\MediaInfo\Video\File_Fraps.cpp" />
     <ClCompile Include="Source\MediaInfo\Video\File_H263.cpp" />
+    <ClCompile Include="Source\MediaInfo\Video\File_Hevc.cpp" />
     <ClCompile Include="Source\MediaInfo\Video\File_Lagarith.cpp" />
     <ClCompile Include="Source\MediaInfo\Video\File_Mpeg4v.cpp" />
     <ClCompile Include="Source\MediaInfo\Video\File_Mpegv.cpp" />
@@ -500,6 +598,7 @@
     <ClInclude Include="Source\MediaInfo\MediaInfo.h" />
     <ClInclude Include="Source\MediaInfo\MediaInfo_Config.h" />
     <ClInclude Include="Source\MediaInfo\MediaInfo_Config_MediaInfo.h" />
+    <ClInclude Include="Source\MediaInfo\MediaInfo_Const.h" />
     <ClInclude Include="Source\MediaInfo\MediaInfo_Events.h" />
     <ClInclude Include="Source\MediaInfo\MediaInfo_Events_Internal.h" />
     <ClInclude Include="Source\MediaInfo\MediaInfo_Internal.h" />
@@ -517,6 +616,7 @@
     <ClInclude Include="Source\MediaInfo\Multiple\File_Ivf.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_Lxf.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_P2_Clip.h" />
+    <ClInclude Include="Source\MediaInfo\Multiple\File_Pmp.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_SequenceInfo.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_Xdcam_Clip.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File__ReferenceFilesHelper.h" />
@@ -598,16 +698,19 @@
     <ClInclude Include="Source\MediaInfo\Text\File_Scte20.h" />
     <ClInclude Include="Source\MediaInfo\Text\File_SubRip.h" />
     <ClInclude Include="Source\MediaInfo\Text\File_Teletext.h" />
+    <ClInclude Include="Source\MediaInfo\Text\File_TimedText.h" />
     <ClInclude Include="Source\MediaInfo\Text\File_Ttml.h" />
     <ClInclude Include="Source\MediaInfo\TimeCode.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_Aic.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_Avc.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_AvsV.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_AfdBarData.h" />
+    <ClInclude Include="Source\MediaInfo\Video\File_Canopus.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_Dirac.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_Flic.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_Fraps.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_H263.h" />
+    <ClInclude Include="Source\MediaInfo\Video\File_Hevc.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_Lagarith.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_Mpeg4v.h" />
     <ClInclude Include="Source\MediaInfo\Video\File_Mpegv.h" />

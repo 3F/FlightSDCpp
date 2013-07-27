@@ -141,7 +141,7 @@ OnlineUserPtr NmdcHub::findUser(const string& aNick) const
 
 void NmdcHub::putUser(const string& aNick)
 {
-	OnlineUser* ou = NULL;
+	OnlineUser* ou = nullptr;
 	{
 		Lock l(cs);
 		NickIter i = users.find(aNick);
@@ -283,7 +283,7 @@ void NmdcHub::onLine(const string& aLine) noexcept
 			return;
 		}
 		
-		ChatMessage chatMessage = { unescape(message), findUser(nick) };
+		ChatMessage chatMessage(unescape(message), findUser(nick));
 		
 		if (!chatMessage.from)
 		{
@@ -415,7 +415,7 @@ void NmdcHub::onLine(const string& aLine) noexcept
 		i = j + 1;
 		string terms = unescape(param.substr(i));
 		
-		if (terms.size() > 0)
+		if (!terms.empty())
 		{
 			if (isPassive)
 			{
@@ -981,7 +981,7 @@ void NmdcHub::onLine(const string& aLine) noexcept
 		if (fromNick.empty() || param.size() < j + 2)
 			return;
 			
-		ChatMessage message = { unescape(param.substr(j + 2)), findUser(fromNick), &getUser(getMyNick()), findUser(rtNick) };
+		ChatMessage message(unescape(param.substr(j + 2)), findUser(fromNick), &getUser(getMyNick()), findUser(rtNick)) ;
 		
 		if (!message.replyTo || !message.from)
 		{
@@ -1145,7 +1145,8 @@ void NmdcHub::myInfo(bool alwaysSend)
 	}
 	
 	char myInfo[256];
-	snprintf(myInfo, sizeof(myInfo), "$MyINFO $ALL %s %s<%s,M:%c,H:%s,S:%d>$ $%s%c$%s$", fromUtf8(getCurrentNick()).c_str(),
+	myInfo[0] = 0;
+	snprintf(myInfo, _countof(myInfo), "$MyINFO $ALL %s %s<%s,M:%c,H:%s,S:%d>$ $%s%c$%s$", fromUtf8(getCurrentNick()).c_str(),
 	         fromUtf8(escape(getCurrentDescription())).c_str(), getClientId().c_str(), modeChar, getCounts().c_str(),
 	         UploadManager::getInstance()->getSlots(), uploadSpeed.c_str(), status, fromUtf8(escape(SETTING(EMAIL))).c_str());
 	         
@@ -1258,7 +1259,7 @@ void NmdcHub::privateMessage(const OnlineUserPtr& aUser, const string& aMessage,
 	OnlineUserPtr ou = findUser(getMyNick());
 	if (ou)
 	{
-		ChatMessage message = { aMessage, ou, aUser, ou };
+		ChatMessage message(aMessage, ou, aUser, ou);
 		fire(ClientListener::Message(), this, message);
 	}
 }

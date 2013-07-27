@@ -570,7 +570,7 @@ void ADLSearchManager::prepareDestinationDirectories(DestDirList& destDirVector,
 	destDirVector.clear();
 	auto id = destDirVector.insert(destDirVector.end(), DestDir());
 	id->name = "ADLSearch";
-	id->dir  = new DirectoryListing::Directory(root, "<<<" + id->name + ">>>", true, true);
+	id->dir  = new DirectoryListing::Directory(root, "<<<" + id->name + ">>>", true, true, true);
 	
 	// Scan all loaded searches
 	for (auto is = collection.begin(); is != collection.end(); ++is)
@@ -602,7 +602,7 @@ void ADLSearchManager::prepareDestinationDirectories(DestDirList& destDirVector,
 			// Add new destination directory
 			id = destDirVector.insert(destDirVector.end(), DestDir());
 			id->name = is->destDir;
-			id->dir  = new DirectoryListing::Directory(root, "<<<" + id->name + ">>>", true, true);
+			id->dir  = new DirectoryListing::Directory(root, "<<<" + id->name + ">>>", true, true, true);
 			is->ddIndex = ddIndex;
 		}
 	}

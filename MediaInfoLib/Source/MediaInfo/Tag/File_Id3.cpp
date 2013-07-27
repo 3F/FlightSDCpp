@@ -1,21 +1,8 @@
-// File_Id3 - Info for ID3 tagged files
-// Copyright (C) 2005-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -117,7 +104,10 @@ void File_Id3::Read_Buffer_Continue()
         Fill(Stream_General, 0, General_Album, Album+AlbumAddition);
         Fill(Stream_General, 0, General_Track, Title+TitleAddition);
         Fill(Stream_General, 0, General_Performer, Artist+ArtistAddition);
-        Fill(Stream_General, 0, General_Comment, Comment);
+        if (Comment.find(__T("ExactAudioCopy"))==0)
+            Fill(Stream_General, 0, General_Encoded_Application, Comment);
+        else
+            Fill(Stream_General, 0, General_Comment, Comment);
         Fill(Stream_General, 0, General_Recorded_Date, Year);
         if (GenreAddition.empty())
             Fill(Stream_General, 0, General_Genre, GenreAddition);

@@ -527,8 +527,8 @@ string CFlyServerJSON::connectFlyServer(const CFlyServerKeyArray& p_fileInfoArra
 	Json::Value  l_root;   	
 	Json::Value& l_arrays = l_root["array"];
 	l_root["header"]["ID"] = CFlyServerJSON::g_fly_server_id;
-	int  l_count = 0;
-	int  l_count_only_ext_info = 0;
+	size_t  l_count = 0;
+	size_t  l_count_only_ext_info = 0;
 	bool is_all_file_only_ext_info = false;
 	if( p_is_fly_set_query == false) // Для get-запроса все записи хотят только расширенную инфу?
 	{

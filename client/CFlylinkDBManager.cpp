@@ -99,9 +99,6 @@ CFlylinkDBManager::CFlylinkDBManager()
 	m_convert_ftype_stop_key = 0;
 	m_first_ratio_cache = false;
 	m_DIC.resize(e_DIC_LAST - 1);
-	const string l_pragma_page_size = "PRAGMA page_size=4096;";
-	const string l_pragma_cache_size = "PRAGMA cache_size=2048;";
-	const string l_pragma_default_cache_size = "PRAGMA default_cache_size=2048;";
 	try
 	{
 		const string l_log_db_name = "FlylinkDC_log.sqlite";

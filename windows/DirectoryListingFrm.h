@@ -383,8 +383,8 @@ class DirectoryListingFrame : public MDITabChildWindowImpl<DirectoryListingFrame
 						}
 						break;
 						case COLUMN_BITRATE:
-							if ((type == FILE && file->m_media.m_bitrate) || (type == DIRECTORY && dir->getTotalBitrate()))
-								return type == FILE ? Util::toStringW(file->m_media.m_bitrate) : Util::toStringW(dir->getTotalBitrate());
+							if ((type == FILE && file->m_media.m_bitrate) || (type == DIRECTORY && !dir->getMinMaxBitrateDirAsString().empty()))
+								return type == FILE ? Util::toStringW(file->m_media.m_bitrate) : dir->getMinMaxBitrateDirAsString();
 							break;
 						case COLUMN_MEDIA_XY:
 							if (type == FILE && file->m_media.m_mediaX && file->m_media.m_mediaY)
@@ -431,7 +431,7 @@ class DirectoryListingFrame : public MDITabChildWindowImpl<DirectoryListingFrame
 								case COLUMN_TS:
 									return compare(a->dir->getTotalTS(), b->dir->getTotalTS());
 								case COLUMN_BITRATE:
-									return compare(a->dir->getTotalBitrate(), b->dir->getTotalBitrate());
+									return compare(a->dir->getMinMaxBitrateDirAsString(), b->dir->getMinMaxBitrateDirAsString());
 								default:
 									return lstrcmpi(a->getText(col).c_str(), b->getText(col).c_str());
 							}

@@ -82,7 +82,9 @@ class DirectoryItem
 QueueManager::FileQueue::~FileQueue()
 {
 	for (auto i = queue.begin(); i != queue.end(); ++i)
+	{
 		i->second->dec();
+	}
 }
 
 QueueItem* QueueManager::FileQueue::add(const string& aTarget, int64_t aSize,
@@ -213,7 +215,7 @@ static QueueItem* findCandidate(QueueItem::StringMap::const_iterator start, Queu
 		if (q->getPriority() == QueueItem::PAUSED)
 			continue;
 		// No files that already have more than AUTO_SEARCH_LIMIT online sources
-		if (q->countOnlineUsers() >= (size_t)SETTING(AUTO_SEARCH_LIMIT))
+		if (q->countOnlineUsers(SETTING(AUTO_SEARCH_LIMIT)) >= size_t(SETTING(AUTO_SEARCH_LIMIT)))
 			continue;
 		// Did we search for it recently?
 		if (find(recent.begin(), recent.end(), q->getTarget()) != recent.end())
@@ -792,13 +794,13 @@ void QueueManager::addList(const HintedUser& aUser, Flags::MaskType aFlags, cons
 
 string QueueManager::getListPath(const HintedUser& user)
 {
-	StringList nicks = ClientManager::getInstance()->getNicks(user);
-	string nick = nicks.empty() ? Util::emptyString : Util::cleanPathChars(nicks[0]) + ".";
+	const auto& nicks = ClientManager::getInstance()->getNicks(user);
+	const string nick = nicks.empty() ? Util::emptyString : Util::cleanPathChars(nicks[0]) + ".";
 	return checkTarget(Util::getListPath() + nick + user.user->getCID().toBase32(), /*checkExistence*/ false);
 }
 
 void QueueManager::add(const string& aTarget, int64_t aSize, const TTHValue& root, const HintedUser& aUser,
-                       Flags::MaskType aFlags /* = 0 */, bool addBad /* = true */) throw(QueueException, FileException)
+                       Flags::MaskType aFlags /* = 0 */, bool addBad /* = true */, bool p_first_file /*= true*/) throw(QueueException, FileException)
 {
 	bool wantConnection = true;
 	bool newItem = false;
@@ -887,13 +889,19 @@ void QueueManager::add(const string& aTarget, int64_t aSize, const TTHValue& roo
 		setDirty();
 	}
 	
-	if (wantConnection && aUser.user->isOnline())
-		ConnectionManager::getInstance()->getDownloadConnection(aUser);
-		
-	// auto search, prevent DEADLOCK
-	if (newItem && BOOLSETTING(AUTO_SEARCH))
+	if (p_first_file)
 	{
-		SearchManager::getInstance()->search(TTHValue(root).toBase32(), 0, SearchManager::TYPE_TTH, SearchManager::SIZE_DONTCARE, "auto");
+		//[!] FlylinkDC++ Team: выполн€ем вызов getDownloadConnection только на первом файле первого каталога при скачке каталога с одного юзера.
+		//[!] FlylinkDC++ Team: исправлено зависание при скачивании каталогов с кол-вом файлов > 10-100 тыс.... + ћожет тормозить когда качаетс€ много каталогов.
+		dcdebug(" ********************** QueueManager::add::p_first_file is its true ********************** \n");
+		if (wantConnection && aUser.user->isOnline())
+			ConnectionManager::getInstance()->getDownloadConnection(aUser);
+			
+		// auto search, prevent DEADLOCK
+		if (newItem && BOOLSETTING(AUTO_SEARCH))
+		{
+			SearchManager::getInstance()->search(root.toBase32(), 0, SearchManager::TYPE_TTH, SearchManager::SIZE_DONTCARE, "auto");
+		}
 	}
 	
 }
@@ -990,8 +998,9 @@ bool QueueManager::addSource(QueueItem* qi, const HintedUser& aUser, Flags::Mask
 	}
 	else
 	{
-		if ((!SETTING(SOURCEFILE).empty()) && (!BOOLSETTING(SOUNDS_DISABLED)))
-			PlaySound(Text::toT(SETTING(SOURCEFILE)).c_str(), NULL, SND_FILENAME | SND_ASYNC);
+		if (!qi->isSet(QueueItem::FLAG_USER_LIST) // // http://code.google.com/p/flylinkdc/issues/detail?id=1088
+		        && !SETTING(SOURCEFILE).empty() && !BOOLSETTING(SOUNDS_DISABLED))
+			PlaySound(Text::toT(SETTING(SOURCEFILE)).c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 		userQueue.add(qi, aUser);
 	}
 	
@@ -1007,7 +1016,7 @@ void QueueManager::addDirectory(const string& aDir, const HintedUser& aUser, con
 	{
 		Lock l(cs);
 		
-		auto dp = directories.equal_range(aUser);
+		const auto dp = directories.equal_range(aUser);
 		
 		for (auto i = dp.first; i != dp.second; ++i)
 		{
@@ -1018,8 +1027,9 @@ void QueueManager::addDirectory(const string& aDir, const HintedUser& aUser, con
 		// Unique directory, fine...
 		directories.insert(make_pair(aUser, new DirectoryItem(aUser, aDir, aTarget, p)));
 		needList = (dp.first == dp.second);
-		setDirty();
 	}
+	
+	setDirty();
 	
 	if (needList)
 	{
@@ -1629,10 +1639,11 @@ void QueueManager::putDownload(Download* aDownload, bool finished, bool reportFi
 								LOG(DOWNLOAD, params);
 							}
 							//[+]PPA
-							if (!q->isSet(Download::FLAG_XML_BZ_LIST))
+							if (!q->isSet(Download::FLAG_XML_BZ_LIST) && !q->isSet(Download::FLAG_USER_CHECK) && !q->isSet(Download::FLAG_PARTIAL))
 								CFlylinkDBManager::getInstance()->push_download_tth(q->getTTH());
 							//[~]PPA
 							fire(QueueManagerListener::Finished(), q, dir, aDownload);
+							//delete aDownload->getFile(); //[+]PPA
 							userQueue.remove(q);
 							
 							if (!BOOLSETTING(KEEP_FINISHED_FILES) || aDownload->getType() == Transfer::TYPE_FULL_LIST)
@@ -2070,7 +2081,11 @@ void QueueManager::saveQueue(bool force) noexcept
 					f.write(LIT("\t\t<Source CID=\""));
 					f.write(cid.toBase32());
 					f.write(LIT("\" Nick=\""));
-					f.write(SimpleXML::escape(ClientManager::getInstance()->getNicks(cid, hint)[0], tmp, true));
+					const auto& l_nicks = ClientManager::getInstance()->getNicks(cid, hint);
+					if (!l_nicks.empty())
+					{
+						f.write(SimpleXML::escape(l_nicks.empty() ? "" : l_nicks[0], tmp, true));
+					}
 					if (!hint.empty())
 					{
 						f.write(LIT("\" HubHint=\""));
@@ -2300,7 +2315,7 @@ void QueueManager::on(SearchManagerListener::SR, const SearchResultPtr& sr) noex
 					
 				try
 				{
-					users = qi->countOnlineUsers();
+					users = qi->countOnlineUsers(SETTING(MAX_AUTO_MATCH_SOURCES));
 					if (!BOOLSETTING(AUTO_SEARCH_AUTO_MATCH) || (users >= (size_t)SETTING(MAX_AUTO_MATCH_SOURCES)))
 						wantConnection = addSource(qi, HintedUser(sr->getUser(), sr->getHubURL()), 0);
 					added = true;
@@ -2443,7 +2458,7 @@ bool QueueManager::dropSource(Download* d)
 				break;
 		}
 		
-		onlineUsers = q->countOnlineUsers();
+		onlineUsers = q->countOnlineUsers(2);
 		overallSpeed = q->getAverageSpeed();
 	}
 	
@@ -2656,7 +2671,7 @@ TTHValue* QueueManager::FileQueue::findPFSPubTTH()
 		{
 			if (cand == NULL || cand->getNextPublishingTime() > qi->getNextPublishingTime() || (cand->getNextPublishingTime() == qi->getNextPublishingTime() && cand->getPriority() < qi->getPriority()))
 			{
-				if (qi->getDownloadedBytes() > qi->getBlockSize())
+				if (qi->getDownloadedBytes() > uint64_t(qi->getBlockSize()))
 					cand = qi;
 			}
 		}

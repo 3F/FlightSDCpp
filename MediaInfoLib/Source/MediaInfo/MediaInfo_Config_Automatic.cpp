@@ -1,27 +1,14 @@
-// File__Analyze - Base for analyze files
-// Copyright (C) 2005-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //
 // Automaticly generated methods for MediaInfo
 // Don't modify, this will be deleted at the next automatic update
 //
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 //---------------------------------------------------------------------------
@@ -41,7 +28,7 @@ void MediaInfo_Config_DefaultLanguage (Translation &Info)
     Info.Separator_Set(0, __T("\n"));
     Info.Write(Ztring().From_UTF8(
     "  Language_ISO639;en\n"
-    "  Author_Email;Zen@mediaarea.net\n"
+    "  Author_Email;Info@MediaArea.net\n"
     "  Author_Name;Zen\n"
     "  Author_OldNames;Initial translator\n"
     "  Language_Name;English\n"
@@ -231,7 +218,8 @@ void MediaInfo_Config_DefaultLanguage (Translation &Info)
     "Bits-(Pixel*Frame);Bits/(Pixel*Frame)\n"
     "BufferSize;Buffer size\n"
     "Cancel;Cancel\n"
-    "Channel(s);Channel(s)\n"
+    "Channel(s);Channel count\n"
+    "Channel(s)_Original;Original Channel count\n"
     "ChannelPositions;Channel positions\n"
     "Chapter(s);Chapter(s)\n"
     "Chapters;Chapters\n"
@@ -1057,7 +1045,7 @@ void MediaInfo_Config_DefaultLanguage (Translation &Info)
     "WebSite_General_More;Go to the web site of a player for this file\n"
     "WebSite_Text;Go to the web site of this text codec\n"
     "WebSite_Text_More;Go to the web site (%Url%) to find this text codec\n"
-    "WebSite_Url;http://mediainfo.sourceforge.net\n"
+    "WebSite_Url;http://MediaArea.net/MediaInfo\n"
     "WebSite_Video;Go to the web site of this video codec\n"
     "WebSite_Video_More;Go to the web site (%Url%) to find this video codec\n"
     "Width;Width\n"
@@ -1109,6 +1097,7 @@ void MediaInfo_Config_Format (InfoMap &Info)
     "MXF;;;M;Mxf;;mxf;application/mxf;\n"
     "NSV;;;M;Nsv;Nullsoft Streaming Video;nsv;;http://winamp.com\n"
     "Ogg;;;M;Ogg;;ogg ogm opus;video/ogg;http://www.free-codecs.com/Ogg_DirectShow_Filters_download.htm\n"
+    "PMP;;;M;Pmp;Playstation Portable;pmp;;\n"
     "QuickTime;;;M;Mpeg4;Original Apple specifications;mov qt;video/quicktime;http://www.apple.com/quicktime/download/standalone.html\n"
     "RealMedia;;;M;Rm;;rm rmvb ra;application/vnd.rn-realmedia;\n"
     "RIFF-MMP;;;M;Riff;RIFF Multimedia Movie;;;\n"
@@ -1126,6 +1115,7 @@ void MediaInfo_Config_Format (InfoMap &Info)
     "FLIC;;;V;Flic;;fli flc;;http://www.chem.nott.ac.uk/flc.html;Lossy\n"
     "H.261;;;V;;;h261;video/H261;;Lossy\n"
     "H.263;;;V;;;h263;video/H263;;Lossy\n"
+    "HEVC;;;V;Hevc;High Efficiency Video Coding;avc h264;video/H265;http://www.itu.int\n"
     "MPEG Video;;;V;Mpegv;;mpgv mpv mp1v m1v mp2v m2v;video/MPV;;Lossy\n"
     "MPEG-4 Visual;;;V;Mpeg4;;m4v mp4v;video/MP4V-ES;;Lossy\n"
     "Theora;;;V;;;;;http://www.theora.org/;Lossy\n"
@@ -1211,7 +1201,7 @@ void MediaInfo_Config_Format (InfoMap &Info)
     "Cheeta;;;T;Other;;asc;;;Lossless\n"
     "N19;;;T;N19;;stl;;;Lossless\n"
     "SAMI;;;T;Sami;;smi sami;;;Lossless\n"
-    "SCC;;;T;SCC;;scc;;;Lossless\n"
+    "SCC;;;T;SCC;;scc sc2;;;Lossless\n"
     "SubRip;;;T;SubRip;;srt;;http://ffdshow.sourceforge.net/tikiwiki/tiki-index.php?page=Getting+ffdshow;Lossless\n"
     "TTML;;;T;TTML;;dfxp;;;Lossless\n"
     "SSA;;;T;Other;;ssa;;http://ffdshow.sourceforge.net/tikiwiki/tiki-index.php?page=Getting+ffdshow;Lossless\n"
@@ -1230,6 +1220,7 @@ void MediaInfo_Config_CodecID_General_Mpeg4 (InfoMap &Info)
     "M4V ;MPEG-4;;;\n"
     "isom;MPEG-4;;;http://www.apple.com/quicktime/download/standalone.html;Base Media\n"
     "iso2;MPEG-4;;;http://www.apple.com/quicktime/download/standalone.html;Base Media\n"
+    "iso4;MPEG-4;;;http://www.apple.com/quicktime/download/standalone.html;Base Media\n"
     "mp41;MPEG-4;;;http://www.apple.com/quicktime/download/standalone.html;Base Media / Version 1\n"
     "mp42;MPEG-4;;;http://www.apple.com/quicktime/download/standalone.html;Base Media / Version 2\n"
     "avc1;MPEG-4;;;http://www.apple.com/quicktime/download/standalone.html;JVT\n"
@@ -1305,6 +1296,7 @@ void MediaInfo_Config_CodecID_Video_Matroska (InfoMap &Info)
     "V_MPEG4/ISO/ASP;MPEG-4 Visual;;Advanced Simple Profile;http://www.xvid.org/Downloads.15.0.html\n"
     "V_MPEG4/ISO/AP;MPEG-4 Visual;;Advanced Profile;http://ffdshow-tryout.sourceforge.net/\n"
     "V_MPEG4/ISO/AVC;AVC;;;http://ffdshow-tryout.sourceforge.net/\n"
+    "V_MPEGH/ISO/HEVC;HEVC;;\n"
     "V_MPEG4/MS/V2;MPEG-4 Visual;MS MPEG-4 v2;MS MPEG-4 v2;http://ffdshow-tryout.sourceforge.net/\n"
     "V_MPEG4/MS/V3;MPEG-4 Visual;MS MPEG-4 v3;MS MPEG-4 v3;http://ffdshow-tryout.sourceforge.net/\n"
     "V_MPEG1;MPEG Video;;MPEG 1 or 2 Video;http://ffdshow-tryout.sourceforge.net/\n"
@@ -1316,6 +1308,7 @@ void MediaInfo_Config_CodecID_Video_Matroska (InfoMap &Info)
     "V_REAL/RV40;RealVideo 4;;RealVideo 4.0 aka RealVideo 9;http://www.real.com\n"
     "V_THEORA;Theora;;;http://www.theora.org\n"
     "V_VP8;VP8;;;http://www.webmproject.org/\n"
+    "V_VP9;VP9;;;http://www.webmproject.org/\n"
     ));
     Info.Separator_Set(0, ZenLib::EOL);
 }
@@ -1382,6 +1375,9 @@ void MediaInfo_Config_CodecID_Video_Mpeg4 (InfoMap &Info)
     "DVVT;Digital Voodoo;;Digital Voodoo intermediate v210;http://www.digitalvoodoo.net/;;;\n"
     "encv;(Encrypted);;;http://www.apple.com/quicktime/download/standalone.html;;;\n"
     "gif ;M-GIF;;;;;;\n"
+    "Hap1;Hap;;Hap Video Codec;https://github.com/Vidvox/hap;;;\n"
+    "Hap5;Hap Alpha;;Hap Video Codec;https://github.com/Vidvox/hap;;;\n"
+    "HapY;Hap Q;;Hap Video Codec;https://github.com/Vidvox/hap;;;\n"
     "h261;H.261;;;http://www.apple.com/quicktime/download/standalone.html;;;\n"
     "h263;H.263;;;http://www.apple.com/quicktime/download/standalone.html;;;\n"
     "H263;H.263;;;http://www.apple.com/quicktime/download/standalone.html;;;\n"
@@ -1403,6 +1399,8 @@ void MediaInfo_Config_CodecID_Video_Mpeg4 (InfoMap &Info)
     "hdvd;MPEG Video;;;http://www.apple.com/quicktime/download/standalone.html;;;YUV\n"
     "hdve;MPEG Video;;;http://www.apple.com/quicktime/download/standalone.html;;;YUV\n"
     "hdvf;MPEG Video;;;http://www.apple.com/quicktime/download/standalone.html;;;YUV\n"
+    "hvc1;HEVC;;High Efficiency Video Coding;http://www.itu.int/;;;\n"
+    "hev1;HEVC;;High Efficiency Video Coding;http://www.itu.int/;;;\n"
     "icod;AIC;;Apple Intermediate Codec;http://www.apple.com/quicktime/download/standalone.html;;;YUV;4:2:0\n"
     "j420;YUV;;;;;;YUV;4:2:0\n"
     "jpeg;JPEG;;;http://www.apple.com/quicktime/download/standalone.html;;;\n"
@@ -2071,6 +2069,8 @@ void MediaInfo_Config_CodecID_Video_Riff (InfoMap &Info)
     "U<YA;YUV;Discreet;Discreet UC YUV 4:2:2:4 10 bit (with Alpha-channel);;;;YUV\n"
     "U263;H.263;UB;UB Video H.263/H.263+/H.263++ Decoder;http://eMajix.com;;;\n"
     "UCOD;ClearVideo;;ClearVideo (fractal compression-based);;;;\n"
+    "ULH0;YUV;Ut Video;Ut Video Lossless Codec;http://umezawa.dyndns.info/archive/utvideo;;;YUV;4:2:0\n"
+    "ULH2;YUV;Ut Video;Ut Video Lossless Codec;http://umezawa.dyndns.info/archive/utvideo;;;YUV;4:2:2\n"
     "ULRA;RGBA;Ut Video;Ut Video Lossless Codec;http://umezawa.dyndns.info/archive/utvideo;;;RGBA;4:4:4:4\n"
     "ULRG;RGB;Ut Video;Ut Video Lossless Codec;http://umezawa.dyndns.info/archive/utvideo;;;RGB;4:4:4\n"
     "ULTI;Ultimotion;;IBM Ultimotion;;;;\n"
@@ -3207,6 +3207,8 @@ void MediaInfo_Config_Codec (InfoMap &Info)
     "U<YA;Discreet YUV;4CC;V;;;Discreet UC YUV 4:2:2:4 10 bit (with Alpha-channel)\n"
     "U263;UB H.263;4CC;V;;;UB Video H.263/H.263+/H.263++ Decoder;http://eMajix.com\n"
     "UCOD;ClearVideo;4CC;V;;;ClearVideo (fractal compression-based)\n"
+    "ULH0;YUV;Ut Video;Ut Video Lossless Codec;http://umezawa.dyndns.info/archive/utvideo;;;YUV;4:2:0\n"
+    "ULH2;YUV;Ut Video;Ut Video Lossless Codec;http://umezawa.dyndns.info/archive/utvideo;;;YUV;4:2:2\n"
     "ULRA;RGBA;Ut Video;Ut Video Lossless Codec;http://umezawa.dyndns.info/archive/utvideo;;;RGBA;4:4:4:4\n"
     "ULRG;RGB;Ut Video;Ut Video Lossless Codec;http://umezawa.dyndns.info/archive/utvideo;;;RGB;4:4:4\n"
     "ULTI;Ultimotion;4CC;V;;;IBM Ultimotion\n"
@@ -4518,6 +4520,8 @@ void MediaInfo_Config_Audio (ZtringListList &Info)
     "BitRate_Encoded/String;;;Y NT;;;Encoded (with forced padding) bit rate (with measurement), if some container padding is present\n"
     "Channel(s);; channel;N YF;;;Number of channels;\n"
     "Channel(s)/String;;;Y NT;;;Number of channels (with measurement);\n"
+    "Channel(s)_Original;; channel;N YF;;;Number of channels;\n"
+    "Channel(s)_Original/String;;;Y NT;;;Number of channels (with measurement);\n"
     "ChannelPositions;;;Y YT;;;Position of channels;\n"
     "ChannelPositions/String2;;;N NT;;;Position of channels (x/y.z format);\n"
     "ChannelLayout;;;N YT;;;Layout of channels (in the stream);\n"

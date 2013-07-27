@@ -417,7 +417,7 @@ class ShareManager : public Singleton<ShareManager>, private SettingsManagerList
 		typedef HashFileMap::const_iterator HashFileIter;
 		
 		HashFileMap tthIndex;
-		
+		static bool g_isShutdown;
 		BloomFilter<5> bloom;
 		
 		Directory::File::Set::const_iterator findFile(const string& virtualFile) const;
@@ -462,7 +462,17 @@ class ShareManager : public Singleton<ShareManager>, private SettingsManagerList
 		{
 			load(xml);
 		}
-		
+	public:
+		void shutdown()//[+]IRainman stopping buildTree
+		{
+			dcassert(g_isShutdown == false);
+			g_isShutdown = true;
+		}
+		static bool isShutdown() // TODO унести в интерфейсный класс - друган Singleton-а
+		{
+			return g_isShutdown;
+		}
+	private:
 		// TimerManagerListener
 		void on(TimerManagerListener::Minute, uint64_t tick) noexcept;
 		void load(SimpleXML& aXml);

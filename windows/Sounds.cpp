@@ -144,7 +144,7 @@ LRESULT Sounds::onPlay(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOO
 	if (ctrlSounds.GetSelectedItem(&item))
 	{
 		ctrlSounds.GetItemText(item.iItem, 1, buf, MAX_PATH);
-		PlaySound(buf, NULL, SND_FILENAME | SND_ASYNC);
+		PlaySound(buf, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 		
 	}
 	return 0;

@@ -24,7 +24,7 @@ AppUpdatesURL=http://code.google.com/p/flylinkdc/downloads/list
 DefaultDirName={sd}\StrongDC++sqlite
 DefaultGroupName=StrongDC++ sqlite
 InfoBeforeFile="readme.rtf"
-OutputBaseFilename=SetupStrongDC-sqlite-x86-r13802
+OutputBaseFilename=SetupStrongDC-sqlite-x86-r14735
 SetupIconFile="..\res\StrongDC.ico"
 Compression=lzma2/ultra64
 SolidCompression=yes
@@ -51,7 +51,6 @@ Name: "DCPlusPlus\vip_dchublist"; Description: "Крупнейшие хабы dchublist.ru"; F
 
 [Files]
 Source: "..\compiled\StrongDC.exe"; DestDir: "{app}"; Flags: overwritereadonly ignoreversion
-;Source: "C:\Users\ppa\Documents\My Dropbox\Public\FlylinkDiscover.exe"; DestDir: "{app}"; Flags: overwritereadonly ignoreversion
 Source: "..\compiled\readme.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\cvs-changelog.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\compiled\Settings\GeoIPCountryWhois.csv"; DestDir: "{app}\Settings"; Flags: overwritereadonly

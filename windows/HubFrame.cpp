@@ -661,7 +661,7 @@ LRESULT HubFrame::onDoubleClickUsers(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHand
 				ctrlUsers.getItemData(item->iItem)->addFav();
 				break;
 			case 6:
-				ctrlUsers.getItemData(item->iItem)->browseList(client->getHubUrl());
+				ctrlUsers.getItemData(item->iItem)->getList(client->getHubUrl());
 				break;
 		}
 	}
@@ -752,7 +752,7 @@ LRESULT HubFrame::onSpeaker(UINT /*uMsg*/, WPARAM /* wParam */, LPARAM /* lParam
 			{
 				bool isFavorite = FavoriteManager::getInstance()->isFavoriteUser(u.onlineUser->getUser());
 				if (isFavorite && (!SETTING(SOUND_FAVUSER).empty()) && (!BOOLSETTING(SOUNDS_DISABLED)))
-					PlaySound(Text::toT(SETTING(SOUND_FAVUSER)).c_str(), NULL, SND_FILENAME | SND_ASYNC);
+					PlaySound(Text::toT(SETTING(SOUND_FAVUSER)).c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 					
 				if (isFavorite && BOOLSETTING(POPUP_FAVORITE_CONNECTED))
 				{
@@ -808,7 +808,7 @@ LRESULT HubFrame::onSpeaker(UINT /*uMsg*/, WPARAM /* wParam */, LPARAM /* lParam
 			}
 			
 			if ((!SETTING(SOUND_HUBCON).empty()) && (!BOOLSETTING(SOUNDS_DISABLED)))
-				PlaySound(Text::toT(SETTING(SOUND_HUBCON)).c_str(), NULL, SND_FILENAME | SND_ASYNC);
+				PlaySound(Text::toT(SETTING(SOUND_HUBCON)).c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 		}
 		else if (i->first == DISCONNECTED)
 		{
@@ -816,7 +816,7 @@ LRESULT HubFrame::onSpeaker(UINT /*uMsg*/, WPARAM /* wParam */, LPARAM /* lParam
 			setTabColor(RGB(255, 0, 0));
 			setIconState();
 			if ((!SETTING(SOUND_HUBDISCON).empty()) && (!BOOLSETTING(SOUNDS_DISABLED)))
-				PlaySound(Text::toT(SETTING(SOUND_HUBDISCON)).c_str(), NULL, SND_FILENAME | SND_ASYNC);
+				PlaySound(Text::toT(SETTING(SOUND_HUBDISCON)).c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 				
 			if (BOOLSETTING(POPUP_HUB_DISCONNECTED))
 			{
@@ -880,7 +880,7 @@ LRESULT HubFrame::onSpeaker(UINT /*uMsg*/, WPARAM /* wParam */, LPARAM /* lParam
 		}
 		else if (i->first == GET_PASSWORD)
 		{
-			if (client->getPassword().size() > 0)
+			if (!client->getPassword().empty())
 			{
 				client->password(client->getPassword());
 				addStatus(TSTRING(STORED_PASSWORD_SENT), WinUtil::m_ChatTextSystem);
@@ -1659,7 +1659,7 @@ LRESULT HubFrame::onChar(UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHan
 		if ((uMsg == WM_CHAR) && (GetFocus() == ctrlMessage.m_hWnd) && (wParam != VK_RETURN) && (wParam != VK_TAB) && (wParam != VK_BACK))
 		{
 			if ((!SETTING(SOUND_TYPING_NOTIFY).empty()) && (!BOOLSETTING(SOUNDS_DISABLED)))
-				PlaySound(Text::toT(SETTING(SOUND_TYPING_NOTIFY)).c_str(), NULL, SND_FILENAME | SND_ASYNC);
+				PlaySound(Text::toT(SETTING(SOUND_TYPING_NOTIFY)).c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 		}
 		return 0;
 	}
@@ -2535,7 +2535,7 @@ bool HubFrame::PreparePopupMenu(CWindow* /*pCtrl*/, OMenu& menu)
 			menu.SetMenuDefaultItem(IDC_ADD_TO_FAVORITES);
 			break;
 		case 6:
-			menu.SetMenuDefaultItem(IDC_BROWSELIST);
+			menu.SetMenuDefaultItem(IDC_GETLIST);
 			break;
 	}
 	

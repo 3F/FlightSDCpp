@@ -95,3 +95,4 @@ vc10
 vcxproj.user
 vcproj.user
 .svn
+tth-history.leveldb

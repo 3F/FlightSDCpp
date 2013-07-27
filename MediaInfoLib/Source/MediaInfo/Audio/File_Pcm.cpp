@@ -1,21 +1,8 @@
-// File_Pcm - Info for PCM files
-// Copyright (C) 2007-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -95,6 +82,9 @@ File_Pcm::File_Pcm()
     SamplingRate=0;
     Endianness='\0';
     Sign='\0';
+    #if MEDIAINFO_DEMUX
+    Frame_Count_Valid_Demux=0;
+    #endif //MEDIAINFO_DEMUX
 }
 
 //***************************************************************************
@@ -250,6 +240,23 @@ void File_Pcm::Streams_Finish()
 }
 
 //***************************************************************************
+// Buffer - Global
+//***************************************************************************
+
+//---------------------------------------------------------------------------
+#if MEDIAINFO_DEMUX
+void File_Pcm::Read_Buffer_Continue()
+{
+    if (Demux_UnpacketizeContainer && !Status[IsAccepted])
+    {
+        Frame_Count_Valid_Demux++;
+        if (Frame_Count_Valid_Demux<Frame_Count_Valid)
+            Element_WaitForMoreData();
+    }
+}
+#endif //MEDIAINFO_DEMUX
+
+//***************************************************************************
 // Buffer - File header
 //***************************************************************************
 
@@ -293,6 +300,17 @@ void File_Pcm::Data_Parse()
 {
     #if MEDIAINFO_DEMUX
         FrameInfo.PTS=FrameInfo.DTS;
+        int64u Frame_Count_NotParsedIncluded_ToAdd=0;
+        if (Frame_Count_Valid_Demux)
+        {
+            if (FrameInfo.DUR!=(int64u)-1)
+                FrameInfo.DUR*=Frame_Count_Valid_Demux;
+            if (Frame_Count_NotParsedIncluded!=(int64u)-1 && Frame_Count_Valid_Demux-1<=Frame_Count_NotParsedIncluded)
+            {
+                Frame_Count_NotParsedIncluded_ToAdd=Frame_Count_Valid_Demux-1;
+                Frame_Count_NotParsedIncluded-=Frame_Count_NotParsedIncluded_ToAdd;
+            }
+        }
         Demux_random_access=true;
         Element_Code=(int64u)-1;
 
@@ -361,6 +379,16 @@ void File_Pcm::Data_Parse()
     //Parsing
     Skip_XX(Element_Size,                                       "Data"); //It is impossible to detect... Default is no detection, only filling
 
+    #if MEDIAINFO_DEMUX
+    if (Frame_Count_Valid_Demux)
+    {
+        Frame_Count+=Frame_Count_Valid_Demux-1;
+        if (Frame_Count_NotParsedIncluded!=(int64u)-1 && Frame_Count_NotParsedIncluded_ToAdd)
+            Frame_Count_NotParsedIncluded+=Frame_Count_NotParsedIncluded_ToAdd;
+        FrameInfo.DUR/=Frame_Count_Valid_Demux;
+        Frame_Count_Valid_Demux=0;
+    }
+    #endif //MEDIAINFO_DEMUX
     Frame_Count++;
     if (Frame_Count_NotParsedIncluded!=(int64u)-1)
         Frame_Count_NotParsedIncluded++;

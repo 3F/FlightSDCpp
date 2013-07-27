@@ -19,16 +19,14 @@
 #include "stdafx.h"
 
 
-#ifdef _DEBUG_VLD
-/**
-    Memory leak detector
-    You can remove following 3 lines if you don't want to detect memory leaks.
- */
-#define VLD_MAX_DATA_DUMP 0
-#define VLD_AGGREGATE_DUPLICATES
-#ifdef _WIN32
-#include <vld.h>
-#endif
+#ifdef _DEBUG
+    //Memory leak detector - http://vld.codeplex.com
+    #ifdef _DEBUG_VLD
+        #define VLD_AGGREGATE_DUPLICATES
+        //#define VLD_DEFAULT_MAX_DATA_DUMP 1
+        //#define VLD_FORCE_ENABLE // Uncoment this define to enable VLD in release
+        #include <vld.h>
+    #endif
 #endif
 
 #include "../client/DCPlusPlus.h"
@@ -142,7 +140,7 @@ void ExceptionFunction()
 static void NotifyUserAboutException(LPEXCEPTION_POINTERS pException, bool bDumped, DWORD dwDumpError)
 {
 	if ((!SETTING(SOUND_EXC).empty()) && (!BOOLSETTING(SOUNDS_DISABLED)))
-		PlaySound(Text::toT(SETTING(SOUND_EXC)).c_str(), NULL, SND_FILENAME | SND_ASYNC);
+		PlaySound(Text::toT(SETTING(SOUND_EXC)).c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 		
 	NOTIFYICONDATA m_nid = {0};
 	m_nid.cbSize = sizeof(NOTIFYICONDATA);
@@ -489,7 +487,7 @@ static bool SendFileToServer(const wstring& p_DumpFileName, const string& p_medi
 			{
 				TCHAR l_msg[1000];
 				l_msg[0] = 0;
-				_sntprintf(l_msg, sizeof(l_msg), _T("Ошибка передачи файлов на сервер разрабоитчиков\r\nЕсли не сложно вышлите их по почте на адрес ppa74@ya.ru!\r\n")
+				_sntprintf(l_msg, _countof(l_msg), _T("Ошибка передачи файлов на сервер разрабоитчиков\r\nЕсли не сложно вышлите их по почте на адрес ppa74@ya.ru!\r\n")
 				           _T("Код ошибки GetLastError() = %d [%s]\r\n")
 				           _T("Файл l_bz2_name = %s\r\n")
 				           _T("Файл l_guid_str = %s\r\n"),
@@ -604,6 +602,7 @@ static int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 		SetProcessDefaultLayout(LAYOUT_RTL);
 	}
 	
+	// Зовется явно а не из конструктора TODO потестить - UPNP глючит :(
 	MappingManager::getInstance()->addMapper<Mapper_NATPMP>();
 	MappingManager::getInstance()->addMapper<Mapper_MiniUPnPc>();
 	MappingManager::getInstance()->addMapper<Mapper_WinUPnP>();

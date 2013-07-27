@@ -64,10 +64,9 @@ public UserInfoBase
 					}
 				};
 				typedef vector<Ptr> List;
-				typedef List::const_iterator Iter;
 				
-			File(Directory* aDir, const string& aName, int64_t aSize, const string& aTTH, uint32_t p_Hit, uint32_t p_ts, const CFlyMediaInfo& p_media) noexcept :
-				name(aName), size(aSize), parent(aDir), tthRoot(aTTH), hit(p_Hit), ts(p_ts), m_media(p_media), adls(false)
+			File(Directory* p_Dir, const string& p_Name, int64_t p_Size, const TTHValue& p_TTH, uint32_t p_Hit, uint32_t p_ts, const CFlyMediaInfo& p_media) noexcept :
+				name(p_Name), size(p_Size), parent(p_Dir), tthRoot(p_TTH), hit(p_Hit), ts(p_ts), m_media(p_media), adls(false)
 				{
 				}
 				File(const File& rhs, bool _adls = false) : name(rhs.name), size(rhs.size), parent(rhs.parent), tthRoot(rhs.tthRoot),
@@ -75,25 +74,12 @@ public UserInfoBase
 				{
 				}
 				
-				File& operator=(const File& rhs)
-				{
-					name = rhs.name;
-					size = rhs.size;
-					parent = rhs.parent;
-					tthRoot = rhs.tthRoot;
-					hit = rhs.hit;
-					ts = rhs.ts;
-					m_media = rhs.m_media;
-					adls = rhs.adls;
-					return *this;
-				}
-				
 				~File() { }
 				
-				GETSET(TTHValue, tthRoot, TTH);
 				GETSET(string, name, Name);
 				GETSET(int64_t, size, Size);
 				GETSET(Directory*, parent, Parent);
+				GETSET(TTHValue, tthRoot, TTH);
 				GETSET(uint32_t, hit, Hit);
 				GETSET(uint32_t, ts, TS);
 				CFlyMediaInfo m_media;
@@ -121,75 +107,44 @@ public UserInfoBase
 				typedef unordered_set<TTHValue> TTHSet;
 				
 				List directories;
+				
 				File::List files;
-				
-				Directory(Directory* aParent, const string& aName, bool _adls, bool aComplete)
-					: name(aName), parent(aParent), adls(_adls), complete(aComplete) { }
-					
-				virtual ~Directory();
-				
-				size_t getTotalFileCount(bool adls = false) const;
-				int64_t getTotalSize(bool adls = false) const;
-				int64_t getTotalHit() const;
-				uint32_t getTotalTS() const;
-				uint16_t getTotalBitrate() const;
-				void filterList(DirectoryListing& dirList);
-				void filterList(TTHSet& l);
-				void getHashList(TTHSet& l);
-				
 				size_t getFileCount() const
 				{
 					return files.size();
 				}
 				
-				int64_t getSize() const
-				{
-					int64_t x = 0;
-					for (File::Iter i = files.begin(); i != files.end(); ++i)
-					{
-						x += (*i)->getSize();
-					}
-					return x;
-				}
-				int64_t getHit() const
-				{
-					int64_t x = 0;
-					for (File::Iter i = files.begin(); i != files.end(); ++i)
-					{
-						x += (*i)->getHit();
-					}
-					return x;
-				}
-				uint16_t getBitrate() const
-				{
-					uint16_t x = 0;
-					for (File::Iter i = files.begin(); i != files.end(); ++i)
-					{
-						x = std::max((*i)->m_media.m_bitrate, x);
-					}
-					return x;
-				}
-				uint32_t getTS() const
-				{
-					uint32_t x = 0;
-					for (File::Iter i = files.begin(); i != files.end(); ++i)
-					{
-						x = std::max((*i)->getTS(), x);
-					}
-					return x;
-				}
+				Directory(Directory* aParent, const string& aName, bool _adls, bool aComplete, bool p_is_mediainfo)
+					: name(aName), parent(aParent), adls(_adls), complete(aComplete), m_is_mediainfo(p_is_mediainfo) { }
+					
+				virtual ~Directory();
 				
+				size_t getTotalFileCount(bool adls = false) const;
+				uint64_t getTotalSize(bool adls = false) const;
+				uint64_t getTotalHit() const;
+				uint32_t getTotalTS() const;
+				std::pair<uint32_t, uint32_t> getMinMaxBitrateDir() const;
+				std::pair<uint32_t, uint32_t> getMinMaxBitrateFile() const;
+				tstring getMinMaxBitrateDirAsString() const;
+				uint64_t getSumSize() const;
+				uint64_t getSumHit() const;
+				uint32_t getMaxTS() const;
+				void filterList(DirectoryListing& dirList);
+				void filterList(TTHSet& l);
+				void getHashList(TTHSet& l);
 				void checkDupes(const DirectoryListing* lst); // !SMT!-UI
 				GETSET(string, name, Name);
 				GETSET(Directory*, parent, Parent);
 				GETSET(bool, adls, Adls);
 				GETSET(bool, complete, Complete);
+			private:
+				bool m_is_mediainfo;
 		};
 		
 		class AdlDirectory : public Directory
 		{
 			public:
-				AdlDirectory(const string& aFullPath, Directory* aParent, const string& aName) : Directory(aParent, aName, true, true), fullPath(aFullPath) { }
+				AdlDirectory(const string& aFullPath, Directory* aParent, const string& aName) : Directory(aParent, aName, true, true, true), fullPath(aFullPath) { }
 				
 				GETSET(string, fullPath, FullPath);
 		};
@@ -203,8 +158,8 @@ public UserInfoBase
 		string loadXML(InputStream& xml, bool updating, bool p_own_list);
 		
 		void download(const string& aDir, const string& aTarget, bool highPrio, QueueItem::Priority prio = QueueItem::DEFAULT);
-		void download(Directory* aDir, const string& aTarget, bool highPrio, QueueItem::Priority prio = QueueItem::DEFAULT);
-		void download(File* aFile, const string& aTarget, bool view, bool highPrio, QueueItem::Priority prio = QueueItem::DEFAULT);
+		void download(Directory* aDir, const string& aTarget, bool highPrio, QueueItem::Priority prio = QueueItem::DEFAULT, bool p_first_file = true);
+		void download(const File* aFile, const string& aTarget, bool view, bool highPrio, QueueItem::Priority prio = QueueItem::DEFAULT, bool p_first_file = true);
 		
 		string getPath(const Directory* d) const;
 		string getPath(const File* f) const
@@ -245,6 +200,8 @@ public UserInfoBase
 		friend class ListLoader;
 		
 		Directory* root;
+		bool m_is_mediainfo;
+		bool m_own_list;
 		
 		Directory* find(const string& aName, Directory* current);
 };

@@ -1,21 +1,8 @@
-// File_Avc - Info for AVC Video files
-// Copyright (C) 2006-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 #ifndef MediaInfo_AvcH
@@ -154,6 +141,7 @@ private :
         int8u   log2_max_pic_order_cnt_lsb_minus4;
         int8u   max_num_ref_frames;
         int8u   pic_struct_FirstDetected; //For stats only
+        int8u   log2_max_slice_group_change_cycle_minus4;
         bool    constraint_set3_flag;
         bool    separate_colour_plane_flag;
         bool    delta_pic_order_always_zero_flag;
@@ -197,11 +185,14 @@ private :
         int8u   num_ref_idx_l0_default_active_minus1;
         int8u   num_ref_idx_l1_default_active_minus1;
         int8u   weighted_bipred_idc;
+        int32u  num_slice_groups_minus1;
+        int32u  slice_group_map_type;
         bool    entropy_coding_mode_flag;
         bool    bottom_field_pic_order_in_frame_present_flag;
         bool    weighted_pred_flag;
         bool    redundant_pic_cnt_present_flag;
         bool    IsSynched; //Computed value
+        bool    deblocking_filter_control_present_flag;
 
         #if MEDIAINFO_DEMUX
         int8u*  Iso14496_10_Buffer;
@@ -267,6 +258,7 @@ private :
     void slice_layer_without_partitioning_IDR();
     void slice_layer_without_partitioning_non_IDR();
     void slice_header();
+    void slice_data (bool AllCategories);
     void seq_parameter_set();
     void pic_parameter_set();
     void sei();

@@ -1,20 +1,9 @@
-// File_Mxf - Info for MXF files
-// Copyright (C) 2006-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //
 // Information about Mxf files
@@ -74,15 +63,15 @@ protected :
     //Streams management
     void Streams_Fill ();
     void Streams_Finish ();
-    void Streams_Finish_Preface (int128u PrefaceUID);
-    void Streams_Finish_ContentStorage (int128u ContentStorageUID);
-    void Streams_Finish_Package (int128u PackageUID);
-    void Streams_Finish_Track (int128u TrackUID);
-    void Streams_Finish_Essence (int32u EssenceUID, int128u TrackUID);
-    void Streams_Finish_Descriptor (int128u DescriptorUID, int128u PackageUID);
-    void Streams_Finish_Locator (int128u DescriptorUID, int128u LocatorUID);
-    void Streams_Finish_Component (int128u ComponentUID, float64 EditRate, int32u TrackID, int64u Origin);
-    void Streams_Finish_Identification (int128u IdentificationUID);
+    void Streams_Finish_Preface (const int128u &PrefaceUID);
+    void Streams_Finish_ContentStorage (const int128u &ContentStorageUID);
+    void Streams_Finish_Package (const int128u &PackageUID);
+    void Streams_Finish_Track (const int128u &TrackUID);
+    void Streams_Finish_Essence (int32u EssenceUID, const int128u &TrackUID);
+    void Streams_Finish_Descriptor (const int128u &DescriptorUID, const int128u &PackageUID);
+    void Streams_Finish_Locator (const int128u &DescriptorUID, const int128u &LocatorUID);
+    void Streams_Finish_Component (const int128u &ComponentUID, float64 EditRate, int32u TrackID, int64u Origin);
+    void Streams_Finish_Identification (const int128u &IdentificationUID);
     void Streams_Finish_CommercialNames ();
 
     //Buffer - Global
@@ -360,7 +349,7 @@ protected :
     void Get_UMID       (int256u &Value, const char* Name);
     void Skip_UMID      ();
 
-    void Get_UL (int128u &Value, const char* Name, const char* (*Param) (int128u));
+    void Get_UL (int128u &Value, const char* Name, const char* (*Param) (const int128u&));
     void Skip_UL(const char* Name);
     void Get_BER(int64u &Value, const char* Name);
     #if MEDIAINFO_TRACE
@@ -777,6 +766,9 @@ protected :
     bool   Essences_FirstEssence_Parsed;
     int32u IndexTable_NSL;
     int32u IndexTable_NPE;
+    #if MEDIAINFO_ADVANCED
+        int64u Footer_Position;
+    #endif //MEDIAINFO_ADVANCED
     #if defined(MEDIAINFO_ANCILLARY_YES)
         File_Ancillary* Ancillary;
         bool            Ancillary_IsBinded;

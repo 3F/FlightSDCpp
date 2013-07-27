@@ -41,14 +41,14 @@ void CBarShader::BuildModifiers()
 
 void CBarShader::CalcPerPixelandPerByte()
 {
-		if (m_qwFileSize)
-			m_dblPixelsPerByte = static_cast<double>(m_iWidth) / m_qwFileSize;
-		else
-			m_dblPixelsPerByte = 0.0;
-		if (m_iWidth)
-			m_dblBytesPerPixel = static_cast<double>(m_qwFileSize) / m_iWidth;
-		else
-			m_dblBytesPerPixel = 0.0;
+	if (m_qwFileSize)
+		m_dblPixelsPerByte = static_cast<double>(m_iWidth) / m_qwFileSize;
+	else
+		m_dblPixelsPerByte = 0.0;
+	if (m_iWidth)
+		m_dblBytesPerPixel = static_cast<double>(m_qwFileSize) / m_iWidth;
+	else
+		m_dblBytesPerPixel = 0.0;
 	}
 
 void CBarShader::SetWidth(uint32_t width)

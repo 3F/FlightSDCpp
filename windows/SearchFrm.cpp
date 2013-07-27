@@ -631,7 +631,7 @@ void SearchFrame::onEnter()
 
 void SearchFrame::on(SearchManagerListener::SR, const SearchResultPtr& aResult) noexcept
 {
-	if(closed)
+	if (closed)
 		return;
 	// Check that this is really a relevant search result...
 	{
@@ -695,9 +695,10 @@ void SearchFrame::on(TimerManagerListener::Second, uint64_t aTick) noexcept
 	{
 		if (aTick < searchEndTime + 1000)
 		{
-			TCHAR buf[64];
-			_stprintf(buf, _T("%s %s"), CTSTRING(TIME_LEFT), Util::formatSeconds(searchEndTime > aTick ? (searchEndTime - aTick) / 1000 : 0).c_str());
-			PostMessage(WM_SPEAKER, QUEUE_STATS, (LPARAM)new tstring(buf));
+			TCHAR l_buf[64];
+			l_buf[0] = 0;
+			_sntprintf(l_buf, _countof(l_buf), _T("%s %s"), CTSTRING(TIME_LEFT), Util::formatSeconds(searchEndTime > aTick ? (searchEndTime - aTick) / 1000 : 0).c_str());
+			PostMessage(WM_SPEAKER, QUEUE_STATS, (LPARAM)new tstring(l_buf));
 		}
 		
 		if (aTick > searchEndTime)
@@ -1515,7 +1516,7 @@ LRESULT SearchFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, 
 			targetMenu.InsertSeparatorFirst(TSTRING(DOWNLOAD_TO));
 			//Append favorite download dirs
 			StringPairList spl = FavoriteManager::getInstance()->getFavoriteDirs();
-			if (spl.size() > 0)
+			if (!spl.empty())
 			{
 				for (StringPairIter i = spl.begin(); i != spl.end(); ++i)
 				{
@@ -1527,7 +1528,7 @@ LRESULT SearchFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, 
 			
 			n = 0;
 			targetMenu.AppendMenu(MF_STRING, IDC_DOWNLOADTO, CTSTRING(BROWSE));
-			if (WinUtil::lastDirs.size() > 0)
+			if (!WinUtil::lastDirs.empty())
 			{
 				targetMenu.InsertSeparatorLast(TSTRING(PREVIOUS_FOLDERS));
 				for (TStringIter i = WinUtil::lastDirs.begin(); i != WinUtil::lastDirs.end(); ++i)
@@ -1542,7 +1543,7 @@ LRESULT SearchFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, 
 				targets.clear();
 				QueueManager::getInstance()->getTargets(TTHValue(Text::fromT(cs.tth)), targets);
 				
-				if (targets.size() > 0)
+				if (!targets.empty())
 				{
 					targetMenu.InsertSeparatorLast(TSTRING(ADD_AS_SOURCE));
 					for (StringIter i = targets.begin(); i != targets.end(); ++i)
@@ -1556,7 +1557,7 @@ LRESULT SearchFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, 
 			n = 0;
 			targetDirMenu.InsertSeparatorFirst(TSTRING(DOWNLOAD_WHOLE_DIR_TO));
 			//Append favorite download dirs
-			if (spl.size() > 0)
+			if (!spl.empty())
 			{
 				for (StringPairIter i = spl.begin(); i != spl.end(); ++i)
 				{
@@ -1568,7 +1569,7 @@ LRESULT SearchFrame::onContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, 
 			
 			n = 0;
 			targetDirMenu.AppendMenu(MF_STRING, IDC_DOWNLOADDIRTO, CTSTRING(BROWSE));
-			if (WinUtil::lastDirs.size() > 0)
+			if (!WinUtil::lastDirs.empty())
 			{
 				targetDirMenu.AppendMenu(MF_SEPARATOR);
 				for (TStringIter i = WinUtil::lastDirs.begin(); i != WinUtil::lastDirs.end(); ++i)
@@ -1786,7 +1787,7 @@ LRESULT SearchFrame::onCustomDraw(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled
 			{
 				targets.clear();
 				QueueManager::getInstance()->getTargets(TTHValue(si->sr->getTTH().toBase32()), targets);
-				if (si->sr->getType() == SearchResult::TYPE_FILE && targets.size() > 0)
+				if (si->sr->getType() == SearchResult::TYPE_FILE && !targets.empty())
 					cd->clrText = SETTING(SEARCH_ALTERNATE_COLOUR);
 				if (si->sr->m_is_tth_share)
 					cd->clrTextBk = SETTING(DUPE_COLOR);

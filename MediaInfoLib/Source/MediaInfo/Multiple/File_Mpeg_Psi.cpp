@@ -1,21 +1,8 @@
-// File_Mpeg_Psi - Info for MPEG Stream files
-// Copyright (C) 2006-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -119,6 +106,7 @@ const char* Mpeg_Psi_stream_type_Format(int8u stream_type, int32u format_identif
         case 0x1E : return "MPEG Video"; //ISO/IEC 23002-3
         case 0x1F : return "AVC";
         case 0x20 : return "AVC";
+        case 0x27 : return "HEVC";
         default :
             switch (format_identifier)
             {
@@ -185,6 +173,7 @@ const char* Mpeg_Psi_stream_type_Codec(int8u stream_type, int32u format_identifi
         case 0x1E : return "MPEG-2V";
         case 0x1F : return "AVC";
         case 0x20 : return "AVC";
+        case 0x27 : return "HEVC";
         default :
             switch (format_identifier)
             {
@@ -338,6 +327,7 @@ const char* Mpeg_Psi_stream_type_Info(int8u stream_type, int32u format_identifie
         case 0x1E : return "Auxiliary video data stream as defined in ISO/IEC 23002-3";
         case 0x1F : return "SVC video sub-bitstream of an AVC video stream conforming to one or more profiles defined in Annex G of ITU-T Rec. H.264 | ISO/IEC 14496-10";
         case 0x20 : return "MVC video sub-bitstream of an AVC video stream conforming to one or more profiles defined in Annex H of ITU-T Rec. H.264 | ISO/IEC 14496-10";
+        case 0x27 : return "ITU-T Rec. H.265 | ISO/IEC 23008-2 MPEG-H Part 2 / HEVC video stream";
         case 0x7F : return "IPMP stream";
         default :
             if (stream_type<=0x7F) return "ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved";
@@ -977,7 +967,9 @@ void File_Mpeg_Psi::Data_Parse()
         Skip_B4(                                                "CRC32");
     }
 
-    if (table_id>=0x40 && Complete_Stream->Streams_NotParsedCount!=(size_t)-1 && Complete_Stream->Streams_NotParsedCount!=0)
+    if (table_id>=0x40
+     && Config->ParseSpeed>=0.5
+     && Complete_Stream->Streams_NotParsedCount!=(size_t)-1 && Complete_Stream->Streams_NotParsedCount!=0)
         Complete_Stream->Streams_NotParsedCount=(size_t)-1; //Disabling speed up for detection in case of DVB/ATSC tables, we want all of them.
 
     if (Buffer_Offset+Element_Size==Buffer_Size)
@@ -1159,7 +1151,7 @@ void File_Mpeg_Psi::Table_01()
 void File_Mpeg_Psi::Table_02()
 {
     //Informing PSI is parsed
-    if (!Complete_Stream->Transport_Streams[Complete_Stream->transport_stream_id].Programs[table_id_extension].IsParsed)
+    if (!Complete_Stream->Transport_Streams[Complete_Stream->transport_stream_id].Programs[table_id_extension].IsParsed && Complete_Stream->Transport_Streams[Complete_Stream->transport_stream_id].Programs_NotParsedCount)
     {
         Complete_Stream->Transport_Streams[Complete_Stream->transport_stream_id].Programs_NotParsedCount--;
         Complete_Stream->Transport_Streams[Complete_Stream->transport_stream_id].Programs[table_id_extension].IsParsed=true;
@@ -1178,6 +1170,7 @@ void File_Mpeg_Psi::Table_02()
     BS_End();
 
     //Descriptors
+    transport_stream_id=Complete_Stream->transport_stream_id;
     program_number=table_id_extension;
     program_number_IsValid=true;
     if (Descriptors_Size>0)
@@ -2478,7 +2471,7 @@ void File_Mpeg_Psi::program_number_Remove()
             if (StreamKind!=Stream_Max && StreamPos!=(size_t)-1)
                 Complete_Stream->StreamPos_ToRemove[StreamKind].push_back(StreamPos);
 
-            if (Complete_Stream->Streams_NotParsedCount!=(size_t)-1 && Complete_Stream->Streams_NotParsedCount>0 && !Complete_Stream->Streams[elementary_PID_Temp]->IsParsed)
+            if (Complete_Stream->Streams_NotParsedCount!=(size_t)-1 && Complete_Stream->Streams_NotParsedCount && !Complete_Stream->Streams[elementary_PID_Temp]->IsParsed)
                 Complete_Stream->Streams_NotParsedCount--; //Not parsed, and no need to parse it now
             delete Complete_Stream->Streams[elementary_PID_Temp]; Complete_Stream->Streams[elementary_PID_Temp]=new complete_stream::stream;
         }
@@ -2524,7 +2517,7 @@ void File_Mpeg_Psi::elementary_PID_Update(int16u PCR_PID)
     //stream_type
     if (stream_type!=Complete_Stream->Streams[elementary_PID]->stream_type && Complete_Stream->Streams[elementary_PID]->stream_type!=(int8u)-1)
     {
-        if (Complete_Stream->Streams_NotParsedCount!=(size_t)-1 && Complete_Stream->Streams_NotParsedCount>0 && !Complete_Stream->Streams[elementary_PID]->IsParsed)
+        if (Complete_Stream->Streams_NotParsedCount!=(size_t)-1 && Complete_Stream->Streams_NotParsedCount && !Complete_Stream->Streams[elementary_PID]->IsParsed)
             Complete_Stream->Streams_NotParsedCount--; //Not parsed, and no need to parse it now
         delete Complete_Stream->Streams[elementary_PID]; Complete_Stream->Streams[elementary_PID]=new complete_stream::stream;
         Complete_Stream->Streams[elementary_PID]->Kind=complete_stream::stream::unknown;
@@ -2607,7 +2600,7 @@ void File_Mpeg_Psi::elementary_PID_Remove()
         if (StreamKind!=Stream_Max && StreamPos!=(size_t)-1)
             Complete_Stream->StreamPos_ToRemove[StreamKind].push_back(StreamPos);
 
-        if (Complete_Stream->Streams_NotParsedCount!=(size_t)-1 && Complete_Stream->Streams_NotParsedCount>0 && !Complete_Stream->Streams[elementary_PID]->IsParsed)
+        if (Complete_Stream->Streams_NotParsedCount!=(size_t)-1 && Complete_Stream->Streams_NotParsedCount && !Complete_Stream->Streams[elementary_PID]->IsParsed)
             Complete_Stream->Streams_NotParsedCount--; //Not parsed, and no need to parse it now
         delete Complete_Stream->Streams[elementary_PID]; Complete_Stream->Streams[elementary_PID]=new complete_stream::stream;
         Complete_Stream->PES_PIDs.erase(elementary_PID);

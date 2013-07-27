@@ -1,21 +1,8 @@
-// File_Gxf - Info for GXF (SMPTE 360M) files
-// Copyright (C) 2010-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -524,7 +511,9 @@ void File_Gxf::Streams_Finish_PerStream(size_t StreamID, stream &Temp)
                 Fill(StreamKind_Last, StreamPos_Last, "Title", Temp.MediaName); //Second half of the channel grouping or standalone
 
                 for (std::map<std::string, Ztring>::iterator Info=Temp.Infos.begin(); Info!=Temp.Infos.end(); ++Info)
-                    if (Retrieve(Stream_Audio, StreamPos_Last, Info->first.c_str()).empty())
+                    if (Info->first=="BitRate" && Temp.Parsers[0]->Count_Get(Stream_Audio)>1)
+                        Fill(Stream_Audio, StreamPos_Last, Audio_BitRate_Encoded, Pos?Ztring(__T("0")):Info->second); // In case of more than 1 audio sub-stream Encoded bit rate is the bit rate of all streams + overhead
+                    else if (Retrieve(Stream_Audio, StreamPos_Last, Info->first.c_str()).empty())
                         Fill(Stream_Audio, StreamPos_Last, Info->first.c_str(), Info->second);
             }
 
@@ -1585,7 +1574,7 @@ File__Analyze* File_Gxf::ChooseParser_ChannelGrouping(int8u TrackID)
             return NULL; //Not a channel grouping
 
         Parser=new File_ChannelGrouping;
-        Parser->CanBePcm=true;;
+        Parser->CanBePcm=true;
         Parser->Channel_Pos=1;
         Parser->Common=((File_ChannelGrouping*)Streams[TrackID-1].Parsers[0])->Common;
         Parser->StreamID=TrackID-1;
@@ -1594,7 +1583,7 @@ File__Analyze* File_Gxf::ChooseParser_ChannelGrouping(int8u TrackID)
     else
     {
         Parser=new File_ChannelGrouping;
-        Parser->CanBePcm=true;;
+        Parser->CanBePcm=true;
         Parser->Channel_Pos=0;
         //if (Descriptor->second.Infos.find("SamplingRate")!=Descriptor->second.Infos.end())
         Streams[TrackID].IsChannelGrouping=true;

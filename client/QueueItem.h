@@ -149,7 +149,7 @@ class QueueItem : public Flags,  public intrusive_ptr_base<QueueItem>
 			dec();
 		}
 		
-		size_t countOnlineUsers() const;
+		size_t countOnlineUsers(size_t p_stop_value = 0xFFFFFFFF) const;
 		void getOnlineUsers(HintedUserList& l) const;
 		
 		SourceList& getSources()

@@ -1,21 +1,8 @@
-// File_Dummy - Fill with Name of tags
-// Copyright (C) 2005-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -84,10 +71,10 @@ void File_Dummy::FileHeader_Parse()
         Fill(Stream_General, 0, General_Released_Date, "1977");
         Fill(Stream_General, 0, General_FileSize, "734000000");
         Fill(Stream_General, 0, General_Format, "Matroska");
-        Fill(Stream_General, 0, General_Format_Url, "http://mediainfo.sourceforge.net");
+        Fill(Stream_General, 0, General_Format_Url, "http://MediaArea.net/MediaInfo");
         Stream_Prepare(Stream_Video);
         Fill(Stream_Video, 0, Video_Codec, "XVID");
-        Fill(Stream_Video, 0, Video_Codec_Url, "http://mediainfo.sourceforge.net");
+        Fill(Stream_Video, 0, Video_Codec_Url, "http://MediaArea.net/MediaInfo");
         Fill(Stream_Video, 0, Video_BitRate, "800000");
         Fill(Stream_Video, 0, Video_Width, "720");
         Fill(Stream_Video, 0, Video_Height, "320");
@@ -97,7 +84,7 @@ void File_Dummy::FileHeader_Parse()
         Stream_Prepare(Stream_Audio);
         Fill(Stream_Audio, 0, Audio_Format, "AC-3");
         Fill(Stream_Audio, 0, Audio_Codec, "AC3");
-        Fill(Stream_Audio, 0, Audio_Codec_Url, "http://mediainfo.sourceforge.net");
+        Fill(Stream_Audio, 0, Audio_Codec_Url, "http://MediaArea.net/MediaInfo");
         Fill(Stream_Audio, 0, Audio_BitRate, "384000");
         Fill(Stream_Audio, 0, Audio_BitRate_Mode, "CBR");
         Fill(Stream_Audio, 0, Audio_Channel_s_, "6");
@@ -105,7 +92,7 @@ void File_Dummy::FileHeader_Parse()
         Fill(Stream_Audio, 0, Audio_Language, "en");
         Stream_Prepare(Stream_Text);
         Fill(Stream_Text, 0, Text_Codec, "SSA");
-        Fill(Stream_Text, 0, Text_Codec_Url, "http://mediainfo.sourceforge.net");
+        Fill(Stream_Text, 0, Text_Codec_Url, "http://MediaArea.net/MediaInfo");
         Fill(Stream_Text, 0, Text_Language, "en");
         Fill(Stream_Text, 0, Text_Language_More, "Forced");
         Stream_Prepare(Stream_Other);
@@ -124,7 +111,7 @@ void File_Dummy::FileHeader_Parse()
 void File_Dummy::Fill_Dummy_General()
 {
     Fill(Stream_General, 0, General_Format, "Format");
-    Fill(Stream_General, 0, General_Format_Url, "http://mediainfo.sourceforge.net");
+    Fill(Stream_General, 0, General_Format_Url, "http://MediaArea.net/MediaInfo");
     Fill(Stream_General, 0, General_Format_Extensions, "fmt fmt fmt");
     Fill(Stream_General, 0, General_FileSize, "1000000");
     Fill(Stream_General, 0, General_Duration, "10000");

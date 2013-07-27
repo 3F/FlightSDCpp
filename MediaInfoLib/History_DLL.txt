@@ -3,13 +3,63 @@ Notes:
 + Added
 - Deleted
 x Correction
-#number is the identifier of bug report/requested feature/patch
+#number is the identifier of bug report (B), requested feature (F) or patch (P)
 bug reports and feature request are here:
-http://sourceforge.net/tracker/?group_id=86862
+https://sourceforge.net/p/mediainfo/_list/tickets
 
 
-Version 0.7.63, 2013-
+Version 0.7.65, 2013-
 --------------
++ MXF: forcing detection of MPEG Video in case EssenceCompression is not present but MPEG2VideoDescriptor is present
+x MPEG-4: wrong demux of some E-AC-3 streams
+
+Version 0.7.64, 2013-07-05
+--------------
++ New canonical URL of the website: http://MediaArea.net/MediaInfo
++ E-AC-3: support of streams having substreams (e.g. more than 6 channels)
++ JPEG: detection of YUVA, RGB, RGBA and YCCK color spaces
++ MPEG Audio: detection of Id3v1 inside an MPEG Audio frame
++ Matroska: support of HEVC/H.265 (based on specifications draft from DivX inc)
++ Canopus: detection of scan mode, scan order, pixel aspect ratio
++ MD5 generation option (work in progress)
++ Id3v2: reading of all Id3v2 blocks (no more only the first one) at the beginning of the file
++ MPEG-4: support of few additional iTunes tags, thanks to Kurtnoise
++ AVI: detection of Ut Video, thanks to Kurtnoise
++ MXF: detection of Dolby E even if EssenceCompression is not SMPTE 337
++ AIFF: detection of Dolby E
++ AIFF: detection of not aligned Dolby E
++ ARIB B24/B37: Caption_conversion_type display (HD, SD, Mobile)
++ MPEG-TS: displaying CEA-708 service and CEA-608 presence if the corresponding ATSC descriptor is present
++ MPEG-TS: quicker analysis in the case of quick parsing option
++ #F412, Matroska: Handling of files having no DocType
+x #B761, MPEG-TS/ARIB: crash with some streams, thanks to maki
+x #B765, Matroska: was parsing the complete file if a stream indicated in the header is not present
+x #B763, MXF: detection of incoherency of channel count between bitstream and wrapper
+x #B762, Matroska: detecting 23.976 frame rate (instead of 23.962 fps due to imprecise timestamp)
+x #B759, QuickTime: detection of time codes having tcmi not embedded in tmcd box
+x #B766, RMVB: a/v delay is incorrect, currently disabling it
+x #B768, MPEG-4, crash with some MPEG-4 files
+x #B769, MPEG-4, crash with some MPEG-4 files
+x #B764, AVC: wrong parsing of some streams having pic_scaling_matrix
+x AVC, crash with some AVC streams
+x AAC, infinite loop with some AAC streams
+x FLV, infinite loop with some FLV files
+x Matroska: crash with some malformed files
+x MOV: crash/long parsing with some malformed files
+x AC-3: crashes and freezes fix
+x Java 64-bit: Count_Get(StreamKind) was always returning 0
+x Python 64-bit: Count_Get(StreamKind) was always returning 0
+x DTS: some streams were not detected
+x DTS: some memory leaks with 14-bit streams
+x SMPTE ST 302: memory leaks
+x SMPTE ST 337: memory leaks
+x Total failure if MEDIAINFO_REFERENCES_NO #define was used
+x QuickTime: Time code name is in "Title" field
+x MPEG-4/QuickTime: handling of weird "negative" frame duration is stts
+
+Version 0.7.63, 2013-05-13
+--------------
++ Switched to a BSD-2-Clause license
 + LXF: AFD (from ancillary stream) support
 + Detection of some side car files and showing them as a single package (optional)
 + MOV: more channel positions information
@@ -19,9 +69,20 @@ Version 0.7.63, 2013-
 + .so: search a local copy of the library before trying default path
 + AVI: Support of Adobe PARf (Aspect Ratio) chunk
 + VC-3: Scan order
-x #742, MPEG-4/MOV, crash with some truncated/invalid files
-x #746, MPEG-4/MOV: crash with files having moof atom and no moov atom
-x #747, Inconsistent hang with buffer API
++ #P65, Flac/Ogg DISCTOTAL metadata support, thanks to Kurtnoise
++ #P67, MOV, add Hap Video to the database, thanks to Kurtnoise
++ #P67, Matroska, add VP9 to the database, thanks to Kurtnoise
++ #P68, FLV, add HEVC detection in the FLV parser
++ #P66, MOV, tref/chap handling, with chapters information, thanks to Kurtnoise
++ #P72, MOV, HEVC/H265 detection and basic support, thanks to Kurtnoise
++ #F382/P75, PMP format detection
++ MPEG-TS, HEVC/H265 support
++ 16:10 DAR known value
+x #B742, MPEG-4/MOV, crash with some truncated/invalid files
+x #B746, MPEG-4/MOV: crash with files having moof atom and no moov atom
+x #B747, Inconsistent hang with buffer API
+x #B757, MediaInfoDLL.py MediaInfoList was not working, thanks to Elbenfreund
+x #B740, XML: dt:dt is replaced by dt (for binary data)
 x MXF: Dolby E streams starting only at the second or third frame were not well detected
 x MPEG-4/MOV: reducing analysis time for I-frame only video streams
 x CEA-708: weird behavior phantom streams are displayed) in case of buggy CEA-708
@@ -29,6 +90,8 @@ x AVI: crash with audio delay and AvgBytesPerSec of 0
 x Wrong demuxing of the caption stream in the case of AVC streams without frame_mbs_only_flag but having 2 fields in one slice.
 x DPX: parsing was very slow with a sequence of files.
 x MXF: Pre-charge duration was not read, time code of the first frame was wrong if "Origin" is not 0
+x FLV: file was sometimes (e.g. most of the file padded with zeroes) fully parsed
+x VC-3: Using values from specifications (based on compression ID) instead of SBD/SST/SPL/APLF from bitstream
 
 Version 0.7.62, 2013-02-22
 --------------

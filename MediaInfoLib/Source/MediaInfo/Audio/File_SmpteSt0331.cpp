@@ -1,20 +1,9 @@
-// File_SmpteSt0331 - Info about SMPTE ST 331 streams
-// Copyright (C) 2008-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //
 // AES3 PCM and non-PCM (SMPTE 337M)
@@ -178,6 +167,9 @@ void File_SmpteSt0331::Read_Buffer_Continue()
         Element_Offset=4;
 
         #if MEDIAINFO_DEMUX
+            OriginalBuffer_Size=(size_t)Element_Size;
+            OriginalBuffer=(int8u*)(Buffer+Buffer_Offset);
+
             FrameInfo.PTS=FrameInfo.DTS;
             FrameInfo.DUR=(Element_Size-4)*1000000000/48000/32; // 48 kHz, 4 bytes per sample
             Demux_random_access=true;
@@ -185,6 +177,9 @@ void File_SmpteSt0331::Read_Buffer_Continue()
             Element_Offset=0;
             Demux(Info, Info_Offset, ContentType_MainStream);
             Element_Offset=4;
+
+            OriginalBuffer_Size=0;
+            OriginalBuffer=NULL;
         #endif //MEDIAINFO_DEMUX
 
         delete[] Info;

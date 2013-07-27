@@ -498,7 +498,7 @@ class MainFrame : public CMDIFrameWindowImpl<MainFrame>, public CUpdateUI<MainFr
 		bool oldshutdown;
 		
 		int tabPos;
-		bool closing;
+		bool m_closing;
 		
 		int lastUpload;
 		

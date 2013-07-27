@@ -81,7 +81,6 @@
     <ClCompile Include="jsoncpp\src\lib_json\json_writer.cpp">
       <Filter>jsoncpp</Filter>
     </ClCompile>
-    <ClCompile Include="client\CFlyProfiler.cpp" />
     <ClCompile Include="client\DebugManager.cpp" />
     <ClCompile Include="client\Exception.cpp" />
   </ItemGroup>
@@ -228,7 +227,6 @@
       <Filter>jsoncpp</Filter>
     </ClInclude>
     <ClInclude Include="client\CFlyMediaInfo.h" />
-    <ClInclude Include="client\CFlyProfiler.h" />
     <ClInclude Include="client\HintedUser.h" />
     <ClInclude Include="client\util_flylinkdc.h" />
   </ItemGroup>

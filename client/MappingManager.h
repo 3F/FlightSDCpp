@@ -58,8 +58,9 @@ class MappingManager :
 		boost::atomic_flag busy;
 		unique_ptr<Mapper> working; /// currently working implementation.
 		uint64_t renewal; /// when the next renewal should happen, if requested by the mapper.
+		int m_listeners_count;
 		
-		MappingManager() : renewal(0) { }
+		MappingManager();
 		virtual ~MappingManager()
 		{
 			join();

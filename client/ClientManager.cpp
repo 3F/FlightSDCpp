@@ -39,7 +39,7 @@
 
 namespace dcpp
 {
-    bool ClientManager::isSigKill = false;
+bool ClientManager::_isSigKill = false;
 
 Client* ClientManager::getClient(const string& aHubURL)
 {
@@ -81,7 +81,7 @@ void ClientManager::putClient(Client* aClient)
 		clients.erase(aClient->getHubUrl());
 	}
 	aClient->shutdown();
-    aClient->clearUsers(isSigKill);
+    aClient->clearUsers(isSigKill());
 	delete aClient;
 }
 
@@ -430,7 +430,7 @@ void ClientManager::putOffline(OnlineUser* ou, bool disconnect) noexcept
 	{
 		UserPtr& u = ou->getUser();
 		u->unsetFlag(User::ONLINE);
-		updateNick(*ou);
+		// [-] updateNick(ou); [-] FlylinkDC++ fix.
 		if (disconnect)
 			ConnectionManager::getInstance()->disconnect(u);
 		fire(ClientManagerListener::UserDisconnected(), u);
@@ -590,7 +590,7 @@ void ClientManager::on(NmdcSearch, Client* aClient, const string& aSeeker, int a
 	
 	SearchResultList l;
 	ShareManager::getInstance()->search(l, aString, aSearchType, aSize, aFileType, aClient, isPassive ? 5 : 10);
-	if (l.size() > 0)
+	if (!l.empty())
 	{
 		if (isPassive)
 		{
@@ -606,7 +606,7 @@ void ClientManager::on(NmdcSearch, Client* aClient, const string& aSeeker, int a
 				str += '|';
 			}
 			
-			if (str.size() > 0)
+			if (!str.empty())
 				aClient->send(str);
 				
 		}

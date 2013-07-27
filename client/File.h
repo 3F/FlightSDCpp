@@ -128,7 +128,7 @@ class File : public IOStream
 		// TODO сделать чтобы работало http://code.google.com/p/flylinkdc/issues/detail?id=1019
 		static string FormatPath(const string& path)
 		{
-			if (path.size() < MAX_PATH-1)
+			if (path.size() < MAX_PATH - 1)
 				return path;
 				
 			if (path[1] == '\\' && path[0] == '\\')
@@ -139,7 +139,7 @@ class File : public IOStream
 		
 		static tstring FormatPath(const tstring& path)
 		{
-			if (path.size() < MAX_PATH-1)
+			if (path.size() < MAX_PATH - 1)
 				return path;
 				
 			if (path[1] == _T('\\') && path[0] == _T('\\'))

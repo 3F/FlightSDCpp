@@ -140,23 +140,23 @@ const tstring QueueFrame::QueueItemInfo::getText(int col) const
 			}
 			else if (isWaiting())
 			{
+				const size_t size = QueueManager::getInstance()->getSourcesCount(qi);
 				if (l_online > 0)
 				{
-					size_t size = QueueManager::getInstance()->getSourcesCount(qi);
 					if (size == 1)
 					{
 						return TSTRING(WAITING_USER_ONLINE);
 					}
 					else
 					{
-						TCHAR buf[64];
-						_stprintf(buf, CTSTRING(WAITING_USERS_ONLINE), l_online, size);
-						return buf;
+						TCHAR l_buf[64];
+						l_buf[0] = 0;
+						_sntprintf(l_buf, _countof(l_buf), CTSTRING(WAITING_USERS_ONLINE), l_online, size);
+						return l_buf;
 					}
 				}
 				else
 				{
-					size_t size = QueueManager::getInstance()->getSourcesCount(qi);
 					if (size == 0)
 					{
 						return TSTRING(NO_USERS_TO_DOWNLOAD_FROM);
@@ -179,9 +179,10 @@ const tstring QueueFrame::QueueItemInfo::getText(int col) const
 					}
 					else
 					{
-						TCHAR buf[64];
-						_stprintf(buf, CTSTRING(ALL_USERS_OFFLINE), size);
-						return buf;
+						TCHAR l_buf[64];
+						l_buf[0] = 0;
+						_sntprintf(l_buf, _countof(l_buf), CTSTRING(ALL_USERS_OFFLINE), size);
+						return l_buf;
 					}
 				}
 			}
@@ -194,9 +195,10 @@ const tstring QueueFrame::QueueItemInfo::getText(int col) const
 				}
 				else
 				{
-					TCHAR buf[64];
-					_stprintf(buf, CTSTRING(USERS_ONLINE), l_online, size);
-					return buf;
+					TCHAR l_buf[64];
+					l_buf[0] = 0;
+					_sntprintf(l_buf, _countof(l_buf), CTSTRING(USERS_ONLINE), l_online, size);
+					return l_buf;
 				}
 			}
 		}
@@ -252,7 +254,7 @@ const tstring QueueFrame::QueueItemInfo::getText(int col) const
 			QueueItem::SourceList sources = QueueManager::getInstance()->getSources(qi);
 			for (QueueItem::SourceConstIter j = sources.begin(); j != sources.end(); ++j)
 			{
-				if (tmp.size() > 0)
+				if (!tmp.empty())
 					tmp += _T(", ");
 					
 				tmp += WinUtil::getNicks(j->getUser());
@@ -271,7 +273,7 @@ const tstring QueueFrame::QueueItemInfo::getText(int col) const
 			{
 				if (!j->isSet(QueueItem::Source::FLAG_REMOVED))
 				{
-					if (tmp.size() > 0)
+					if (!tmp.empty())
 						tmp += _T(", ");
 					tmp += WinUtil::getNicks(j->getUser());
 					tmp += _T(" (");

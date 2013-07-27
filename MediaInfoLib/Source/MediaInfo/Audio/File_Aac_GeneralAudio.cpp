@@ -1,21 +1,8 @@
-// File_Aac - Info for AAC (Raw) files
-// Copyright (C) 2008-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -267,8 +254,9 @@ void File_Aac::program_config_element()
 
     FILLING_BEGIN();
         //Integrity test
-        if (Aac_sampling_frequency[sampling_frequency_index_Temp]==0 || Channels_Front<Channels_Side || Channels_Side<Channels_Back)
+        if (Aac_sampling_frequency[sampling_frequency_index_Temp]==0 || Channels>24) // TODO: full_2023548870.mp4 is buggy
         {
+            Trusted_IsNot("sampling frequency / channels");
             Skip_BS(Data_BS_Remain(),                               "(Unknown frequency)");
             return;
         }
@@ -798,7 +786,7 @@ void File_Aac::section_data()
             sect_len+=sect_len_incr;
             sect_start[g][i]=k;
             sect_end[g][i]=k+sect_len;
-            for (int8u sfb=k; sfb<k+sect_len; sfb++)
+            for (int16u sfb=k; sfb<k+sect_len; sfb++)
                 sfb_cb[g][sfb]=sect_cb[g][i];
             k+= sect_len;
             i++;

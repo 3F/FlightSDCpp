@@ -235,7 +235,7 @@ string Identity::setCheat(const ClientBase& c, const string& aCheatDescription, 
 	if (!c.isOp() || isOp()) return Util::emptyString;
 	
 	if ((!SETTING(FAKERFILE).empty()) && (!BOOLSETTING(SOUNDS_DISABLED)))
-		PlaySound(Text::toT(SETTING(FAKERFILE)).c_str(), NULL, SND_FILENAME | SND_ASYNC);
+		PlaySound(Text::toT(SETTING(FAKERFILE)).c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 		
 	StringMap ucParams;
 	getParams(ucParams, "user", true);

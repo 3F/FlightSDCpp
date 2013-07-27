@@ -53,7 +53,7 @@ class QueueManager : public Singleton<QueueManager>, public Speaker<QueueManager
 		
 		/** Add a file to the queue. */
 		void add(const string& aTarget, int64_t aSize, const TTHValue& root, const HintedUser& aUser,
-		         Flags::MaskType aFlags = 0, bool addBad = true) throw(QueueException, FileException);
+		         Flags::MaskType aFlags = 0, bool addBad = true, bool p_first_file = true) throw(QueueException, FileException);
 		/** Add a user's filelist to the queue. */
 		void addList(const HintedUser& HintedUser, Flags::MaskType aFlags, const string& aInitialDir = Util::emptyString) throw(QueueException, FileException);
 		

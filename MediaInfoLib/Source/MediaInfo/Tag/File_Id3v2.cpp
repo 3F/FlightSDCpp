@@ -1,21 +1,8 @@
-// File_Id3 - Info for ID3v2 tagged files
-// Copyright (C) 2005-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -360,7 +347,7 @@ void File_Id3v2::Streams_Fill()
                 {
                     Recorded_Date+=__T(' ');
                     Recorded_Date+=Hour;
-                    if (Minute.empty())
+                    if (!Minute.empty())
                     {
                         Recorded_Date+=__T(':');
                         Recorded_Date+=Minute;
@@ -989,7 +976,15 @@ void File_Id3v2::COMM()
 
     //Filling
     if (Element_Values(0).empty())
+    {
+        if (Element_Values(1).find(__T("ExactAudioCopy"))==0)
+        {
+            Fill(Stream_General, 0, General_Encoded_Application, Element_Values(1));
+            return;
+        }
+
         Element_Values(0)=__T("Comment");
+    }
     Fill_Name();
 }
 

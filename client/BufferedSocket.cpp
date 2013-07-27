@@ -57,6 +57,11 @@ void BufferedSocket::setMode(Modes aMode, size_t aRollback)
 		dcdebug("WARNING: Re-entering mode %d\n", mode);
 		return;
 	}
+	if (mode == MODE_ZPIPE && filterIn)
+	{
+		// delete the filter when going out of zpipe mode.
+		filterIn.reset();
+	}
 	switch (aMode)
 	{
 		case MODE_LINE:
@@ -327,6 +332,7 @@ void BufferedSocket::threadRead()
 						{
 							mode = MODE_LINE;
 							fire(BufferedSocketListener::ModeChange());
+							break; // [DC++] break loop, in case setDataMode is called with less than read buffer size
 						}
 					}
 				}

@@ -77,7 +77,13 @@
 #include <boost/noncopyable.hpp>
 #endif
 
-#define BOOST_ALL_NO_LIB 1
+#ifndef BOOST_ALL_NO_LIB
+#define BOOST_ALL_NO_LIB
+#endif
+
+#ifndef BOOST_USE_WINDOWS_H
+#define BOOST_USE_WINDOWS_H
+#endif
 
 #endif // MakeDefs
 

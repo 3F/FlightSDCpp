@@ -77,7 +77,8 @@ string SocketException::errorToString(int aError) noexcept
 	if (msg.empty())
 	{
 		char tmp[64];
-		snprintf(tmp, sizeof(tmp), CSTRING(UNKNOWN_ERROR), aError);
+		tmp[0] = 0;
+		snprintf(tmp, _countof(tmp), CSTRING(UNKNOWN_ERROR), aError);
 		msg = tmp;
 	}
 	

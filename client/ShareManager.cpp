@@ -56,6 +56,7 @@
 namespace dcpp
 {
 
+bool ShareManager::g_isShutdown;
 ShareManager::ShareManager() : hits(0), xmlListLen(0), bzXmlListLen(0),
 	xmlDirty(true), forceXmlRefresh(false), refreshDirs(false), update(false), initial(true), listN(0),
 	lastXmlUpdate(0), lastFullUpdate(GET_TICK()), bloom(1 << 20), sharedSize(0), m_sweep_guard(0), m_sweep_path(0)
@@ -68,6 +69,7 @@ ShareManager::ShareManager() : hits(0), xmlListLen(0), bzXmlListLen(0),
 
 ShareManager::~ShareManager()
 {
+	dcassert(g_isShutdown == true);
 	SettingsManager::getInstance()->removeListener(this);
 	TimerManager::getInstance()->removeListener(this);
 	QueueManager::getInstance()->removeListener(this);
@@ -822,7 +824,7 @@ return directories.end();
 int64_t ShareManager::getShareSize(const string& realPath) const noexcept
 {
     Lock l(cs);
-    dcassert(realPath.size() > 0);
+    dcassert(!realPath.empty());
     StringMap::const_iterator i = shares.find(realPath);
     
     if (i != shares.end())

@@ -857,7 +857,7 @@ void UploadManager::on(TimerManagerListener::Second, uint64_t aTick) noexcept
 			}
 		}
 		
-		if (ticks.size() > 0)
+		if (!ticks.empty())
 			fire(UploadManagerListener::Tick(), ticks);
 			
 		notifyQueuedUsers();

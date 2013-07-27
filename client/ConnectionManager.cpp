@@ -596,7 +596,7 @@ void ConnectionManager::on(UserConnectionListener::MyNick, UserConnection* aSour
 		return;
 	}
 	
-	dcassert(aNick.size() > 0);
+	dcassert(!aNick.empty());
 	dcdebug("ConnectionManager::onMyNick %p, %s\n", (void*)aSource, aNick.c_str());
 	dcassert(!aSource->getUser());
 	
@@ -1029,12 +1029,13 @@ void ConnectionManager::disconnect(const UserPtr& aUser, int isDownload)
 
 void ConnectionManager::shutdown()
 {
-	TimerManager::getInstance()->removeListener(this);
+	dcassert(shuttingDown == false);
 	shuttingDown = true;
+	TimerManager::getInstance()->removeListener(this);
 	disconnect();
 	{
 		Lock l(cs);
-		for (UserConnectionList::const_iterator j = userConnections.begin(); j != userConnections.end(); ++j)
+		for (auto j = userConnections.cbegin(); j != userConnections.cend(); ++j)
 		{
 			(*j)->disconnect(true);
 		}
@@ -1057,9 +1058,9 @@ void ConnectionManager::shutdown()
 void ConnectionManager::on(UserConnectionListener::Supports, UserConnection* conn, const StringList& feat) noexcept
 {
 	string sup;
-	for (StringList::const_iterator i = feat.begin(); i != feat.end(); ++i)
+	for (auto i = feat.cbegin(); i != feat.cend(); ++i)
 	{
-		sup += (string) * i + " ";
+		sup += (string) * i + ' ';
 		if (*i == UserConnection::FEATURE_MINISLOTS)
 		{
 			conn->setFlag(UserConnection::FLAG_SUPPORTS_MINISLOTS);

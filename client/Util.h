@@ -180,10 +180,6 @@ class LocalArray
 		{
 			return N * sizeof(T);
 		}
-		const T* data() const
-		{
-			return m_data;
-		}
 		T* data()
 		{
 			return m_data;
@@ -482,8 +478,8 @@ class Util
 			* MSVC's atoi returns INT_MIN/INT_MAX if out-of-range; hence, a number
 			* between INT_MAX and UINT_MAX can't be converted back to uint32_t.
 			*/
-			uint32_t ret = atoi(c);
-			if (errno == ERANGE)
+			const uint32_t ret = atoi(c);
+			if ((ret == INT_MAX || ret == INT_MIN ) && errno == ERANGE)
 				return (uint32_t)_atoi64(c);
 			return ret;
 #else

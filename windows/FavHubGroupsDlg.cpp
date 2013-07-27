@@ -214,7 +214,7 @@ LRESULT FavHubGroupsDlg::onRemove(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWn
 	{
 		tstring name = getText(0, pos);
 		FavoriteHubEntryList l = FavoriteManager::getInstance()->getFavoriteHubs(Text::fromT(name));
-		if (l.size() > 0)
+		if (!l.empty())
 		{
 			tstring msg;
 			msg += _T("The group ");

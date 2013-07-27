@@ -18,6 +18,8 @@ MediaInfoLib
 Zenlib
 miniupnpc
 natpmp
+leveldb
+snappy
 src_exclude.txt
 src_include.txt
 runDoxygen.bat

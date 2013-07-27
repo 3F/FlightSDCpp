@@ -268,11 +268,15 @@ void UserConnection::on(Data, uint8_t* data, size_t len) noexcept
 	const string& l_hubUrl = getHubUrl();
 	if (len && l_hubUrl.length())
 	{
-		const string l_nick =  ClientManager::getInstance()->getNicks(getUser()->getCID(), l_hubUrl)[0]; //[+]PPA TODO
-		CFlylinkDBManager::getInstance()->store_ratio(
-		    l_hubUrl,
-		    l_nick,
-		    len, getRemoteIp(), true);
+		const auto& l_nicks = ClientManager::getInstance()->getNicks(getUser()->getCID(), l_hubUrl);
+		if (!l_nicks.empty())
+		{
+			const string l_nick =  l_nicks[0];
+			CFlylinkDBManager::getInstance()->store_ratio(
+			    l_hubUrl,
+			    l_nick,
+			    len, getRemoteIp(), true);
+		}
 	}
 	fire(UserConnectionListener::Data(), this, data, len);
 }
@@ -282,9 +286,13 @@ void UserConnection::on(BytesSent, size_t bytes, size_t actual) noexcept
 	lastActivity = GET_TICK();
 	if (bytes)
 	{
-		const string l_nick = ClientManager::getInstance()->getNicks(getUser()->getCID(), getHubUrl())[0]; //[+]PPA TODO
-		CFlylinkDBManager::getInstance()->store_ratio(
-		    getHubUrl(), l_nick , bytes, getRemoteIp(), false);
+		const auto& l_nicks = ClientManager::getInstance()->getNicks(getUser()->getCID(), getHubUrl());
+		if (!l_nicks.empty())
+		{
+			const string l_nick = l_nicks[0]; //[+]PPA TODO
+			CFlylinkDBManager::getInstance()->store_ratio(
+			    getHubUrl(), l_nick , bytes, getRemoteIp(), false);
+		}
 	}
 	fire(UserConnectionListener::BytesSent(), this, bytes, actual);
 }

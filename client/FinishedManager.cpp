@@ -79,7 +79,7 @@ void FinishedManager::on(QueueManagerListener::Finished, const QueueItem* qi, co
 	
 	if (isFile && !SETTING(FINISHFILE).empty() && !BOOLSETTING(SOUNDS_DISABLED))
 	{
-		PlaySound(Text::toT(SETTING(FINISHFILE)).c_str(), NULL, SND_FILENAME | SND_ASYNC);
+		PlaySound(Text::toT(SETTING(FINISHFILE)).c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 	}
 	
 	if (isFile || (qi->isSet(QueueItem::FLAG_USER_LIST) && BOOLSETTING(LOG_FILELIST_TRANSFERS)))

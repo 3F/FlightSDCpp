@@ -99,7 +99,7 @@
       <CompileAs>Default</CompileAs>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>_UNICODE;BOOST_ALL_NO_LIB;_DEBUG;UNICODE;HAS_PCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;BOOST_ALL_NO_LIB;HAVE_NATUPNP_H;_DEBUG;UNICODE;HAS_PCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OptimizeForWindowsApplication>false</OptimizeForWindowsApplication>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
@@ -138,7 +138,7 @@
       <CompileAs>Default</CompileAs>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>_UNICODE;BOOST_ALL_NO_LIB;UNICODE;HAS_PCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;BOOST_ALL_NO_LIB;HAVE_NATUPNP_H;UNICODE;HAS_PCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OptimizeForWindowsApplication>false</OptimizeForWindowsApplication>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
@@ -179,7 +179,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>NDEBUG;BOOST_ALL_NO_LIB;_UNICODE;UNICODE;HAS_PCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;BOOST_ALL_NO_LIB;HAVE_NATUPNP_H;_UNICODE;UNICODE;HAS_PCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <ResourceCompile>
@@ -223,7 +223,7 @@
       <CallingConvention>Cdecl</CallingConvention>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>NDEBUG;BOOST_ALL_NO_LIB;_UNICODE;UNICODE;HAS_PCH;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;BOOST_ALL_NO_LIB;HAVE_NATUPNP_H;_UNICODE;UNICODE;HAS_PCH;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <OptimizeForWindowsApplication>true</OptimizeForWindowsApplication>
     </ClCompile>
@@ -242,7 +242,6 @@
     <ClCompile Include="client\ADLSearch.cpp" />
     <ClCompile Include="client\BufferedSocket.cpp" />
     <ClCompile Include="client\BZUtils.cpp" />
-    <ClCompile Include="client\CFlyProfiler.cpp" />
     <ClCompile Include="client\ChatMessage.cpp" />
     <ClCompile Include="client\CID.cpp" />
     <ClCompile Include="client\Client.cpp" />
@@ -330,7 +329,6 @@
   <ItemGroup>
     <ClInclude Include="client\CFlylinkDBManager.h" />
     <ClInclude Include="client\CFlyMediaInfo.h" />
-    <ClInclude Include="client\CFlyProfiler.h" />
     <ClInclude Include="client\HintedUser.h" />
     <ClInclude Include="client\sqlite\sqlite3.h" />
     <ClInclude Include="client\sqlite\sqlite3ext.h" />

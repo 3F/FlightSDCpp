@@ -202,7 +202,7 @@ int ExListViewCtrl::insert(TStringList& aList, int iImage, LPARAM lParam)
 int ExListViewCtrl::insert(int nItem, TStringList& aList, int iImage, LPARAM lParam)
 {
 
-	dcassert(aList.size() > 0);
+	dcassert(!aList.empty());
 	
 	int i = insert(nItem, aList[0], iImage, lParam);
 	

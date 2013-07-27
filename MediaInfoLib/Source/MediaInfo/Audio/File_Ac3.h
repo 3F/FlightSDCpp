@@ -1,21 +1,8 @@
-// File_Ac3 - Info for AC3 files
-// Copyright (C) 2004-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 #ifndef MediaInfo_Ac3H
@@ -76,6 +63,7 @@ private :
 
     //Elements
     void Core();
+    void Core_Frame();
     void HD();
     void TimeStamp();
     void dac3();
@@ -117,17 +105,18 @@ private :
     std::map<int8u, int64u> fscods;
     std::map<int8u, int64u> frmsizecods;
     int64u Frame_Count_HD;
-    int16u chanmap;
-    int16u frmsiz;
+    int16u chanmap_Max[8][9];
+    int16u frmsizplus1_Max[8][9];
     int16u HD_BitRate_Max;
     int16u HD_Channels2;
     int8u  fscod;
     int8u  fscod2;
     int8u  frmsizecod;
     int8u  bsid;
-    int8u  bsmod;
-    int8u  acmod;
-    int8u  dsurmod;
+    int8u  bsid_Max;
+    int8u  bsmod_Max[8][9];
+    int8u  acmod_Max[8][9];
+    int8u  dsurmod_Max[8][9];
     int8u  numblkscod;
     int8u  HD_StreamType;
     int8u  HD_SubStreams_Count;
@@ -137,7 +126,9 @@ private :
     int8u  HD_Resolution1;
     int8u  HD_Resolution2;
     int8u  dynrng_Old;
-    bool   lfeon;
+    int8u  substreamid_Independant_Current;
+    int8u  substreams_Count;
+    bool   lfeon_Max[8][9];
     bool   dxc3_Parsed;
     bool   HD_MajorSync_Parsed;
     bool   HD_NoRestart;
@@ -146,12 +137,15 @@ private :
     bool   Core_IsPresent;
     bool   HD_IsPresent;
     bool   dynrnge_Exists;
+    bool   chanmape_Max[8][9];
     bool   TimeStamp_IsPresent;
     bool   TimeStamp_IsParsing;
     bool   TimeStamp_Parsed;
     bool   TimeStamp_DropFrame_IsValid;
     bool   TimeStamp_DropFrame_Content;
     bool   BigEndian;
+    bool   IgnoreCrc_Done;
+    bool   IgnoreCrc;
     float64 TimeStamp_Content;
 };
 

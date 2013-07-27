@@ -22,7 +22,7 @@
 #ifdef _WIN32
 
 #ifndef _WIN32_WINNT
-# define _WIN32_WINNT 0x0600
+# define _WIN32_WINNT 0x0501 // Если boost 1.54 должны работать под XP
 #endif
 
 #ifndef _WIN32_IE
@@ -48,7 +48,6 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include <tchar.h>
-#include "CFlyProfiler.h"
 
 class CFlySafeGuard
 {

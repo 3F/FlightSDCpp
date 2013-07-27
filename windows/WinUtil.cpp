@@ -1922,14 +1922,14 @@ int WinUtil::SetupPreviewMenu(CMenu &previewMenu, string extension)
 {
 	int PreviewAppsSize = 0;
 	PreviewApplication::List lst = FavoriteManager::getInstance()->getPreviewApps();
-	if (lst.size() > 0)
+	if (!lst.empty())
 	{
 		PreviewAppsSize = 0;
 		for (PreviewApplication::Iter i = lst.begin(); i != lst.end(); ++i)
 		{
 			const StringList tok = StringTokenizer<string>((*i)->getExtension(), ';').getTokens();
 			bool add = false;
-			if (tok.size() == 0)add = true;
+			if (tok.empty())add = true;
 			
 			
 			for (auto si = tok.cbegin(); si != tok.cend(); ++si)
@@ -1968,6 +1968,7 @@ void WinUtil::RunPreviewCommand(unsigned int index, const string& target)
 string WinUtil::formatTime(uint64_t rest)
 {
 	char buf[128];
+	buf[0] = 0;
 	string formatedTime;
 	uint64_t n, i;
 	i = 0;
@@ -1976,9 +1977,9 @@ string WinUtil::formatTime(uint64_t rest)
 	if (n)
 	{
 		if (n >= 2)
-			snprintf(buf, sizeof(buf), "%d weeks ", n);
+			snprintf(buf, _countof(buf), "%d weeks ", n);
 		else
-			snprintf(buf, sizeof(buf), "%d week ", n);
+			snprintf(buf, _countof(buf), "%d week ", n);
 		formatedTime += (string)buf;
 		i++;
 	}
@@ -1987,9 +1988,9 @@ string WinUtil::formatTime(uint64_t rest)
 	if (n)
 	{
 		if (n >= 2)
-			snprintf(buf, sizeof(buf), "%d days ", n);
+			snprintf(buf, _countof(buf), "%d days ", n);
 		else
-			snprintf(buf, sizeof(buf), "%d day ", n);
+			snprintf(buf, _countof(buf), "%d day ", n);
 		formatedTime += (string)buf;
 		i++;
 	}
@@ -1998,9 +1999,9 @@ string WinUtil::formatTime(uint64_t rest)
 	if (n)
 	{
 		if (n >= 2)
-			snprintf(buf, sizeof(buf), "%d hours ", n);
+			snprintf(buf, _countof(buf), "%d hours ", n);
 		else
-			snprintf(buf, sizeof(buf), "%d hour ", n);
+			snprintf(buf, _countof(buf), "%d hour ", n);
 		formatedTime += (string)buf;
 		i++;
 	}
@@ -2008,14 +2009,14 @@ string WinUtil::formatTime(uint64_t rest)
 	rest %= (60);
 	if (n)
 	{
-		snprintf(buf, sizeof(buf), "%d min ", n);
+		snprintf(buf, _countof(buf), "%d min ", n);
 		formatedTime += (string)buf;
 		i++;
 	}
 	n = rest;
 	if (++i <= 3)
 	{
-		snprintf(buf, sizeof(buf), "%d sec ", n);
+		snprintf(buf, _countof(buf), "%d sec ", n);
 		formatedTime += (string)buf;
 	}
 	return formatedTime;
@@ -2025,7 +2026,7 @@ uint8_t WinUtil::getFlagIndexByCode(const char* countryCode)
 {
 	// country codes are sorted, use binary search for better performance
 	int begin = 0;
-	int end = (sizeof(countryCodes) / sizeof(countryCodes[0])) - 1;
+	int end = _countof(countryCodes) - 1;
 	
 	while (begin <= end)
 	{
@@ -2101,6 +2102,7 @@ string WinUtil::generateStats()
 	if (LOBYTE(LOWORD(GetVersion())) >= 5)
 	{
 		char buf[1024];
+		buf[0] = 0;
 		PROCESS_MEMORY_COUNTERS pmc;
 		pmc.cb = sizeof(pmc);
 		typedef bool (CALLBACK * LPFUNC)(HANDLE Process, PPROCESS_MEMORY_COUNTERS ppsmemCounters, DWORD cb);

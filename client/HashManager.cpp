@@ -211,7 +211,7 @@ void HashManager::getMediaInfo(const string& p_name, CFlyMediaInfo& p_media, int
 			return;
 		char l_size[64];
 		l_size[0] = 0;
-		_snprintf(l_size, sizeof(l_size), "%I64d", p_size);
+		_snprintf(l_size, _countof(l_size), "%I64d", p_size);
 		g_cur_mediainfo_file = p_name + "\r\nTTH = " + p_tth.getRoot().toBase32() + "\r\nFile size = " + string(l_size);
 		if (g_media_info_dll.Open(Text::toT(p_name)))
 		{
@@ -355,6 +355,7 @@ void HashManager::getMediaInfo(const string& p_name, CFlyMediaInfo& p_media, int
 	{
 		LogManager::getInstance()->message("HashManager::getMediaInfo: " + p_name + "TTH = " + p_tth.getRoot().toBase32() + " error =" + string(e.what()));
 		char l_buf[4000];
+		l_buf[0] = 0;
 		sprintf_s(l_buf, _countof(l_buf), "При сканировании файла %s в MediaInfoLib возникла ошибка:\r\n%s\r\nЕсли возможно, вышлите данный файл для анализа на адрес ppa74@ya.ru", // TODO translate
 		          p_name.c_str(),
 		          e.what());

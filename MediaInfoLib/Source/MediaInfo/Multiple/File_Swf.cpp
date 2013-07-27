@@ -1,21 +1,8 @@
-// File_Swf - Info for SWF files
-// Copyright (C) 2005-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -375,7 +362,7 @@ void File_Swf::FileHeader_Parse()
     {
         int16u FrameRate_8_8;
         Get_L2(FrameRate_8_8,                                   "FrameRate");
-        FrameRate=FrameRate_8_8/0x0100+(((float32)(FrameRate_8_8&0x00FF))/0x0100); //8.8 format
+        FrameRate=((float32)FrameRate_8_8)/0x0100+(((float32)(FrameRate_8_8&0x00FF))/0x0100); //8.8 format
         Param_Info1(FrameRate);
     }
     Get_L2 (FrameCount,                                         "FrameCount");

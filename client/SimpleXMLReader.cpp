@@ -682,7 +682,7 @@ void SimpleXMLReader::parse(InputStream& stream, size_t maxSize)
 			
 		if (len == 0)
 		{
-			if (elements.size() == 0)
+			if (elements.empty())
 			{
 				// Fine...
 				return;

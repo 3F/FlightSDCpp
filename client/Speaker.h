@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001-2011 Jacek Sieka, arnetheduck on gmail point com
+ * Copyright (C) 2001-2013 Jacek Sieka, arnetheduck on gmail point com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,43 +28,31 @@ template<typename Listener>
 class Speaker
 {
 		typedef std::vector<Listener*> ListenerList;
-		class CBusy
-		{
-				bool& m_flag;
-			public:
-				explicit CBusy(bool& p_flag) : m_flag(p_flag)
-				{
-					m_flag = true;
-				}
-				~CBusy()
-				{
-					m_flag = false;
-				}
-		};
+#ifdef _DEBUG
+# define  _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_1 // Only critical event debug.
+# ifdef _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_1
+//#  define  _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_2 // Show all events in debug window.
+# endif
+#endif
+
+#ifdef _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_2
 		void log_listener_list(const ListenerList& p_list, const char* p_log_message)
 		{
-#ifdef _DEBUG
-			/*
-			            dcdebug("[log_listener_list][%s][tid = 0x%04X] [this=%p] count = %d ", p_log_message, ::GetCurrentThreadId(), this, p_list.size());
-			            int l_index = 0;
-			            for (auto i = p_list.cbegin(); i != p_list.cend(); ++i, ++l_index)
-			            {
-			                dcdebug("[%d] = %p", l_index, *i);
-			            }
-			            dcdebug("\r\n");
-			*/
-#endif
+			dcdebug("[log_listener_list][%s][tid = %u] [this=%p] count = %d ", p_log_message, GetSelfThreadID(), this, p_list.size());
+			for (size_t i = 0; i != p_list.size(); ++i)
+			{
+				dcdebug("[%u] = %p, ", i, p_list[i]);
+			}
+			dcdebug("\r\n");
 		}
+#endif // _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_2
 	public:
 		explicit Speaker() noexcept
 		{
-			m_fire_process = false;
 		}
 		virtual ~Speaker()
 		{
-			dcassert(m_listeners.empty());
-			dcassert(m_remove_listeners.empty());
-			dcassert(m_add_listeners.empty());
+			dcassert(listeners.empty());
 		}
 		
 		/// @todo simplify when we have variadic templates
@@ -72,201 +60,116 @@ class Speaker
 		template<typename T0>
 		void fire(T0 && type) noexcept
 		{
-			Lock l(m_listenerCS);
-			log_listener_list(m_listeners, "fire-1");
-			{
-				CBusy l_fire_process(m_fire_process);
-				for (auto i = m_listeners.cbegin(); i != m_listeners.cend(); ++i)
-				{
-					(*i)->on(std::forward<T0>(type));
-				}
-			}
-			after_fire_process();
+			Lock l(listenerCS);
+			tmp = listeners;
+			for (auto i = tmp.cbegin(); i != tmp.cend(); ++i)
+				(*i)->on(std::forward<T0>(type));
 		}
 		template<typename T0, typename T1>
 		void fire(T0 && type, T1 && p1) noexcept
 		{
-			Lock l(m_listenerCS);
-			log_listener_list(m_listeners, "fire-2");
-			{
-				CBusy l_fire_process(m_fire_process);
-				for (auto i = m_listeners.cbegin(); i != m_listeners.cend(); ++i)
-				{
-					(*i)->on(std::forward<T0>(type), std::forward<T1>(p1)); // https://www.box.net/shared/da9ee6ddd7ec801b1a86
-				}
-			}
-			after_fire_process();
+			Lock l(listenerCS);
+			tmp = listeners;
+			for (auto i = tmp.cbegin(); i != tmp.cend(); ++i)
+				(*i)->on(std::forward<T0>(type), std::forward<T1>(p1)); // [2] https://www.box.net/shared/da9ee6ddd7ec801b1a86
 		}
 		template<typename T0, typename T1, typename T2>
 		void fire(T0 && type, T1 && p1, T2 && p2) noexcept
 		{
-			Lock l(m_listenerCS);
-			log_listener_list(m_listeners, "fire-3");
-			{
-				CBusy l_fire_process(m_fire_process);
-				for (auto i = m_listeners.cbegin(); i != m_listeners.cend(); ++i)
-				{
-					(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2)); // Venturi Firewall 2012-04-23_22-28-18_A6JRQEPFW5263A7S7ZOBOAJGFCMET3YJCUYOVCQ_0E0D7D71_crash-stack-r501-build-9812.dmp.bz2
-				}
-			}
-			after_fire_process();
+			Lock l(listenerCS);
+			tmp = listeners;
+			for (auto i = tmp.cbegin(); i != tmp.cend(); ++i)
+				(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2)); // Venturi Firewall 2012-04-23_22-28-18_A6JRQEPFW5263A7S7ZOBOAJGFCMET3YJCUYOVCQ_0E0D7D71_crash-stack-r501-build-9812.dmp.bz2
 		}
 		template<typename T0, typename T1, typename T2, typename T3>
 		void fire(T0 && type, T1 && p1, T2 && p2, T3 && p3) noexcept
 		{
-			Lock l(m_listenerCS);
-			log_listener_list(m_listeners, "fire-4");
-			{
-				CBusy l_fire_process(m_fire_process);
-				for (auto i = m_listeners.cbegin(); i != m_listeners.cend(); ++i)
-				{
-					(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2), std::forward<T3>(p3));
-				}
-			}
-			after_fire_process();
+			Lock l(listenerCS);
+			tmp = listeners;
+			for (auto i = tmp.cbegin(); i != tmp.cend(); ++i)
+				(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2), std::forward<T3>(p3));
 		}
 		template<typename T0, typename T1, typename T2, typename T3, typename T4>
 		void fire(T0 && type, T1 && p1, T2 && p2, T3 && p3, T4 && p4) noexcept
 		{
-			Lock l(m_listenerCS);
-			log_listener_list(m_listeners, "fire-5");
-			{
-				CBusy l_fire_process(m_fire_process);
-				for (auto i = m_listeners.cbegin(); i != m_listeners.cend(); ++i)
-				{
-					(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2), std::forward<T3>(p3), std::forward<T4>(p4));
-				}
-			}
-			after_fire_process();
+			Lock l(listenerCS);
+			tmp = listeners;
+			for (auto i = tmp.cbegin(); i != tmp.cend(); ++i)
+				(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2), std::forward<T3>(p3), std::forward<T4>(p4));
 		}
 		template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
 		void fire(T0 && type, T1 && p1, T2 && p2, T3 && p3, T4 && p4, T5 && p5) noexcept
 		{
-			Lock l(m_listenerCS);
-			log_listener_list(m_listeners, "fire-6");
-			{
-				CBusy l_fire_process(m_fire_process);
-				for (auto i = m_listeners.cbegin(); i != m_listeners.cend(); ++i)
-				{
-					(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2), std::forward<T3>(p3), std::forward<T4>(p4), std::forward<T5>(p5));
-				}
-			}
-			after_fire_process();
+			Lock l(listenerCS);
+			tmp = listeners;
+			for (auto i = tmp.cbegin(); i != tmp.cend(); ++i)
+				(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2), std::forward<T3>(p3), std::forward<T4>(p4), std::forward<T5>(p5));
 		}
 		template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
 		void fire(T0 && type, T1 && p1, T2 && p2, T3 && p3, T4 && p4, T5 && p5, T6 && p6) noexcept
 		{
-			Lock l(m_listenerCS);
-			log_listener_list(m_listeners, "fire-7");
-			{
-				CBusy l_fire_process(m_fire_process);
-				for (auto i = m_listeners.cbegin(); i != m_listeners.cend(); ++i)
-				{
-					(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2), std::forward<T3>(p3), std::forward<T4>(p4), std::forward<T5>(p5), std::forward<T6>(p6));
-				}
-			}
-			after_fire_process();
+			Lock l(listenerCS);
+			tmp = listeners;
+			for (auto i = tmp.cbegin(); i != tmp.cend(); ++i)
+				(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2), std::forward<T3>(p3), std::forward<T4>(p4), std::forward<T5>(p5), std::forward<T6>(p6));
 		}
 		template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
 		void fire(T0 && type, T1 && p1, T2 && p2, T3 && p3, T4 && p4, T5 && p5, T6 && p6, T7 && p7) noexcept
 		{
-			Lock l(m_listenerCS);
-			log_listener_list(m_listeners, "fire-8");
-			{
-				CBusy l_fire_process(m_fire_process);
-				for (auto i = m_listeners.cbegin(); i != m_listeners.cend(); ++i)
-				{
-					(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2), std::forward<T3>(p3), std::forward<T4>(p4), std::forward<T5>(p5), std::forward<T6>(p6), std::forward<T7>(p7));
-				}
-			}
-			after_fire_process();
-		}
-		void addListener(Listener* p_Listener)
-		{
-			Lock l(m_listenerCS);
-			if (m_fire_process)
-				m_add_listeners.push_back(p_Listener);
-			else
-				internal_add(p_Listener);
+			Lock l(listenerCS);
+			tmp = listeners;
+			for (auto i = tmp.cbegin(); i != tmp.cend(); ++i)
+				(*i)->on(std::forward<T0>(type), std::forward<T1>(p1), std::forward<T2>(p2), std::forward<T3>(p3), std::forward<T4>(p4), std::forward<T5>(p5), std::forward<T6>(p6), std::forward<T7>(p7));
 		}
 		
-		void removeListener(Listener* p_Listener)
+		void addListener(Listener* aListener)
 		{
-			Lock l(m_listenerCS);
-			if (m_fire_process)
-				m_remove_listeners.push_back(p_Listener);
+			Lock l(listenerCS);
+			if (boost::range::find(listeners, aListener) == listeners.end())
+			{
+				listeners.push_back(aListener);
+			}
+#ifdef _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_1
 			else
-				internal_remove(p_Listener);
+			{
+				dcassert(0);
+# ifdef _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_2
+				log_listener_list(listeners, "addListener-twice!!!");
+# endif
+			}
+#endif // _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_1
+		}
+		
+		void removeListener(Listener* aListener)
+		{
+			Lock l(listenerCS);
+			auto it = boost::range::find(listeners, aListener);
+			if (it != listeners.end())
+			{
+				listeners.erase(it);
+			}
+#ifdef _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_1
+			else
+			{
+				dcassert(0);
+# ifdef _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_2
+				log_listener_list(listeners, "removeListener-zombie!!!");
+# endif
+			}
+#endif // _DEBUG_SPEAKER_LISTENER_LIST_LEVEL_1
 		}
 		
 		void removeListeners()
 		{
-			Lock l(m_listenerCS);
-			if (m_fire_process)
-				m_remove_listeners.insert(m_remove_listeners.end(), m_listeners.begin(), m_listeners.end());
-			else
-			{
-				log_listener_list(m_listeners, "removeListenerAll");
-				m_listeners.clear();
-				dcassert(m_add_listeners.empty());
-				m_add_listeners.clear();
-				dcassert(m_remove_listeners.empty());
-				m_remove_listeners.clear();
-			}
+			Lock l(listenerCS);
+			listeners.clear();
 		}
 		
 	private:
-		void after_fire_process()
-		{
-			for (auto i = m_add_listeners.cbegin(); i != m_add_listeners.cend(); ++i)
-				internal_add(*i);
-				
-			m_add_listeners.clear();
-			
-			for (auto i = m_remove_listeners.cbegin(); i != m_remove_listeners.cend(); ++i)
-				internal_remove(*i);
-				
-			m_remove_listeners.clear();
-		}
+		ListenerList listeners;
+		ListenerList tmp;
+		CriticalSection listenerCS;
 		
-		void internal_add(Listener* p_Listener)
-		{
-			log_listener_list(m_listeners, "addListener-before");
-			dcdebug("[tid = 0x%04X][this=%p] addListener[%p]: count = %d\n", ::GetCurrentThreadId(), this, p_Listener, m_listeners.size());
-			if (boost::range::find(m_listeners, p_Listener) == m_listeners.cend())
-			{
-				m_listeners.push_back(p_Listener);
-				log_listener_list(m_listeners, "addListener-after");
-			}
-			else
-			{
-				// dcassert(0);
-				log_listener_list(m_listeners, "addListener-twice!!!");
-			}
-		}
-		
-		void internal_remove(Listener* p_Listener)
-		{
-			log_listener_list(m_listeners, "removeListener-before");
-			dcdebug("[tid = 0x%04X][this=%p] removeListener[%p]: count = %d\n", ::GetCurrentThreadId(), this, p_Listener, m_listeners.size());
-			const auto it = boost::range::find(m_listeners, p_Listener);
-			if (it != m_listeners.cend())
-			{
-				m_listeners.erase(it);
-				log_listener_list(m_listeners, "removeListener-after");
-			}
-			else
-			{
-				// dcassert(0);
-				log_listener_list(m_listeners, "removeListener-zombie!!!");
-			}
-		}
-		
-		bool m_fire_process;
-		ListenerList m_listeners;
-		ListenerList m_remove_listeners;
-		ListenerList m_add_listeners;
-		CriticalSection m_listenerCS;
 };
 
 #endif // !defined(SPEAKER_H)

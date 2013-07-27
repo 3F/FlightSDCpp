@@ -1,21 +1,8 @@
-// File_Mpegv - Info for MPEG Video files
-// Copyright (C) 2004-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
 
 //---------------------------------------------------------------------------
 // Pre-compilation
@@ -54,6 +41,7 @@ extern const char* Mpegv_colour_primaries(int8u colour_primaries)
         case  6 : return "BT.601 NTSC";
         case  7 : return "SMPTE 240M"; //Same as BT.601 NTSC
         case  8 : return "Generic film";
+        case  9 : return "BT.2020";                                     //Added in HEVC
         default : return "";
     }
 }
@@ -73,6 +61,9 @@ extern const char* Mpegv_transfer_characteristics(int8u transfer_characteristics
         case 10 : return "Logarithmic (316.22777:1)";                   //Added in MPEG-4 Visual
         case 11 : return "IEC 61966-2-4";                               //Added in AVC
         case 12 : return "BT.1361 extended colour gamut system";        //Added in AVC
+        case 13 : return "sYCC";                                        //Added in HEVC
+        case 14 : return "BT.2020";                                     //Added in HEVC
+        case 15 : return "BT.2020";                                     //Added in HEVC
         default : return "";
     }
 }
@@ -89,6 +80,8 @@ extern const char* Mpegv_matrix_coefficients(int8u matrix_coefficients)
         case  6 : return "BT.601";
         case  7 : return "SMPTE 240M";
         case  8 : return "YCgCo";                                       //Added in AVC
+        case  9 : return "BT.2020 non-constant";                        //Added in HEVC
+        case 10 : return "BT.2020 constant";                            //Added in HEVC
         default : return "";
     }
 }
@@ -1694,7 +1687,7 @@ void File_Mpegv::Synched_Init()
     frame_rate_code=0;
     profile_and_level_indication_profile=(int8u)-1;
     profile_and_level_indication_level=(int8u)-1;
-    chroma_format=0;
+    chroma_format=1; //Default is 4:2:0
     horizontal_size_extension=0;
     vertical_size_extension=0;
     frame_rate_extension_n=0;
@@ -2227,6 +2220,9 @@ void File_Mpegv::picture_start()
                 IFrame_IsParsed=true;
         }
 
+        if (Frame_Count_LastIFrame!=(int64u)-1)
+            FrameNumber_PresentationOrder=Frame_Count_LastIFrame+temporal_reference;
+
         //Config
         progressive_frame=true;
         picture_structure=3; //Frame is default
@@ -2461,10 +2457,10 @@ void File_Mpegv::slice_start()
                     int64u Time_End  =Time_End_Seconds  *1000;
                     if (FrameRate)
                         Time_End  +=float32_int32s((Time_Current_Frames+temporal_reference)*1000/FrameRate);
-                    size_t Hours  = Time_End/60/60/1000;
-                    size_t Minutes=(Time_End-(Hours*60*60*1000))/60/1000;
-                    size_t Seconds=(Time_End-(Hours*60*60*1000)-(Minutes*60*1000))/1000;
-                    size_t Milli  =(Time_End-(Hours*60*60*1000)-(Minutes*60*1000)-(Seconds*1000));
+                    size_t Hours  =(size_t) Time_End/60/60/1000;
+                    size_t Minutes=(size_t)(Time_End-(Hours*60*60*1000))/60/1000;
+                    size_t Seconds=(size_t)(Time_End-(Hours*60*60*1000)-(Minutes*60*1000))/1000;
+                    size_t Milli  =(size_t)(Time_End-(Hours*60*60*1000)-(Minutes*60*1000)-(Seconds*1000));
 
                     Ztring Time;
                     Time+=Ztring::ToZtring(Hours);

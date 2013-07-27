@@ -762,7 +762,7 @@ void FavoriteManager::load(SimpleXML& aXml, bool p_is_url /* = false*/)
 			}
 			else
 			{
-				if (!m_sync_hub_external.size() && favHubGroups.size() == 0)
+				if (!m_sync_hub_external.size() && favHubGroups.empty())
 				{
 					FavHubGroupProperties props = { aXml.getBoolChildAttrib("Public") };
 					favHubGroups["ISP"] = props;

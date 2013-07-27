@@ -1,20 +1,9 @@
-// File_Jpeg - Info for JPEG files
-// Copyright (C) 2005-2012 MediaArea.net SARL, Info@MediaArea.net
-//
-// This library is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public License
-// along with this library. If not, see <http://www.gnu.org/licenses/>.
-//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license that can
+ *  be found in the License.html file in the root of the source tree.
+ */
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //
 // Information about JPEG files
@@ -148,7 +137,8 @@ private :
     void APPB() {Skip_XX(Element_Size, "Data");}
     void APPC() {Skip_XX(Element_Size, "Data");}
     void APPD() {Skip_XX(Element_Size, "Data");}
-    void APPE() {Skip_XX(Element_Size, "Data");}
+    void APPE();
+    void APPE_Adobe0();
     void APPF() {Skip_XX(Element_Size, "Data");}
     void JPG0() {Skip_XX(Element_Size, "Data");}
     void JPG1() {Skip_XX(Element_Size, "Data");}
@@ -167,6 +157,8 @@ private :
     void COM () {Skip_XX(Element_Size, "Data");}
 
     //Temp
+    int8u APPE_Adobe0_transform;
+    bool  APP0_JFIF_Parsed;
     bool  SOS_SOD_Parsed;
 };
 
