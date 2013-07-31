@@ -785,12 +785,17 @@ void QueueFrame::moveSelected()
 		
 		if (WinUtil::browseDirectory(name, m_hWnd))
 		{
-			int i = -1;
-			while ((i = ctrlQueue.GetNextItem(i, LVNI_SELECTED)) != -1)
-			{
-				const QueueItemInfo* ii = ctrlQueue.getItemData(i);
-				QueueManager::getInstance()->move(ii->getTarget(), Text::fromT(name) + Util::getFileName(ii->getTarget()));
+            int i = -1;
+            vector<QueueItemInfo*> files;
+			while((i = ctrlQueue.GetNextItem(i, LVNI_SELECTED)) != -1){
+                files.push_back(ctrlQueue.getItemData(i)); // pin
 			}
+
+            while(!files.empty()){
+                const QueueItemInfo* file = files.back();
+                QueueManager::getInstance()->move(file->getTarget(), Text::fromT(name) + Util::getFileName(file->getTarget()));
+                files.pop_back();
+            }
 		}
 	}
 }
