@@ -83,6 +83,7 @@
     </ClCompile>
     <ClCompile Include="client\DebugManager.cpp" />
     <ClCompile Include="client\Exception.cpp" />
+    <ClCompile Include="client\Wildcards.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client\CFlylinkDBManager.h" />
@@ -229,6 +230,7 @@
     <ClInclude Include="client\CFlyMediaInfo.h" />
     <ClInclude Include="client\HintedUser.h" />
     <ClInclude Include="client\util_flylinkdc.h" />
+    <ClInclude Include="client\Wildcards.hpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="client\StringDefs.h" />
