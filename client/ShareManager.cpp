@@ -51,7 +51,9 @@
 #endif
 
 #include <limits>
-#include <regex>
+
+#include "../client/Wildcards.hpp"
+using namespace reg::text;
 
 namespace dcpp
 {
@@ -869,18 +871,8 @@ ShareManager::Directory::Ptr ShareManager::buildTree(const string& aName, const 
 	if (l_path_id)
 		CFlylinkDBManager::getInstance()->LoadDir(l_path_id, l_dir_map);
 
-    std::string ignoreRaw = SETTING(SHARE_IGNORELIST);
-
-    //if(PATH_SEPARATOR == '\\'){
-    //    Util::replace("\\", "\\\\", ignoreRaw);
-    //}
-    ignoreRaw = std::regex_replace(ignoreRaw, std::regex("([\\[\\]])"), string("\\$1"));
-    ignoreRaw = std::regex_replace(ignoreRaw, std::regex("[\\\\/]"), string("[\\\\/]")); //friendly separate
-    ignoreRaw = std::regex_replace(ignoreRaw, std::regex("([\\.\\(\\)\\-\\+\\{\\}\\^\\$])"), string("\\$1"));
-    Util::replace("*", ".*", ignoreRaw);
-    Util::replace(">", "[^/\\\\]+$", ignoreRaw);
-
-    const StringTokenizer<string> ignoreList(ignoreRaw, ';');
+    string ignorelist = SETTING(SHARE_IGNORELIST);
+    replace(ignorelist.begin(), ignorelist.end(), ';', '|'); //TODO: alias or additional metasymbols or new method
 
 #ifdef _WIN32
 	for (FileFindIter i(aName + "*"); i != end; ++i)
@@ -905,17 +897,12 @@ ShareManager::Directory::Ptr ShareManager::buildTree(const string& aName, const 
 		if (!BOOLSETTING(SHARE_HIDDEN) && i->isHidden())
 			continue;
 		
-        bool ignored = false;
-        for(auto idx = ignoreList.getTokens().cbegin(); idx != ignoreList.getTokens().cend(); ++idx){
-            if(std::regex_match(aName + name, std::regex(*idx, std::tr1::regex_constants::icase))){ // default match BOL & EOL -> ^str$
-                #ifdef _DEBUG
-                dcdebug("ignore(%s%s) :: ^%s$\n", aName.c_str(), name.c_str(), (*idx).c_str());
-                #endif
-                ignored = true;
-                break;
-            }
+        if(Wildcards::match(aName + name, ignorelist)){
+            #ifdef _DEBUG
+                dcdebug("ignored :: %s%s\n", aName.c_str(), name.c_str());
+            #endif
+            continue;
         }
-        if(ignored){ continue; }
 
 		const string fileExt = Util::getFileExt(name);
 		//check for forbidden file patterns

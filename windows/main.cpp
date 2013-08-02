@@ -46,6 +46,9 @@
 #include "MainFrm.h"
 #include "PopupManager.h"
 
+#include "../client/Wildcards.hpp"
+using namespace reg::text;
+
 #include <delayimp.h>
 #ifdef USE_RIP_MINIDUMP
 #include <Dbghelp.h>
@@ -737,7 +740,8 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 	if (!hInstRich)
 		hInstRich = ::LoadLibrary(_T("RICHED32.DLL"));
 		
-	const int nRet = Run(lpstrCmdLine, nCmdShow);
+    Wildcards::validate();
+    const int nRet = Run(lpstrCmdLine, nCmdShow);
 	
 	if (hInstRich)
 	{

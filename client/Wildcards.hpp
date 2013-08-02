@@ -5,12 +5,14 @@
   * (see accompanying file LICENSE or a copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
+// see detail in commit's on -> bitbucket.org/3F
+
 #pragma once
-#include "typedefs.h" //https://bitbucket.org/3F/sandbox/src/ee1d809bcb905c1b01cea8c0e595337dab6d3d27/cpp/text/wildcards/wildcards/typedefs.hpp
+#include "typedefs.h" //or use from sandbox
 
 using namespace dcpp;
 
-namespace reg { namespace text { namespace wildcards {
+namespace reg { namespace text {
 
     class Wildcards
     {
@@ -36,25 +38,24 @@ namespace reg { namespace text { namespace wildcards {
             MS_END      = _T('$'),
         };
 
-        bool main(const tstring& text, const tstring& filter);
+        //static bool match(const tstring& text, const tstring& filter);
 
-        Wildcards(void)
+        //[+] :(
+        static bool Wildcards::match(const wstring& text, const wstring& filter)
         {
-            _asserts();
-        };
-        ~Wildcards(void){};
+            return _match(text, filter);
+        }
+        //[+] :(
+        static bool match(const string& text, const string& filter);
+
+        /** main support */
+        static void validate();
 
     protected:
-        /** verify MetaOperation::ANY */
-        void _assertsAny();
-        /** verify MetaOperation::SPLIT */
-        void _assertsSplit();
-        /** verify MetaOperation::ONE */
-        void _assertsOne();
-        /** verify MetaOperation::ANYSP */
-        void _assertsAnySP();
-        /** wrapper */
-        void _asserts();
+
+        // :( this project uses a variety of string/wstring without unified typedef
+        template<class tstring>
+        static bool _match(const tstring& text, const tstring& filter);
 
         struct Mask{
             MetaOperation curr;
@@ -65,6 +66,7 @@ namespace reg { namespace text { namespace wildcards {
         /**
          * to wildcards
          */
+        template<class tstring>
         struct Item{
             tstring curr;
             size_t pos;
@@ -89,7 +91,34 @@ namespace reg { namespace text { namespace wildcards {
          *      _______
          * {word} ... {word}
          */
-        size_t _handlerInterval(Item& item, Words& words, const tstring& text);
+        template<class tstring>
+        static size_t _handlerInterval(Item<tstring>& item, Words& words, const tstring& text);
+
+        #ifdef _DEBUG
+            /** verify MetaOperation::ANY */
+            static void _assertsAny();
+            /** verify MetaOperation::SPLIT */
+            static void _assertsSplit();
+            /** verify MetaOperation::ONE */
+            static void _assertsOne();
+            /** verify MetaOperation::ANYSP */
+            static void _assertsAnySP();
+        #endif
+
+        template<class tstring>
+        inline static tstring _uppercase(tstring str) throw()
+        {
+            transform(str.begin(), str.end(), str.begin(), towupper);
+	        return str;
+        };
+
+        //[+]
+        inline const static tstring _slashs(const tstring&) throw() { return _T("\\/"); }
+        //[+]
+        inline const static string _slashs(const string&) throw() { return "\\/"; }
+
+        Wildcards(void){};
+        ~Wildcards(void){};
     };
 
-}}};
+}};
