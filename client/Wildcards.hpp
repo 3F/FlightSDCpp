@@ -41,10 +41,8 @@ namespace reg { namespace text {
         //static bool match(const tstring& text, const tstring& filter);
 
         //[+] :(
-        static bool Wildcards::match(const wstring& text, const wstring& filter)
-        {
-            return _match(text, filter);
-        }
+        static bool Wildcards::match(const wstring& text, const wstring& filter);
+
         //[+] :(
         static bool match(const string& text, const string& filter);
 

@@ -165,6 +165,11 @@ namespace reg { namespace text {
         return _match(text, filter);
     }
 
+    bool Wildcards::match(const wstring& text, const wstring& filter)
+    {
+        return _match(text, filter);
+    }
+
 #ifdef _DEBUG
 
     void Wildcards::_assertsAny()
