@@ -25,31 +25,31 @@
 
 class FavHubProperties : public CDialogImpl<FavHubProperties>
 {
-	public:
-		FavHubProperties(FavoriteHubEntry *_entry) : entry(_entry) { }
-		~FavHubProperties() { }
-		
-		enum { IDD = IDD_FAVORITEHUB };
-		
-		BEGIN_MSG_MAP_EX(FavHubProperties)
-		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-		COMMAND_HANDLER(IDC_HUBNICK, EN_CHANGE, OnTextChanged)
-		COMMAND_HANDLER(IDC_HUBPASS, EN_CHANGE, OnTextChanged)
-		COMMAND_HANDLER(IDC_HUBUSERDESCR, EN_CHANGE, OnTextChanged)
-		COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
-		COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
-		COMMAND_ID_HANDLER(IDC_CLIENT_ID, OnChangeId)
-		END_MSG_MAP()
-		
-		LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT OnTextChanged(WORD /*wNotifyCode*/, WORD wID, HWND hWndCtl, BOOL& /*bHandled*/);
-		LRESULT OnChangeId(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		
-		CComboBox IdCombo; // !SMT!-S
-		
-	protected:
-		FavoriteHubEntry *entry;
+    public:
+        FavHubProperties(FavoriteHubEntry *_entry) : entry(_entry) { }
+        ~FavHubProperties() { }
+        
+        enum { IDD = IDD_FAVORITEHUB };
+        
+        BEGIN_MSG_MAP_EX(FavHubProperties)
+        MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+        COMMAND_HANDLER(IDC_HUBNICK, EN_CHANGE, OnTextChanged)
+        COMMAND_HANDLER(IDC_HUBPASS, EN_CHANGE, OnTextChanged)
+        COMMAND_HANDLER(IDC_HUBUSERDESCR, EN_CHANGE, OnTextChanged)
+        COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
+        COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
+        COMMAND_ID_HANDLER(IDC_CLIENT_ID, OnChangeId)
+        END_MSG_MAP()
+        
+        LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT OnTextChanged(WORD /*wNotifyCode*/, WORD wID, HWND hWndCtl, BOOL& /*bHandled*/);
+        LRESULT OnChangeId(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        
+        CComboBox IdCombo; // !SMT!-S
+        
+    protected:
+        FavoriteHubEntry *entry;
 };
 
 #endif // !defined(FAV_HUB_PROPERTIES_H)

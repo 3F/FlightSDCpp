@@ -35,70 +35,70 @@
 
 class PopupManager : public Singleton< PopupManager >, private TimerManagerListener
 {
-	public:
-		PopupManager() : height(90), width(200), offset(0), activated(true), id(0)
-		{
-			if (LOBYTE(LOWORD(GetVersion())) >= 5)
-			{
-				user32lib = LoadLibrary(_T("user32"));
-				_d_SetLayeredWindowAttributes = (LPFUNC)GetProcAddress(user32lib, "SetLayeredWindowAttributes");
-			}
-			
-			TimerManager::getInstance()->addListener(this);
-		}
-		
-		
-		~PopupManager()
-		{
-			TimerManager::getInstance()->removeListener(this);
-			
-			if (LOBYTE(LOWORD(GetVersion())) >= 5)
-			{
-				FreeLibrary(user32lib);
-			}
-		}
-		
-		//call this with a preformatted message
-		void Show(const tstring &aMsg, const tstring &aTitle, int Icon, int iPreview = -1);
-		
-		//remove first popup in list and move everyone else
-		void Remove(uint32_t pos = 0);
-		
-		//remove the popups that are scheduled to be removed
-		void AutoRemove();
-		
-		void Mute(bool mute)
-		{
-			activated = !mute;
-		}
-		
-	private:
-		typedef list< PopupWnd* > PopupList;
-		typedef PopupList::iterator PopupIter;
-		PopupList popups;
-		
-		typedef bool (CALLBACK* LPFUNC)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags);
-		LPFUNC _d_SetLayeredWindowAttributes;
-		HMODULE user32lib;
-		
-		
-		//size of the popup window
-		uint8_t height;
-		uint8_t width;
-		
-		//if we have multiple windows displayed,
-		//keep track of where the new one will be displayed
-		uint16_t offset;
-		
-		//turn on/off popups completely
-		bool activated;
-		
-		//id of the popup to keep track of them
-		uint32_t id;
-		
-		// TimerManagerListener
-		void on(TimerManagerListener::Second, uint64_t tick) noexcept;
-		
+    public:
+        PopupManager() : height(90), width(200), offset(0), activated(true), id(0)
+        {
+            if (LOBYTE(LOWORD(GetVersion())) >= 5)
+            {
+                user32lib = LoadLibrary(_T("user32"));
+                _d_SetLayeredWindowAttributes = (LPFUNC)GetProcAddress(user32lib, "SetLayeredWindowAttributes");
+            }
+            
+            TimerManager::getInstance()->addListener(this);
+        }
+        
+        
+        ~PopupManager()
+        {
+            TimerManager::getInstance()->removeListener(this);
+            
+            if (LOBYTE(LOWORD(GetVersion())) >= 5)
+            {
+                FreeLibrary(user32lib);
+            }
+        }
+        
+        //call this with a preformatted message
+        void Show(const tstring &aMsg, const tstring &aTitle, int Icon, int iPreview = -1);
+        
+        //remove first popup in list and move everyone else
+        void Remove(uint32_t pos = 0);
+        
+        //remove the popups that are scheduled to be removed
+        void AutoRemove();
+        
+        void Mute(bool mute)
+        {
+            activated = !mute;
+        }
+        
+    private:
+        typedef list< PopupWnd* > PopupList;
+        typedef PopupList::iterator PopupIter;
+        PopupList popups;
+        
+        typedef bool (CALLBACK* LPFUNC)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags);
+        LPFUNC _d_SetLayeredWindowAttributes;
+        HMODULE user32lib;
+        
+        
+        //size of the popup window
+        uint8_t height;
+        uint8_t width;
+        
+        //if we have multiple windows displayed,
+        //keep track of where the new one will be displayed
+        uint16_t offset;
+        
+        //turn on/off popups completely
+        bool activated;
+        
+        //id of the popup to keep track of them
+        uint32_t id;
+        
+        // TimerManagerListener
+        void on(TimerManagerListener::Second, uint64_t tick) noexcept;
+        
 };
 
 #endif

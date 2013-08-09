@@ -30,59 +30,59 @@ namespace dcpp
 template<typename T>
 class intrusive_ptr_base
 {
-	public:
-		void inc() noexcept
-		{
-			intrusive_ptr_add_ref(this);
-		}
-		
-		void dec() noexcept
-		{
-			intrusive_ptr_release(this);
-		}
-		
-		bool is_last() const noexcept
-		{
-		    return ref == 1;
-		}
-		bool unique(int val = 1) const noexcept
-		{
-		    return ref <= val;
-		}
-		int getRefs() const noexcept
-		{
-		    return ref;
-		}
-		
-	protected:
-	intrusive_ptr_base() noexcept :
-		ref(0) { }
-		virtual ~intrusive_ptr_base() { }
-		
-	private:
-		friend void intrusive_ptr_add_ref(intrusive_ptr_base* p)
-		{
-			++p->ref;
-		}
-		friend void intrusive_ptr_release(intrusive_ptr_base* p)
-		{
-			if (--p->ref == 0)
-			{
-				delete static_cast<T*>(p);
-			}
-		}
-		
-		boost::detail::atomic_count ref;
+    public:
+        void inc() noexcept
+        {
+            intrusive_ptr_add_ref(this);
+        }
+        
+        void dec() noexcept
+        {
+            intrusive_ptr_release(this);
+        }
+        
+        bool is_last() const noexcept
+        {
+            return ref == 1;
+        }
+        bool unique(int val = 1) const noexcept
+        {
+            return ref <= val;
+        }
+        int getRefs() const noexcept
+        {
+            return ref;
+        }
+        
+    protected:
+    intrusive_ptr_base() noexcept :
+        ref(0) { }
+        virtual ~intrusive_ptr_base() { }
+        
+    private:
+        friend void intrusive_ptr_add_ref(intrusive_ptr_base* p)
+        {
+            ++p->ref;
+        }
+        friend void intrusive_ptr_release(intrusive_ptr_base* p)
+        {
+            if (--p->ref == 0)
+            {
+                delete static_cast<T*>(p);
+            }
+        }
+        
+        boost::detail::atomic_count ref;
 };
 
 
 struct DeleteFunction
 {
-	template<typename T>
-	void operator()(const T& p) const
-	{
-		delete p;
-	}
+    template<typename T>
+    void operator()(const T& p) const
+    {
+        delete p;
+    }
 };
 
 } // namespace dcpp

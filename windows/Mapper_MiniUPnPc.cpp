@@ -37,35 +37,35 @@ const string Mapper_MiniUPnPc::name = "MiniUPnP";
 
 bool Mapper_MiniUPnPc::init()
 {
-	if (initialized)
-		return true;
-		
-	UPNPDev* devices = upnpDiscover(2000,
-	                                SettingsManager::getInstance()->isDefault(SettingsManager::BIND_INTERFACE) ? nullptr : Socket::getBindAddress().c_str(),
-	                                0, 0, 0, 0);
-	if (!devices)
-		return false;
-		
-	UPNPUrls urls = {0};
-	IGDdatas data = {0};
-	
-	auto res = UPNP_GetValidIGD(devices, &urls, &data, 0, 0);
-	
-	initialized = res == 1;
-	if (initialized)
-	{
-		url = urls.controlURL;
-		service = data.first.servicetype;
-		device = ""; /* data.CIF.friendlyName;  MINIUPNPC_VERSION   "1.7 */
-		
-	}
-	
-	if (res)
-	{
-		FreeUPNPUrls(&urls);
-		freeUPNPDevlist(devices);
-	}
-	return initialized;
+    if (initialized)
+        return true;
+        
+    UPNPDev* devices = upnpDiscover(2000,
+                                    SettingsManager::getInstance()->isDefault(SettingsManager::BIND_INTERFACE) ? nullptr : Socket::getBindAddress().c_str(),
+                                    0, 0, 0, 0);
+    if (!devices)
+        return false;
+        
+    UPNPUrls urls = {0};
+    IGDdatas data = {0};
+    
+    auto res = UPNP_GetValidIGD(devices, &urls, &data, 0, 0);
+    
+    initialized = res == 1;
+    if (initialized)
+    {
+        url = urls.controlURL;
+        service = data.first.servicetype;
+        device = ""; /* data.CIF.friendlyName;  MINIUPNPC_VERSION   "1.7 */
+        
+    }
+    
+    if (res)
+    {
+        FreeUPNPUrls(&urls);
+        freeUPNPDevlist(devices);
+    }
+    return initialized;
 }
 
 void Mapper_MiniUPnPc::uninit()
@@ -74,26 +74,26 @@ void Mapper_MiniUPnPc::uninit()
 
 bool Mapper_MiniUPnPc::add(const unsigned short port, const Protocol protocol, const string& description)
 {
-	const string port_ = Util::toString(port);
-	return UPNP_AddPortMapping(url.c_str(), service.c_str(), port_.c_str(), port_.c_str(),
-	                           Util::getLocalIp().c_str(), description.c_str(), protocols[protocol], 0, 0) == UPNPCOMMAND_SUCCESS;
+    const string port_ = Util::toString(port);
+    return UPNP_AddPortMapping(url.c_str(), service.c_str(), port_.c_str(), port_.c_str(),
+                               Util::getLocalIp().c_str(), description.c_str(), protocols[protocol], 0, 0) == UPNPCOMMAND_SUCCESS;
 }
 
 bool Mapper_MiniUPnPc::remove(const unsigned short port, const Protocol protocol)
 {
-	return UPNP_DeletePortMapping(url.c_str(), service.c_str(), Util::toString(port).c_str(),
-	                              protocols[protocol], 0) == UPNPCOMMAND_SUCCESS;
+    return UPNP_DeletePortMapping(url.c_str(), service.c_str(), Util::toString(port).c_str(),
+                                  protocols[protocol], 0) == UPNPCOMMAND_SUCCESS;
 }
 
 string Mapper_MiniUPnPc::getDeviceName()
 {
-	return device;
+    return device;
 }
 
 string Mapper_MiniUPnPc::getExternalIP()
 {
-	char buf[16] = { 0 };
-	if (UPNP_GetExternalIPAddress(url.c_str(), service.c_str(), buf) == UPNPCOMMAND_SUCCESS)
-		return buf;
-	return Util::emptyString;
+    char buf[16] = { 0 };
+    if (UPNP_GetExternalIPAddress(url.c_str(), service.c_str(), buf) == UPNPCOMMAND_SUCCESS)
+        return buf;
+    return Util::emptyString;
 }

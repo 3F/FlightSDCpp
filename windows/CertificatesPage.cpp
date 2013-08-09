@@ -30,90 +30,90 @@
 
 PropPage::TextItem CertificatesPage::texts[] =
 {
-	{ IDC_STATIC1, ResourceManager::PRIVATE_KEY_FILE },
-	{ IDC_STATIC2, ResourceManager::OWN_CERTIFICATE_FILE },
-	{ IDC_STATIC3, ResourceManager::TRUSTED_CERTIFICATES_PATH },
-	{ IDC_GENERATE_CERTS, ResourceManager::GENERATE_CERTIFICATES },
-	{ 0, ResourceManager::SETTINGS_AUTO_AWAY }
+    { IDC_STATIC1, ResourceManager::PRIVATE_KEY_FILE },
+    { IDC_STATIC2, ResourceManager::OWN_CERTIFICATE_FILE },
+    { IDC_STATIC3, ResourceManager::TRUSTED_CERTIFICATES_PATH },
+    { IDC_GENERATE_CERTS, ResourceManager::GENERATE_CERTIFICATES },
+    { 0, ResourceManager::SETTINGS_AUTO_AWAY }
 };
 
 PropPage::Item CertificatesPage::items[] =
 {
-	{ IDC_TLS_CERTIFICATE_FILE, SettingsManager::TLS_CERTIFICATE_FILE, PropPage::T_STR },
-	{ IDC_TLS_PRIVATE_KEY_FILE, SettingsManager::TLS_PRIVATE_KEY_FILE, PropPage::T_STR },
-	{ IDC_TLS_TRUSTED_CERTIFICATES_PATH, SettingsManager::TLS_TRUSTED_CERTIFICATES_PATH, PropPage::T_STR },
-	{ 0, 0, PropPage::T_END }
+    { IDC_TLS_CERTIFICATE_FILE, SettingsManager::TLS_CERTIFICATE_FILE, PropPage::T_STR },
+    { IDC_TLS_PRIVATE_KEY_FILE, SettingsManager::TLS_PRIVATE_KEY_FILE, PropPage::T_STR },
+    { IDC_TLS_TRUSTED_CERTIFICATES_PATH, SettingsManager::TLS_TRUSTED_CERTIFICATES_PATH, PropPage::T_STR },
+    { 0, 0, PropPage::T_END }
 };
 
 PropPage::ListItem CertificatesPage::listItems[] =
 {
-	{ SettingsManager::USE_TLS, ResourceManager::SETTINGS_USE_TLS },
-	{ SettingsManager::ALLOW_UNTRUSTED_HUBS, ResourceManager::SETTINGS_ALLOW_UNTRUSTED_HUBS },
-	{ SettingsManager::ALLOW_UNTRUSTED_CLIENTS, ResourceManager::SETTINGS_ALLOW_UNTRUSTED_CLIENTS },
-	{ 0, ResourceManager::SETTINGS_AUTO_AWAY }
+    { SettingsManager::USE_TLS, ResourceManager::SETTINGS_USE_TLS },
+    { SettingsManager::ALLOW_UNTRUSTED_HUBS, ResourceManager::SETTINGS_ALLOW_UNTRUSTED_HUBS },
+    { SettingsManager::ALLOW_UNTRUSTED_CLIENTS, ResourceManager::SETTINGS_ALLOW_UNTRUSTED_CLIENTS },
+    { 0, ResourceManager::SETTINGS_AUTO_AWAY }
 };
 
 LRESULT CertificatesPage::onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
-	PropPage::translate((HWND)(*this), texts);
-	PropPage::read((HWND)*this, items, listItems, GetDlgItem(IDC_TLS_OPTIONS));
-	
-	// Do specialized reading here
-	return TRUE;
+    PropPage::translate((HWND)(*this), texts);
+    PropPage::read((HWND)*this, items, listItems, GetDlgItem(IDC_TLS_OPTIONS));
+    
+    // Do specialized reading here
+    return TRUE;
 }
 
 void CertificatesPage::write()
 {
-	PropPage::write((HWND)*this, items, listItems, GetDlgItem(IDC_TLS_OPTIONS));
+    PropPage::write((HWND)*this, items, listItems, GetDlgItem(IDC_TLS_OPTIONS));
 }
 
 LRESULT CertificatesPage::onBrowsePrivateKey(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	tstring target = Text::toT(SETTING(TLS_PRIVATE_KEY_FILE));
-	CEdit edt(GetDlgItem(IDC_TLS_PRIVATE_KEY_FILE));
-	
-	if (WinUtil::browseFile(target, m_hWnd, false, target))
-	{
-		edt.SetWindowText(&target[0]);
-	}
-	return 0;
+    tstring target = Text::toT(SETTING(TLS_PRIVATE_KEY_FILE));
+    CEdit edt(GetDlgItem(IDC_TLS_PRIVATE_KEY_FILE));
+    
+    if (WinUtil::browseFile(target, m_hWnd, false, target))
+    {
+        edt.SetWindowText(&target[0]);
+    }
+    return 0;
 }
 
 LRESULT CertificatesPage::onBrowseCertificate(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	tstring target = Text::toT(SETTING(TLS_CERTIFICATE_FILE));
-	CEdit edt(GetDlgItem(IDC_TLS_CERTIFICATE_FILE));
-	
-	if (WinUtil::browseFile(target, m_hWnd, false, target))
-	{
-		edt.SetWindowText(&target[0]);
-	}
-	return 0;
+    tstring target = Text::toT(SETTING(TLS_CERTIFICATE_FILE));
+    CEdit edt(GetDlgItem(IDC_TLS_CERTIFICATE_FILE));
+    
+    if (WinUtil::browseFile(target, m_hWnd, false, target))
+    {
+        edt.SetWindowText(&target[0]);
+    }
+    return 0;
 }
 
 LRESULT CertificatesPage::onBrowseTrustedPath(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	tstring target = Text::toT(SETTING(TLS_TRUSTED_CERTIFICATES_PATH));
-	CEdit edt(GetDlgItem(IDC_TLS_TRUSTED_CERTIFICATES_PATH));
-	
-	if (WinUtil::browseDirectory(target, m_hWnd))
-	{
-		edt.SetWindowText(&target[0]);
-	}
-	return 0;
+    tstring target = Text::toT(SETTING(TLS_TRUSTED_CERTIFICATES_PATH));
+    CEdit edt(GetDlgItem(IDC_TLS_TRUSTED_CERTIFICATES_PATH));
+    
+    if (WinUtil::browseDirectory(target, m_hWnd))
+    {
+        edt.SetWindowText(&target[0]);
+    }
+    return 0;
 }
 
 LRESULT CertificatesPage::onGenerateCerts(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	try
-	{
-		CryptoManager::getInstance()->generateCertificate();
-	}
-	catch (const CryptoException& e)
-	{
-		MessageBox(Text::toT(e.getError()).c_str(), L"Error generating certificate");
-	}
-	return 0;
+    try
+    {
+        CryptoManager::getInstance()->generateCertificate();
+    }
+    catch (const CryptoException& e)
+    {
+        MessageBox(Text::toT(e.getError()).c_str(), L"Error generating certificate");
+    }
+    return 0;
 }
 
 /**

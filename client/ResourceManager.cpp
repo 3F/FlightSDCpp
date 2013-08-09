@@ -30,54 +30,54 @@ wstring ResourceManager::wstrings[ResourceManager::LAST];
 
 void ResourceManager::loadLanguage(const string& aFile)
 {
-	try
-	{
-		File f(aFile, File::READ, File::OPEN);
-		SimpleXML xml;
-		xml.fromXML(f.read());
-		
-		unordered_map<string, int> h;
-		
-		for (int i = 0; i < LAST; ++i)
-		{
-			h[names[i]] = i;
-		}
-		
-		if (xml.findChild("Language"))
-		{
-			rtl = xml.getBoolChildAttrib("RightToLeft");
-			
-			xml.stepIn();
-			if (xml.findChild("Strings"))
-			{
-				xml.stepIn();
-				
-				while (xml.findChild("String"))
-				{
-					unordered_map<string, int>::const_iterator j = h.find(xml.getChildAttrib("Name"));
-					
-					if (j != h.end())
-					{
-						strings[j->second] = xml.getChildData();
-					}
-				}
-				createWide();
-			}
-		}
-	}
-	catch (const Exception&)
-	{
-		// ...
-	}
+    try
+    {
+        File f(aFile, File::READ, File::OPEN);
+        SimpleXML xml;
+        xml.fromXML(f.read());
+        
+        unordered_map<string, int> h;
+        
+        for (int i = 0; i < LAST; ++i)
+        {
+            h[names[i]] = i;
+        }
+        
+        if (xml.findChild("Language"))
+        {
+            rtl = xml.getBoolChildAttrib("RightToLeft");
+            
+            xml.stepIn();
+            if (xml.findChild("Strings"))
+            {
+                xml.stepIn();
+                
+                while (xml.findChild("String"))
+                {
+                    unordered_map<string, int>::const_iterator j = h.find(xml.getChildAttrib("Name"));
+                    
+                    if (j != h.end())
+                    {
+                        strings[j->second] = xml.getChildData();
+                    }
+                }
+                createWide();
+            }
+        }
+    }
+    catch (const Exception&)
+    {
+        // ...
+    }
 }
 
 void ResourceManager::createWide()
 {
-	for (int i = 0; i < LAST; ++i)
-	{
-		wstrings[i].clear();
-		Text::utf8ToWide(strings[i], wstrings[i]);
-	}
+    for (int i = 0; i < LAST; ++i)
+    {
+        wstrings[i].clear();
+        Text::utf8ToWide(strings[i], wstrings[i]);
+    }
 }
 
 } // namespace dcpp

@@ -27,46 +27,46 @@
 
 class CertificatesPage : public CPropertyPage<IDD_CERTIFICATESPAGE>, public PropPage
 {
-	public:
-		CertificatesPage(SettingsManager *s) : PropPage(s)
-		{
-			title = _tcsdup((TSTRING(SETTINGS_ADVANCED) + _T('\\') + TSTRING(SETTINGS_CERTIFICATES)).c_str());
-			SetTitle(title);
-			m_psp.dwFlags |= PSP_RTLREADING;
-		}
-		
-		~CertificatesPage()
-		{
-			free(title);
-		}
-		
-		BEGIN_MSG_MAP(CertificatesPage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		COMMAND_ID_HANDLER(IDC_BROWSE_PRIVATE_KEY, onBrowsePrivateKey)
-		COMMAND_ID_HANDLER(IDC_BROWSE_CERTIFICATE, onBrowseCertificate)
-		COMMAND_ID_HANDLER(IDC_BROWSE_TRUSTED_PATH, onBrowseTrustedPath)
-		COMMAND_ID_HANDLER(IDC_GENERATE_CERTS, onGenerateCerts)
-		END_MSG_MAP()
-		
-		LRESULT onBrowsePrivateKey(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onBrowseCertificate(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onBrowseTrustedPath(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onGenerateCerts(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-	
-		static Item items[];
-		static TextItem texts[];
-		static ListItem listItems[];
-		TCHAR* title;
+    public:
+        CertificatesPage(SettingsManager *s) : PropPage(s)
+        {
+            title = _tcsdup((TSTRING(SETTINGS_ADVANCED) + _T('\\') + TSTRING(SETTINGS_CERTIFICATES)).c_str());
+            SetTitle(title);
+            m_psp.dwFlags |= PSP_RTLREADING;
+        }
+        
+        ~CertificatesPage()
+        {
+            free(title);
+        }
+        
+        BEGIN_MSG_MAP(CertificatesPage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        COMMAND_ID_HANDLER(IDC_BROWSE_PRIVATE_KEY, onBrowsePrivateKey)
+        COMMAND_ID_HANDLER(IDC_BROWSE_CERTIFICATE, onBrowseCertificate)
+        COMMAND_ID_HANDLER(IDC_BROWSE_TRUSTED_PATH, onBrowseTrustedPath)
+        COMMAND_ID_HANDLER(IDC_GENERATE_CERTS, onGenerateCerts)
+        END_MSG_MAP()
+        
+        LRESULT onBrowsePrivateKey(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onBrowseCertificate(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onBrowseTrustedPath(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onGenerateCerts(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+    
+        static Item items[];
+        static TextItem texts[];
+        static ListItem listItems[];
+        TCHAR* title;
 };
 
 #endif // !defined(CERTIFICATES_PAGE_H)

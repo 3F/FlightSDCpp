@@ -25,26 +25,26 @@
 
 class FinishedULFrame : public FinishedFrameBase<FinishedULFrame, ResourceManager::FINISHED_UPLOADS, IDC_FINISHED_UL, IDR_FINISHED_UL>
 {
-	public:
-		FinishedULFrame()
-		{
-			upload = true;
-			boldFinished = SettingsManager::BOLD_FINISHED_UPLOADS;
-			columnOrder = SettingsManager::FINISHED_UL_ORDER;
-			columnWidth = SettingsManager::FINISHED_UL_WIDTHS;
-			columnVisible = SettingsManager::FINISHED_UL_VISIBLE;
-		}
-		
-		~FinishedULFrame() { }
-		
-		DECLARE_FRAME_WND_CLASS_EX(_T("FinishedULFrame"), IDR_FINISHED_UL, 0, COLOR_3DFACE);
-		
-	private:
-	
-		void on(AddedUl, FinishedItem* entry) noexcept
-		{
-			PostMessage(WM_SPEAKER, SPEAK_ADD_LINE, (WPARAM)entry);
-		}
+    public:
+        FinishedULFrame()
+        {
+            upload = true;
+            boldFinished = SettingsManager::BOLD_FINISHED_UPLOADS;
+            columnOrder = SettingsManager::FINISHED_UL_ORDER;
+            columnWidth = SettingsManager::FINISHED_UL_WIDTHS;
+            columnVisible = SettingsManager::FINISHED_UL_VISIBLE;
+        }
+        
+        ~FinishedULFrame() { }
+        
+        DECLARE_FRAME_WND_CLASS_EX(_T("FinishedULFrame"), IDR_FINISHED_UL, 0, COLOR_3DFACE);
+        
+    private:
+    
+        void on(AddedUl, FinishedItem* entry) noexcept
+        {
+            PostMessage(WM_SPEAKER, SPEAK_ADD_LINE, (WPARAM)entry);
+        }
 };
 
 #endif // !defined(FINISHED_UL_FRAME_H)

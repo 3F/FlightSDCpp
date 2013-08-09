@@ -29,50 +29,50 @@
 
 class NetworkPage : public CPropertyPage<IDD_NETWORKPAGE>, public PropPage
 {
-	public:
-		NetworkPage(SettingsManager *s) : PropPage(s), adapterInfo(NULL)
-		{
-			SetTitle(CTSTRING(SETTINGS_NETWORK));
-			m_psp.dwFlags |= PSP_RTLREADING;
-		}
-		~NetworkPage()
-		{
-			if (adapterInfo)
-				HeapFree(GetProcessHeap(), 0, adapterInfo);
-		}
-		
-		BEGIN_MSG_MAP(NetworkPage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		COMMAND_ID_HANDLER(IDC_CONNECTION_DETECTION, onClickedActive)
-		COMMAND_ID_HANDLER(IDC_DIRECT, onClickedActive)
-		COMMAND_ID_HANDLER(IDC_FIREWALL_PASSIVE, onClickedActive)
-		COMMAND_ID_HANDLER(IDC_FIREWALL_UPNP, onClickedActive)
-		COMMAND_ID_HANDLER(IDC_FIREWALL_NAT, onClickedActive)
-		COMMAND_ID_HANDLER(IDC_DIRECT_OUT, onClickedActive)
-		COMMAND_ID_HANDLER(IDC_NATT, onClickedActive)
-		COMMAND_ID_HANDLER(IDC_SOCKS5, onClickedActive)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		LRESULT onClickedActive(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	private:
-		static Item items[];
-		static TextItem texts[];
-		CEdit desc;
-		CComboBox BindCombo;
-		
-		void fixControls();
-		void getAddresses();
-		
-		IP_ADAPTER_ADDRESSES* adapterInfo;
+    public:
+        NetworkPage(SettingsManager *s) : PropPage(s), adapterInfo(NULL)
+        {
+            SetTitle(CTSTRING(SETTINGS_NETWORK));
+            m_psp.dwFlags |= PSP_RTLREADING;
+        }
+        ~NetworkPage()
+        {
+            if (adapterInfo)
+                HeapFree(GetProcessHeap(), 0, adapterInfo);
+        }
+        
+        BEGIN_MSG_MAP(NetworkPage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        COMMAND_ID_HANDLER(IDC_CONNECTION_DETECTION, onClickedActive)
+        COMMAND_ID_HANDLER(IDC_DIRECT, onClickedActive)
+        COMMAND_ID_HANDLER(IDC_FIREWALL_PASSIVE, onClickedActive)
+        COMMAND_ID_HANDLER(IDC_FIREWALL_UPNP, onClickedActive)
+        COMMAND_ID_HANDLER(IDC_FIREWALL_NAT, onClickedActive)
+        COMMAND_ID_HANDLER(IDC_DIRECT_OUT, onClickedActive)
+        COMMAND_ID_HANDLER(IDC_NATT, onClickedActive)
+        COMMAND_ID_HANDLER(IDC_SOCKS5, onClickedActive)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT onClickedActive(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    private:
+        static Item items[];
+        static TextItem texts[];
+        CEdit desc;
+        CComboBox BindCombo;
+        
+        void fixControls();
+        void getAddresses();
+        
+        IP_ADAPTER_ADDRESSES* adapterInfo;
 };
 
 #endif // !defined(NETWORK_PAGE_H)

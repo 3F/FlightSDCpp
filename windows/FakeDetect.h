@@ -27,37 +27,37 @@
 
 class FakeDetect : public CPropertyPage<IDD_FAKEDETECT>, public PropPage
 {
-	public:
-		FakeDetect(SettingsManager *s) : PropPage(s)
-		{
-			title = _tcsdup((TSTRING(SETTINGS_ADVANCED) + _T('\\') + TSTRING(SETTINGS_FAKEDETECT)).c_str());
-			SetTitle(title);
-			m_psp.dwFlags |= PSP_RTLREADING;
-		};
-		
-		~FakeDetect()
-		{
-			free(title);
-		};
-		
-		BEGIN_MSG_MAP(FakeDetect)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT, WPARAM, LPARAM, BOOL&);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-		static Item items[];
-		static TextItem texts[];
-		TCHAR* title;
-		static ListItem listItems[];
+    public:
+        FakeDetect(SettingsManager *s) : PropPage(s)
+        {
+            title = _tcsdup((TSTRING(SETTINGS_ADVANCED) + _T('\\') + TSTRING(SETTINGS_FAKEDETECT)).c_str());
+            SetTitle(title);
+            m_psp.dwFlags |= PSP_RTLREADING;
+        };
+        
+        ~FakeDetect()
+        {
+            free(title);
+        };
+        
+        BEGIN_MSG_MAP(FakeDetect)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT, WPARAM, LPARAM, BOOL&);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+        static Item items[];
+        static TextItem texts[];
+        TCHAR* title;
+        static ListItem listItems[];
 };
 
 #endif //FakeDetect_H

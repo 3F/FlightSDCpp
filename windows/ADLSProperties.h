@@ -25,45 +25,45 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//	Dialog for new/edit ADL searches
+//    Dialog for new/edit ADL searches
 //
 ///////////////////////////////////////////////////////////////////////////////
 class ADLSProperties : public CDialogImpl<ADLSProperties>
 {
-	public:
-	
-		// Constructor/destructor
-		ADLSProperties(ADLSearch *_search) : search(_search) { }
-		~ADLSProperties() { }
-		
-		// Dilaog unique id
-		enum { IDD = IDD_ADLS_PROPERTIES };
-		
-		// Inline message map
-		BEGIN_MSG_MAP(ADLSProperties)
-		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-		COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
-		COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
-		END_MSG_MAP()
-		
-		// Message handlers
-		LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		
-	private:
-	
-		// Current search
-		ADLSearch* search;
-		
-		CEdit ctrlSearch;
-		CEdit ctrlDestDir;
-		CEdit ctrlMinSize;
-		CEdit ctrlMaxSize;
-		CButton ctrlActive;
-		CButton ctrlAutoQueue;
-		CComboBox ctrlSearchType;
-		CComboBox ctrlSizeType;
-		CComboBox cRaw;
+    public:
+    
+        // Constructor/destructor
+        ADLSProperties(ADLSearch *_search) : search(_search) { }
+        ~ADLSProperties() { }
+        
+        // Dilaog unique id
+        enum { IDD = IDD_ADLS_PROPERTIES };
+        
+        // Inline message map
+        BEGIN_MSG_MAP(ADLSProperties)
+        MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+        COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
+        COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
+        END_MSG_MAP()
+        
+        // Message handlers
+        LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        
+    private:
+    
+        // Current search
+        ADLSearch* search;
+        
+        CEdit ctrlSearch;
+        CEdit ctrlDestDir;
+        CEdit ctrlMinSize;
+        CEdit ctrlMaxSize;
+        CButton ctrlActive;
+        CButton ctrlAutoQueue;
+        CComboBox ctrlSearchType;
+        CComboBox ctrlSizeType;
+        CComboBox cRaw;
 };
 
 #endif // !defined(ADLS_PROPERTIES_H)

@@ -26,31 +26,31 @@
 
 class CShellContextMenu
 {
-		static IContextMenu2* g_IContext2;
-		static IContextMenu3* g_IContext3;
-		
-	public:
-		CShellContextMenu();
-		~CShellContextMenu();
-		
-		void SetPath(const tstring& strPath);
-		CMenu* GetMenu();
-		UINT ShowContextMenu(HWND hWnd, CPoint pt);
-		
-	private:
-		bool bDelete;
-		CMenu* m_Menu;
-		IShellFolder* m_psfFolder;
-		LPITEMIDLIST* m_pidlArray;
-		
-		void FreePIDLArray(LPITEMIDLIST* pidlArray);
-		// this functions determines which version of IContextMenu is available for those objects(always the highest one)
-		// and returns that interface
-		bool GetContextMenu(LPVOID* ppContextMenu, int& iMenuType);
-		
-		void InvokeCommand(LPCONTEXTMENU pContextMenu, UINT idCommand);
-		
-		static LRESULT CALLBACK HookWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+        static IContextMenu2* g_IContext2;
+        static IContextMenu3* g_IContext3;
+        
+    public:
+        CShellContextMenu();
+        ~CShellContextMenu();
+        
+        void SetPath(const tstring& strPath);
+        CMenu* GetMenu();
+        UINT ShowContextMenu(HWND hWnd, CPoint pt);
+        
+    private:
+        bool bDelete;
+        CMenu* m_Menu;
+        IShellFolder* m_psfFolder;
+        LPITEMIDLIST* m_pidlArray;
+        
+        void FreePIDLArray(LPITEMIDLIST* pidlArray);
+        // this functions determines which version of IContextMenu is available for those objects(always the highest one)
+        // and returns that interface
+        bool GetContextMenu(LPVOID* ppContextMenu, int& iMenuType);
+        
+        void InvokeCommand(LPCONTEXTMENU pContextMenu, UINT idCommand);
+        
+        static LRESULT CALLBACK HookWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
 

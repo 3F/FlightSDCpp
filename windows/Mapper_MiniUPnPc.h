@@ -23,36 +23,36 @@
 
 class Mapper_MiniUPnPc : public Mapper
 {
-	public:
-		Mapper_MiniUPnPc() : Mapper(), initialized(false) { }
-		
-		static const string name;
-		
-	private:
-		bool init();
-		void uninit();
-		
-		bool add(const unsigned short port, const Protocol protocol, const string& description);
-		bool remove(const unsigned short port, const Protocol protocol);
-		
-		uint32_t renewal() const
-		{
-			return 0;
-		}
-		
-		string getDeviceName();
-		string getExternalIP();
-		
-		const string& getName() const
-		{
-			return name;
-		}
-		
-		bool initialized;
-		
-		string url;
-		string service;
-		string device;
+    public:
+        Mapper_MiniUPnPc() : Mapper(), initialized(false) { }
+        
+        static const string name;
+        
+    private:
+        bool init();
+        void uninit();
+        
+        bool add(const unsigned short port, const Protocol protocol, const string& description);
+        bool remove(const unsigned short port, const Protocol protocol);
+        
+        uint32_t renewal() const
+        {
+            return 0;
+        }
+        
+        string getDeviceName();
+        string getExternalIP();
+        
+        const string& getName() const
+        {
+            return name;
+        }
+        
+        bool initialized;
+        
+        string url;
+        string service;
+        string device;
 };
 
 #endif

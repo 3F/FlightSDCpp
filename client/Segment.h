@@ -27,75 +27,75 @@ namespace dcpp
 
 class Segment
 {
-	public:
-		Segment() : start(0), size(-1), overlapped(false) { }
-		Segment(int64_t start_, int64_t size_, bool overlapped_ = false) : start(start_), size(size_), overlapped(overlapped_) { }
-		
-		int64_t getStart() const
-		{
-			return start;
-		}
-		int64_t getSize() const
-		{
-			return size;
-		}
-		int64_t getEnd() const
-		{
-			return start + size;
-		}
-		
-		void setSize(int64_t size_)
-		{
-			size = size_;
-		}
-		
-		bool overlaps(const Segment& rhs) const
-		{
-			return getStart() < rhs.getEnd() && rhs.getStart() < getEnd();
-		}
-		
-		void trim(const Segment& rhs)
-		{
-			if (!overlaps(rhs))
-			{
-				return;
-			}
-			
-			if (rhs.getStart() < start)
-			{
-				int64_t rend = rhs.getEnd();
-				if (rend > getEnd())
-				{
-					start = size = 0;
-				}
-				else
-				{
-					size -= rend - start;
-					start = rend;
-				}
-				return;
-			}
-			size = rhs.getStart() - start;
-		}
-		
-		bool contains(const Segment& rhs) const
-		{
-			return getStart() <= rhs.getStart() && getEnd() == rhs.getEnd();
-		}
-		
-		bool operator==(const Segment& rhs) const
-		{
-			return getStart() == rhs.getStart() && getSize() == rhs.getSize();
-		}
-		bool operator<(const Segment& rhs) const
-		{
-			return (getStart() < rhs.getStart()) || (getStart() == rhs.getStart() && getSize() < rhs.getSize());
-		}
-	private:
-		int64_t start;
-		int64_t size;
-		
-		GETSET(bool, overlapped, Overlapped);
+    public:
+        Segment() : start(0), size(-1), overlapped(false) { }
+        Segment(int64_t start_, int64_t size_, bool overlapped_ = false) : start(start_), size(size_), overlapped(overlapped_) { }
+        
+        int64_t getStart() const
+        {
+            return start;
+        }
+        int64_t getSize() const
+        {
+            return size;
+        }
+        int64_t getEnd() const
+        {
+            return start + size;
+        }
+        
+        void setSize(int64_t size_)
+        {
+            size = size_;
+        }
+        
+        bool overlaps(const Segment& rhs) const
+        {
+            return getStart() < rhs.getEnd() && rhs.getStart() < getEnd();
+        }
+        
+        void trim(const Segment& rhs)
+        {
+            if (!overlaps(rhs))
+            {
+                return;
+            }
+            
+            if (rhs.getStart() < start)
+            {
+                int64_t rend = rhs.getEnd();
+                if (rend > getEnd())
+                {
+                    start = size = 0;
+                }
+                else
+                {
+                    size -= rend - start;
+                    start = rend;
+                }
+                return;
+            }
+            size = rhs.getStart() - start;
+        }
+        
+        bool contains(const Segment& rhs) const
+        {
+            return getStart() <= rhs.getStart() && getEnd() == rhs.getEnd();
+        }
+        
+        bool operator==(const Segment& rhs) const
+        {
+            return getStart() == rhs.getStart() && getSize() == rhs.getSize();
+        }
+        bool operator<(const Segment& rhs) const
+        {
+            return (getStart() < rhs.getStart()) || (getStart() == rhs.getStart() && getSize() < rhs.getSize());
+        }
+    private:
+        int64_t start;
+        int64_t size;
+        
+        GETSET(bool, overlapped, Overlapped);
 };
 
 } // namespace dcpp

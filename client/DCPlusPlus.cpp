@@ -55,120 +55,120 @@ namespace dcpp
 
 void startup(void (*f)(void*, const tstring&), void* p)
 {
-	// "Dedicated to the near-memory of Nev. Let's start remembering people while they're still alive."
-	// Nev's great contribution to dc++
-	while (1) break;
-	
-	
+    // "Dedicated to the near-memory of Nev. Let's start remembering people while they're still alive."
+    // Nev's great contribution to dc++
+    while (1) break;
+    
+    
 #ifdef _WIN32
-	WSADATA wsaData;
-	WSAStartup(MAKEWORD(2, 2), &wsaData);
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
-	
-	Util::initialize();
-	
-	ResourceManager::newInstance();
-	SettingsManager::newInstance();
-	
-	LogManager::newInstance();
-	g_fly_server_config.loadConfig();
-	CFlylinkDBManager::newInstance();
-	TimerManager::newInstance();
-	HashManager::newInstance();
-	CryptoManager::newInstance();
-	SearchManager::newInstance();
-	ClientManager::newInstance();
-	ConnectionManager::newInstance();
-	DownloadManager::newInstance();
-	UploadManager::newInstance();
-	ThrottleManager::newInstance();
-	QueueManager::newInstance();
-	ShareManager::newInstance();
-	FavoriteManager::newInstance();
-	FinishedManager::newInstance();
-	ADLSearchManager::newInstance();
-	ConnectivityManager::newInstance();
-	MappingManager::newInstance();
-	DebugManager::newInstance();
-	DetectionManager::newInstance();
-	PopupManager::newInstance();
-	IpGuard::newInstance();
-	PGLoader::newInstance();
-	
-	SettingsManager::getInstance()->load();
-	
-	if (!SETTING(LANGUAGE_FILE).empty())
-	{
-		string languageFile = SETTING(LANGUAGE_FILE);
-		if (!File::isAbsolute(languageFile))
-			languageFile = Util::getPath(Util::PATH_LOCALE) + languageFile;
-		ResourceManager::getInstance()->loadLanguage(languageFile);
-	}
-	else
-		ResourceManager::getInstance()->loadLanguage("Russian.xml");
-		
-		
-	Util::load_customlocations(); //[+]FlylinkDC++
-	Util::load_compress_ext();//[+]FlylinkDC++
-	FavoriteManager::getInstance()->load();
-	
-	CryptoManager::getInstance()->loadCertificates();
-	DetectionManager::getInstance()->load();
-	WebServerManager::newInstance();
-	
-	DHT::newInstance();
-	
-	if (f != NULL)
-		(*f)(p, TSTRING(HASH_DATABASE));
-	HashManager::getInstance()->startup();
-	if (f != NULL)
-		(*f)(p, TSTRING(SHARED_FILES));
-	ShareManager::getInstance()->refresh(true, false, true);
-	if (f != NULL)
-		(*f)(p, TSTRING(DOWNLOAD_QUEUE));
-	QueueManager::getInstance()->loadQueue();
+    
+    Util::initialize();
+    
+    ResourceManager::newInstance();
+    SettingsManager::newInstance();
+    
+    LogManager::newInstance();
+    g_fly_server_config.loadConfig();
+    CFlylinkDBManager::newInstance();
+    TimerManager::newInstance();
+    HashManager::newInstance();
+    CryptoManager::newInstance();
+    SearchManager::newInstance();
+    ClientManager::newInstance();
+    ConnectionManager::newInstance();
+    DownloadManager::newInstance();
+    UploadManager::newInstance();
+    ThrottleManager::newInstance();
+    QueueManager::newInstance();
+    ShareManager::newInstance();
+    FavoriteManager::newInstance();
+    FinishedManager::newInstance();
+    ADLSearchManager::newInstance();
+    ConnectivityManager::newInstance();
+    MappingManager::newInstance();
+    DebugManager::newInstance();
+    DetectionManager::newInstance();
+    PopupManager::newInstance();
+    IpGuard::newInstance();
+    PGLoader::newInstance();
+    
+    SettingsManager::getInstance()->load();
+    
+    if (!SETTING(LANGUAGE_FILE).empty())
+    {
+        string languageFile = SETTING(LANGUAGE_FILE);
+        if (!File::isAbsolute(languageFile))
+            languageFile = Util::getPath(Util::PATH_LOCALE) + languageFile;
+        ResourceManager::getInstance()->loadLanguage(languageFile);
+    }
+    else
+        ResourceManager::getInstance()->loadLanguage("Russian.xml");
+        
+        
+    Util::load_customlocations(); //[+]FlylinkDC++
+    Util::load_compress_ext();//[+]FlylinkDC++
+    FavoriteManager::getInstance()->load();
+    
+    CryptoManager::getInstance()->loadCertificates();
+    DetectionManager::getInstance()->load();
+    WebServerManager::newInstance();
+    
+    DHT::newInstance();
+    
+    if (f != NULL)
+        (*f)(p, TSTRING(HASH_DATABASE));
+    HashManager::getInstance()->startup();
+    if (f != NULL)
+        (*f)(p, TSTRING(SHARED_FILES));
+    ShareManager::getInstance()->refresh(true, false, true);
+    if (f != NULL)
+        (*f)(p, TSTRING(DOWNLOAD_QUEUE));
+    QueueManager::getInstance()->loadQueue();
 }
 
 void shutdown()
 {
-	TimerManager::getInstance()->shutdown();
-	HashManager::getInstance()->shutdown();
-	//ConnectionManager::getInstance()->shutdown(); //called twice
-	MappingManager::getInstance()->close();
-	BufferedSocket::waitShutdown();
-	
-	QueueManager::getInstance()->saveQueue(true);
-	SettingsManager::getInstance()->save();
-	MappingManager::deleteInstance();
-	ConnectivityManager::deleteInstance();
-	DHT::deleteInstance();
-	DebugManager::deleteInstance();
-	WebServerManager::deleteInstance();
-	DetectionManager::deleteInstance();
-	PGLoader::deleteInstance();
-	IpGuard::deleteInstance();
-	PopupManager::deleteInstance();
-	ADLSearchManager::deleteInstance();
-	FinishedManager::deleteInstance();
-	ShareManager::deleteInstance();
-	CryptoManager::deleteInstance();
-	ThrottleManager::deleteInstance();
-	DownloadManager::deleteInstance();
-	UploadManager::deleteInstance();
-	QueueManager::deleteInstance();
-	ConnectionManager::deleteInstance();
-	SearchManager::deleteInstance();
-	FavoriteManager::deleteInstance();
-	ClientManager::deleteInstance();
-	CFlylinkDBManager::deleteInstance();
-	HashManager::deleteInstance();
-	LogManager::deleteInstance();
-	SettingsManager::deleteInstance();
-	TimerManager::deleteInstance();
-	ResourceManager::deleteInstance();
-	
+    TimerManager::getInstance()->shutdown();
+    HashManager::getInstance()->shutdown();
+    //ConnectionManager::getInstance()->shutdown(); //called twice
+    MappingManager::getInstance()->close();
+    BufferedSocket::waitShutdown();
+    
+    QueueManager::getInstance()->saveQueue(true);
+    SettingsManager::getInstance()->save();
+    MappingManager::deleteInstance();
+    ConnectivityManager::deleteInstance();
+    DHT::deleteInstance();
+    DebugManager::deleteInstance();
+    WebServerManager::deleteInstance();
+    DetectionManager::deleteInstance();
+    PGLoader::deleteInstance();
+    IpGuard::deleteInstance();
+    PopupManager::deleteInstance();
+    ADLSearchManager::deleteInstance();
+    FinishedManager::deleteInstance();
+    ShareManager::deleteInstance();
+    CryptoManager::deleteInstance();
+    ThrottleManager::deleteInstance();
+    DownloadManager::deleteInstance();
+    UploadManager::deleteInstance();
+    QueueManager::deleteInstance();
+    ConnectionManager::deleteInstance();
+    SearchManager::deleteInstance();
+    FavoriteManager::deleteInstance();
+    ClientManager::deleteInstance();
+    CFlylinkDBManager::deleteInstance();
+    HashManager::deleteInstance();
+    LogManager::deleteInstance();
+    SettingsManager::deleteInstance();
+    TimerManager::deleteInstance();
+    ResourceManager::deleteInstance();
+    
 #ifdef _WIN32
-	::WSACleanup();
+    ::WSACleanup();
 #endif
 }
 

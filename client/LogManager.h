@@ -27,99 +27,99 @@ namespace dcpp
 
 class LogManagerListener
 {
-	public:
-		virtual ~LogManagerListener() { }
-		template<int I> struct X
-		{
-			enum { TYPE = I };
-		};
-		
-		typedef X<0> Message;
-		virtual void on(Message, const string&) noexcept { }
+    public:
+        virtual ~LogManagerListener() { }
+        template<int I> struct X
+        {
+            enum { TYPE = I };
+        };
+        
+        typedef X<0> Message;
+        virtual void on(Message, const string&) noexcept { }
 };
 
 class LogManager : public Singleton<LogManager>, public Speaker<LogManagerListener>
 {
-	public:
-		enum LogArea { CHAT, PM, DOWNLOAD, UPLOAD, SYSTEM, STATUS,
-		               WEBSERVER,
+    public:
+        enum LogArea { CHAT, PM, DOWNLOAD, UPLOAD, SYSTEM, STATUS,
+                       WEBSERVER,
 #ifdef RIP_USE_LOG_PROTOCOL
-		               PROTOCOL,
+                       PROTOCOL,
 #endif
-		               LAST
-		             };
-		enum {FILE, FORMAT};
-		
-		void log(LogArea area, const StringMap& params, bool p_only_file = false) noexcept;
-		void message(const string& msg, bool p_only_file = false);
-		
-		const string& getSetting(int area, int sel) const
-		{
-			return SettingsManager::getInstance()->get(static_cast<SettingsManager::StrSetting>(logOptions[area][sel]), true);
-		}
-		
-		void saveSetting(int area, int sel, const string& setting)
-		{
-			SettingsManager::getInstance()->set(static_cast<SettingsManager::StrSetting>(logOptions[area][sel]), setting);
-		}
-		
-	private:
-		void log(const string& p_area, const string& p_msg) noexcept;
-		
-		friend class Singleton<LogManager>;
-		CriticalSection m_cs; // [!] IRainman opt: use spin lock here.
-		
-		int logOptions[LAST][2];
+                       LAST
+                     };
+        enum {FILE, FORMAT};
+        
+        void log(LogArea area, const StringMap& params, bool p_only_file = false) noexcept;
+        void message(const string& msg, bool p_only_file = false);
+        
+        const string& getSetting(int area, int sel) const
+        {
+            return SettingsManager::getInstance()->get(static_cast<SettingsManager::StrSetting>(logOptions[area][sel]), true);
+        }
+        
+        void saveSetting(int area, int sel, const string& setting)
+        {
+            SettingsManager::getInstance()->set(static_cast<SettingsManager::StrSetting>(logOptions[area][sel]), setting);
+        }
+        
+    private:
+        void log(const string& p_area, const string& p_msg) noexcept;
+        
+        friend class Singleton<LogManager>;
+        CriticalSection m_cs; // [!] IRainman opt: use spin lock here.
+        
+        int logOptions[LAST][2];
 #ifdef _DEBUG
-		unordered_map<string, pair<string, size_t>> m_log_path_cache;
-		size_t total, missed;
+        unordered_map<string, pair<string, size_t>> m_log_path_cache;
+        size_t total, missed;
 #else
-		unordered_map<string, string> m_log_path_cache;
+        unordered_map<string, string> m_log_path_cache;
 #endif
-		LogManager();
-		~LogManager()
-		{
+        LogManager();
+        ~LogManager()
+        {
 #ifdef _DEBUG
-			dcdebug("log path cache: total found=%i, missed=%i size=%i\n", total, missed, m_log_path_cache.size());
+            dcdebug("log path cache: total found=%i, missed=%i size=%i\n", total, missed, m_log_path_cache.size());
 #endif
-		}
-		
+        }
+        
 };
 
 #define LOG(area, msg)  LogManager::getInstance()->log(LogManager::area, msg)
 
 class CFlyLog
 {
-	public:
-		const string m_message;
-		const uint64_t m_start;
-		uint64_t m_tc;
-		const bool m_use_cmd_debug;
-		void log(const string& p_msg)
-		{
-			if (m_use_cmd_debug)
-			{
-				COMMAND_DEBUG(p_msg, DebugManager::CLIENT_OUT, "127.0.0.1");
-			}
-			LogManager::getInstance()->message(p_msg);
-		}
-	public:
-		CFlyLog(const string& p_message, bool p_use_cmd_debug = false) : m_message(p_message), m_start(GET_TICK()), m_tc(m_start), m_use_cmd_debug(p_use_cmd_debug)
-		{
-			log("[Start] " + m_message);
-		}
-		~CFlyLog()
-		{
-			const uint64_t l_current = GET_TICK();
-			log("[Stop ] " + m_message + " [" + Util::toString(l_current - m_tc) + " ms, Total: " + Util::toString(l_current - m_start) + " ms]");
-		}
-		void step(const string& p_message_step, const bool p_reset_count = true)
-		{
-			const uint64_t l_current = GET_TICK();
-			log("[Step ] " + m_message + p_message_step + " [" + Util::toString(l_current - m_tc) + " ms]");
-			if (p_reset_count)
-				m_tc = l_current;
-		}
+    public:
+        const string m_message;
+        const uint64_t m_start;
+        uint64_t m_tc;
+        const bool m_use_cmd_debug;
+        void log(const string& p_msg)
+        {
+            if (m_use_cmd_debug)
+            {
+                COMMAND_DEBUG(p_msg, DebugManager::CLIENT_OUT, "127.0.0.1");
+            }
+            LogManager::getInstance()->message(p_msg);
+        }
+    public:
+        CFlyLog(const string& p_message, bool p_use_cmd_debug = false) : m_message(p_message), m_start(GET_TICK()), m_tc(m_start), m_use_cmd_debug(p_use_cmd_debug)
+        {
+            log("[Start] " + m_message);
+        }
+        ~CFlyLog()
+        {
+            const uint64_t l_current = GET_TICK();
+            log("[Stop ] " + m_message + " [" + Util::toString(l_current - m_tc) + " ms, Total: " + Util::toString(l_current - m_start) + " ms]");
+        }
+        void step(const string& p_message_step, const bool p_reset_count = true)
+        {
+            const uint64_t l_current = GET_TICK();
+            log("[Step ] " + m_message + p_message_step + " [" + Util::toString(l_current - m_tc) + " ms]");
+            if (p_reset_count)
+                m_tc = l_current;
+        }
 };
 
 } // namespace dcpp

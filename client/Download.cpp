@@ -30,118 +30,118 @@ Download::Download(UserConnection& conn, QueueItem& qi, const string& path) noex
 Transfer(conn, path, qi.getTTH()),
          tempTarget(qi.getTempTarget()), file(0), lastTick(GET_TICK()), treeValid(false)
 {
-	conn.setDownload(this);
-	
-	QueueItem::SourceConstIter source = qi.getSource(getUser());
-	
-	if (qi.isSet(QueueItem::FLAG_PARTIAL_LIST))
-	{
-		setType(TYPE_PARTIAL_LIST);
-	}
-	else if (qi.isSet(QueueItem::FLAG_USER_LIST))
-	{
-		setType(TYPE_FULL_LIST);
-	}
-	
-	if (qi.isSet(QueueItem::FLAG_USER_CHECK))
-		setFlag(FLAG_USER_CHECK);
-	if (source->isSet(QueueItem::Source::FLAG_PARTIAL))
-		setFlag(FLAG_PARTIAL);
-		
-	if (getType() == TYPE_FILE && qi.getSize() != -1)
-	{
-		dcdebug("Download::Download getTTH().toBase32(): %s\n", getTTH().toBase32().c_str());
-		if (CFlylinkDBManager::getInstance()->getTree(getTTH(), getTigerTree()))
-		{
-			dcdebug("Download::Download getTree = false\n");
-			setTreeValid(true);
-			setSegment(qi.getNextSegment(getTigerTree().getBlockSize(), conn.getChunkSize(), conn.getSpeed(), source->getPartialSource()));
-		}
-		else if (conn.isSet(UserConnection::FLAG_SUPPORTS_TTHL) && !qi.getSource(conn.getUser())->isSet(QueueItem::Source::FLAG_NO_TREE) && qi.getSize() > MIN_BLOCK_SIZE)
-		{
-			dcdebug("Download::Download FLAG_SUPPORTS_TTHL(for small files, we'd probably only get the root anyway)\n");
-			// Get the tree unless the file is small (for small files, we'd probably only get the root anyway)
-			setType(TYPE_TREE);
-			getTigerTree().setFileSize(qi.getSize());
-			setSegment(Segment(0, -1));
-		}
-		else
-		{
-			// Use the root as tree to get some sort of validation at least...
-			dcdebug("Download::Download Use the root as tree to get some sort of validation at least...\n");
-			getTigerTree() = TigerTree(qi.getSize(), qi.getSize(), getTTH());
-			setTreeValid(true);
-			setSegment(qi.getNextSegment(getTigerTree().getBlockSize(), 0, 0, source->getPartialSource()));
-		}
-		
-		if ((getStartPos() + getSize()) != qi.getSize())
-		{
-			setFlag(FLAG_CHUNKED);
-		}
-		
-		if (getSegment().getOverlapped())
-		{
-			setFlag(FLAG_OVERLAP);
-			
-			// set overlapped flag to original segment
-			for (DownloadList::const_iterator i = qi.getDownloads().begin(); i != qi.getDownloads().end(); ++i)
-			{
-				if ((*i)->getSegment().contains(getSegment()))
-				{
-					(*i)->setOverlapped(true);
-					break;
-				}
-			}
-		}
-	}
+    conn.setDownload(this);
+    
+    QueueItem::SourceConstIter source = qi.getSource(getUser());
+    
+    if (qi.isSet(QueueItem::FLAG_PARTIAL_LIST))
+    {
+        setType(TYPE_PARTIAL_LIST);
+    }
+    else if (qi.isSet(QueueItem::FLAG_USER_LIST))
+    {
+        setType(TYPE_FULL_LIST);
+    }
+    
+    if (qi.isSet(QueueItem::FLAG_USER_CHECK))
+        setFlag(FLAG_USER_CHECK);
+    if (source->isSet(QueueItem::Source::FLAG_PARTIAL))
+        setFlag(FLAG_PARTIAL);
+        
+    if (getType() == TYPE_FILE && qi.getSize() != -1)
+    {
+        dcdebug("Download::Download getTTH().toBase32(): %s\n", getTTH().toBase32().c_str());
+        if (CFlylinkDBManager::getInstance()->getTree(getTTH(), getTigerTree()))
+        {
+            dcdebug("Download::Download getTree = false\n");
+            setTreeValid(true);
+            setSegment(qi.getNextSegment(getTigerTree().getBlockSize(), conn.getChunkSize(), conn.getSpeed(), source->getPartialSource()));
+        }
+        else if (conn.isSet(UserConnection::FLAG_SUPPORTS_TTHL) && !qi.getSource(conn.getUser())->isSet(QueueItem::Source::FLAG_NO_TREE) && qi.getSize() > MIN_BLOCK_SIZE)
+        {
+            dcdebug("Download::Download FLAG_SUPPORTS_TTHL(for small files, we'd probably only get the root anyway)\n");
+            // Get the tree unless the file is small (for small files, we'd probably only get the root anyway)
+            setType(TYPE_TREE);
+            getTigerTree().setFileSize(qi.getSize());
+            setSegment(Segment(0, -1));
+        }
+        else
+        {
+            // Use the root as tree to get some sort of validation at least...
+            dcdebug("Download::Download Use the root as tree to get some sort of validation at least...\n");
+            getTigerTree() = TigerTree(qi.getSize(), qi.getSize(), getTTH());
+            setTreeValid(true);
+            setSegment(qi.getNextSegment(getTigerTree().getBlockSize(), 0, 0, source->getPartialSource()));
+        }
+        
+        if ((getStartPos() + getSize()) != qi.getSize())
+        {
+            setFlag(FLAG_CHUNKED);
+        }
+        
+        if (getSegment().getOverlapped())
+        {
+            setFlag(FLAG_OVERLAP);
+            
+            // set overlapped flag to original segment
+            for (DownloadList::const_iterator i = qi.getDownloads().begin(); i != qi.getDownloads().end(); ++i)
+            {
+                if ((*i)->getSegment().contains(getSegment()))
+                {
+                    (*i)->setOverlapped(true);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 Download::~Download()
 {
-	getUserConnection().setDownload(0);
+    getUserConnection().setDownload(0);
 }
 
 AdcCommand Download::getCommand(bool zlib) const
 {
-	AdcCommand cmd(AdcCommand::CMD_GET);
-	
-	cmd.addParam(Transfer::names[getType()]);
-	
-	if (getType() == TYPE_PARTIAL_LIST)
-	{
-		cmd.addParam(Util::toAdcFile(getTempTarget()));
-	}
-	else if (getType() == TYPE_FULL_LIST)
-	{
-		if (isSet(Download::FLAG_XML_BZ_LIST))
-		{
-			cmd.addParam(USER_LIST_NAME_BZ);
-		}
-		else
-		{
-			cmd.addParam(USER_LIST_NAME);
-		}
-	}
-	else
-	{
-		cmd.addParam("TTH/" + getTTH().toBase32());
-	}
-	
-	cmd.addParam(Util::toString(getStartPos()));
-	cmd.addParam(Util::toString(getSize()));
-	
-	if (zlib && BOOLSETTING(COMPRESS_TRANSFERS))
-	{
-		cmd.addParam("ZL1");
-	}
-	
-	return cmd;
+    AdcCommand cmd(AdcCommand::CMD_GET);
+    
+    cmd.addParam(Transfer::names[getType()]);
+    
+    if (getType() == TYPE_PARTIAL_LIST)
+    {
+        cmd.addParam(Util::toAdcFile(getTempTarget()));
+    }
+    else if (getType() == TYPE_FULL_LIST)
+    {
+        if (isSet(Download::FLAG_XML_BZ_LIST))
+        {
+            cmd.addParam(USER_LIST_NAME_BZ);
+        }
+        else
+        {
+            cmd.addParam(USER_LIST_NAME);
+        }
+    }
+    else
+    {
+        cmd.addParam("TTH/" + getTTH().toBase32());
+    }
+    
+    cmd.addParam(Util::toString(getStartPos()));
+    cmd.addParam(Util::toString(getSize()));
+    
+    if (zlib && BOOLSETTING(COMPRESS_TRANSFERS))
+    {
+        cmd.addParam("ZL1");
+    }
+    
+    return cmd;
 }
 
 void Download::getParams(const UserConnection& aSource, StringMap& params)
 {
-	Transfer::getParams(aSource, params);
-	params["target"] = getPath();
+    Transfer::getParams(aSource, params);
+    params["target"] = getPath();
 }
 
 } // namespace dcpp

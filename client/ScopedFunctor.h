@@ -31,24 +31,24 @@ will print "hello" when the current scope ends. */
 template<typename F>
 struct ScopedFunctor
 {
-		explicit ScopedFunctor(F f_) : f(f_) { }
-		~ScopedFunctor()
-		{
-			f();
-		}
-	private:
-		F f;
+        explicit ScopedFunctor(F f_) : f(f_) { }
+        ~ScopedFunctor()
+        {
+            f();
+        }
+    private:
+        F f;
 };
 
 template<typename F>
 ScopedFunctor<F> makeScopedFunctor(F f)
 {
-	return ScopedFunctor<F>(f);
+    return ScopedFunctor<F>(f);
 }
 
 #define ScopedFunctor_gen(ScopedFunctor_name, ScopedFunctor_counter) ScopedFunctor_name##ScopedFunctor_counter
 #define ScopedFunctor_(ScopedFunctor_f, ScopedFunctor_counter) \
-	auto ScopedFunctor_gen(ScopedFunctor_object, ScopedFunctor_counter) = makeScopedFunctor(ScopedFunctor_f)
+    auto ScopedFunctor_gen(ScopedFunctor_object, ScopedFunctor_counter) = makeScopedFunctor(ScopedFunctor_f)
 #define ScopedFunctor(ScopedFunctor_f) ScopedFunctor_(ScopedFunctor_f, __COUNTER__)
 
 } // namespace dcpp

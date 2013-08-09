@@ -26,59 +26,59 @@ namespace dcpp
 
 class ZFilter
 {
-	public:
-		ZFilter();
-		~ZFilter();
-		/**
-		 * Compress data.
-		 * @param in Input data
-		 * @param insize Input size (Set to 0 to indicate that no more data will follow)
-		 * @param out Output buffer
-		 * @param outsize Output size, set to compressed size on return.
-		 * @return True if there's more processing to be done
-		 */
-		bool operator()(const void* in, size_t& insize, void* out, size_t& outsize);
-	private:
-		z_stream zs;
-		int64_t totalIn;
-		int64_t totalOut;
-		bool compressing;
+    public:
+        ZFilter();
+        ~ZFilter();
+        /**
+         * Compress data.
+         * @param in Input data
+         * @param insize Input size (Set to 0 to indicate that no more data will follow)
+         * @param out Output buffer
+         * @param outsize Output size, set to compressed size on return.
+         * @return True if there's more processing to be done
+         */
+        bool operator()(const void* in, size_t& insize, void* out, size_t& outsize);
+    private:
+        z_stream zs;
+        int64_t totalIn;
+        int64_t totalOut;
+        bool compressing;
 };
 
 class UnZFilter
 {
-	public:
-		UnZFilter();
-		~UnZFilter();
-		/**
-		 * Decompress data.
-		 * @param in Input data
-		 * @param insize Input size (Set to 0 to indicate that no more data will follow)
-		 * @param out Output buffer
-		 * @param outsize Output size, set to decompressed size on return.
-		 * @return True if there's more processing to be done
-		 */
-		bool operator()(const void* in, size_t& insize, void* out, size_t& outsize);
-	private:
-		z_stream zs;
+    public:
+        UnZFilter();
+        ~UnZFilter();
+        /**
+         * Decompress data.
+         * @param in Input data
+         * @param insize Input size (Set to 0 to indicate that no more data will follow)
+         * @param out Output buffer
+         * @param outsize Output size, set to decompressed size on return.
+         * @return True if there's more processing to be done
+         */
+        bool operator()(const void* in, size_t& insize, void* out, size_t& outsize);
+    private:
+        z_stream zs;
 };
 
 #ifndef _WIN32
 class CRC32Filter
 {
-	public:
-		CRC32Filter() : crc(crc32(0, NULL, 0)) { }
-		// TODO 64-bits?
-		void operator()(const void* buf, size_t len)
-		{
-			crc = crc32(crc, (const Bytef*)buf, (uInt)len);
-		}
-		uint32_t getValue() const
-		{
-			return crc;
-		}
-	private:
-		uint32_t crc;
+    public:
+        CRC32Filter() : crc(crc32(0, NULL, 0)) { }
+        // TODO 64-bits?
+        void operator()(const void* buf, size_t len)
+        {
+            crc = crc32(crc, (const Bytef*)buf, (uInt)len);
+        }
+        uint32_t getValue() const
+        {
+            return crc;
+        }
+    private:
+        uint32_t crc;
 };
 #endif
 } // namespace dcpp

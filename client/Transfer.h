@@ -30,125 +30,125 @@ namespace dcpp
 
 class Transfer
 #ifdef _DEBUG
-	: private boost::noncopyable
+    : private boost::noncopyable
 #endif
 {
-	public:
-		enum Type
-		{
-			TYPE_FILE,
-			TYPE_FULL_LIST,
-			TYPE_PARTIAL_LIST,
-			TYPE_TREE,
-			TYPE_LAST
-		};
-		
-		static const string names[TYPE_LAST];
-		
-		static const string USER_LIST_NAME;
-		static const string USER_LIST_NAME_BZ;
-		
-		Transfer(UserConnection& conn, const string& path, const TTHValue& tth);
-		virtual ~Transfer() { };
-		
-		int64_t getPos() const
-		{
-			return pos;
-		}
-		
-		int64_t getStartPos() const
-		{
-			return getSegment().getStart();
-		}
-		
-		void resetPos()
-		{
-			pos = 0;
-			actual = 0;
-		}; //http://bazaar.launchpad.net/~dcplusplus-team/dcplusplus/trunk/revision/2153
-		void addPos(int64_t aBytes, int64_t aActual)
-		{
-			pos += aBytes;
-			actual += aActual;
-		}
-		
-		enum { MIN_SAMPLES = 15, MIN_SECS = 15 };
-		
-		/** Record a sample for average calculation */
-		void tick();
-		
-		int64_t getActual() const
-		{
-			return actual;
-		}
-		
-		int64_t getSize() const
-		{
-			return getSegment().getSize();
-		}
-		void setSize(int64_t size)
-		{
-			segment.setSize(size);
-		}
-		
-		bool getOverlapped() const
-		{
-			return getSegment().getOverlapped();
-		}
-		void setOverlapped(bool overlap)
-		{
-			segment.setOverlapped(overlap);
-		}
-		
-		double getAverageSpeed() const;
-		
-		int64_t getSecondsLeft(bool wholeFile = false) const;
-		
-		void getParams(const UserConnection& aSource, StringMap& params) const;
-		
-		UserPtr getUser();
-		const UserPtr getUser() const;
-		const HintedUser getHintedUser() const;
-		
-		const string& getPath() const
-		{
-			return path;
-		}
-		const TTHValue& getTTH() const
-		{
-			return tth;
-		}
-		
-		UserConnection& getUserConnection()
-		{
-			return userConnection;
-		}
-		const UserConnection& getUserConnection() const
-		{
-			return userConnection;
-		}
-		
-		GETSET(Segment, segment, Segment);
-		GETSET(Type, type, Type);
-		GETSET(uint64_t, start, Start);
-	private:
-	
-		typedef std::pair<uint64_t, int64_t> Sample;
-		typedef deque<Sample> SampleList;
-		
-		SampleList samples;
-		mutable CriticalSection cs;
-		
-		/** The file being transferred */
-		string path;
-		/** TTH of the file being transferred */
-		TTHValue tth;
-		/** Bytes transferred over socket */
-		int64_t actual;
-		/** Bytes transferred to/from file */
-		int64_t pos;
-		
-		UserConnection& userConnection;
+    public:
+        enum Type
+        {
+            TYPE_FILE,
+            TYPE_FULL_LIST,
+            TYPE_PARTIAL_LIST,
+            TYPE_TREE,
+            TYPE_LAST
+        };
+        
+        static const string names[TYPE_LAST];
+        
+        static const string USER_LIST_NAME;
+        static const string USER_LIST_NAME_BZ;
+        
+        Transfer(UserConnection& conn, const string& path, const TTHValue& tth);
+        virtual ~Transfer() { };
+        
+        int64_t getPos() const
+        {
+            return pos;
+        }
+        
+        int64_t getStartPos() const
+        {
+            return getSegment().getStart();
+        }
+        
+        void resetPos()
+        {
+            pos = 0;
+            actual = 0;
+        }; //http://bazaar.launchpad.net/~dcplusplus-team/dcplusplus/trunk/revision/2153
+        void addPos(int64_t aBytes, int64_t aActual)
+        {
+            pos += aBytes;
+            actual += aActual;
+        }
+        
+        enum { MIN_SAMPLES = 15, MIN_SECS = 15 };
+        
+        /** Record a sample for average calculation */
+        void tick();
+        
+        int64_t getActual() const
+        {
+            return actual;
+        }
+        
+        int64_t getSize() const
+        {
+            return getSegment().getSize();
+        }
+        void setSize(int64_t size)
+        {
+            segment.setSize(size);
+        }
+        
+        bool getOverlapped() const
+        {
+            return getSegment().getOverlapped();
+        }
+        void setOverlapped(bool overlap)
+        {
+            segment.setOverlapped(overlap);
+        }
+        
+        double getAverageSpeed() const;
+        
+        int64_t getSecondsLeft(bool wholeFile = false) const;
+        
+        void getParams(const UserConnection& aSource, StringMap& params) const;
+        
+        UserPtr getUser();
+        const UserPtr getUser() const;
+        const HintedUser getHintedUser() const;
+        
+        const string& getPath() const
+        {
+            return path;
+        }
+        const TTHValue& getTTH() const
+        {
+            return tth;
+        }
+        
+        UserConnection& getUserConnection()
+        {
+            return userConnection;
+        }
+        const UserConnection& getUserConnection() const
+        {
+            return userConnection;
+        }
+        
+        GETSET(Segment, segment, Segment);
+        GETSET(Type, type, Type);
+        GETSET(uint64_t, start, Start);
+    private:
+    
+        typedef std::pair<uint64_t, int64_t> Sample;
+        typedef deque<Sample> SampleList;
+        
+        SampleList samples;
+        mutable CriticalSection cs;
+        
+        /** The file being transferred */
+        string path;
+        /** TTH of the file being transferred */
+        TTHValue tth;
+        /** Bytes transferred over socket */
+        int64_t actual;
+        /** Bytes transferred to/from file */
+        int64_t pos;
+        
+        UserConnection& userConnection;
 };
 
 } // namespace dcpp

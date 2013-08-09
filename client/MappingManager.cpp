@@ -32,240 +32,240 @@ namespace dcpp
 {
 MappingManager::MappingManager() : renewal(0), m_listeners_count(0)
 {
-	busy.clear();
-	/* Зовется из main.cpp
-	    addMapper<Mapper_NATPMP>();
-	    addMapper<Mapper_MiniUPnPc>();
-	#ifdef HAVE_NATUPNP_H
-	    addMapper<Mapper_WinUPnP>();
-	#endif
-	*/
+    busy.clear();
+    /* Зовется из main.cpp
+        addMapper<Mapper_NATPMP>();
+        addMapper<Mapper_MiniUPnPc>();
+    #ifdef HAVE_NATUPNP_H
+        addMapper<Mapper_WinUPnP>();
+    #endif
+    */
 }
 
 StringList MappingManager::getMappers() const
 {
-	StringList ret;
-	for (auto i = mappers.cbegin(), iend = mappers.cend(); i != iend; ++i)
-		ret.push_back(i->first);
-	return ret;
+    StringList ret;
+    for (auto i = mappers.cbegin(), iend = mappers.cend(); i != iend; ++i)
+        ret.push_back(i->first);
+    return ret;
 }
 
 bool MappingManager::open()
 {
-	if (getOpened())
-		return false;
-		
-	if (mappers.empty())
-	{
-		log(STRING(UPNP_NO_IMPLEMENTATION));
-		return false;
-	}
-	
-	if (busy.test_and_set())
-	{
-		log("Another UPnP port mapping attempt is in progress...");
-		return false;
-	}
-	
-	start();
-	
-	return true;
+    if (getOpened())
+        return false;
+        
+    if (mappers.empty())
+    {
+        log(STRING(UPNP_NO_IMPLEMENTATION));
+        return false;
+    }
+    
+    if (busy.test_and_set())
+    {
+        log("Another UPnP port mapping attempt is in progress...");
+        return false;
+    }
+    
+    start();
+    
+    return true;
 }
 
 void MappingManager::close()
 {
-	if (m_listeners_count)
-	{
-	TimerManager::getInstance()->removeListener(this);
-		--m_listeners_count;
-	}
-	
-	if (working.get())
-	{
-		close(*working);
-		working.reset();
-	}
+    if (m_listeners_count)
+    {
+    TimerManager::getInstance()->removeListener(this);
+        --m_listeners_count;
+    }
+    
+    if (working.get())
+    {
+        close(*working);
+        working.reset();
+    }
 }
 
 bool MappingManager::getOpened() const
 {
-	return working.get() != NULL;
+    return working.get() != NULL;
 }
 
 int MappingManager::run()
 {
-	ScopedFunctor([this] { busy.clear(); });
-	
-	// cache these
-	const unsigned short
-	conn_port = ConnectionManager::getInstance()->getPort(),
-	secure_port = ConnectionManager::getInstance()->getSecurePort(),
-	search_port = SearchManager::getInstance()->getPort(),
-	dht_port = dht::DHT::getInstance()->getPort();
-	
-	if (renewal
-	        && getOpened()) //[+]FlylinkDC++ Team
-	{
-		Mapper& mapper = *working;
-		
-		ScopedFunctor([&mapper] { mapper.uninit(); });
-		if (!mapper.init())
-		{
-			// can't renew; try again later.
-			renewal = GET_TICK() + std::max(mapper.renewal(), 10u) * 60 * 1000;
-			return 0;
-		}
-		
-		auto addRule = [this, &mapper](const unsigned short port, Mapper::Protocol protocol, const string & description)
-		{
-			// just launch renewal requests - don't bother with possible failures.
-			if (port)
-			{
-				mapper.open(port, protocol, APPNAME + description + " port (" + Util::toString(port) + " " + Mapper::protocols[protocol] + ")");
-			}
-		};
-		
-		addRule(conn_port, Mapper::PROTOCOL_TCP, ("Transfer"));
-		addRule(secure_port, Mapper::PROTOCOL_TCP, ("Encrypted transfer"));
-		addRule(search_port, Mapper::PROTOCOL_UDP, ("Search"));
-		addRule(dht_port, Mapper::PROTOCOL_UDP, ("DHT"));
-		
-		auto minutes = mapper.renewal();
-		if (minutes)
-		{
-			renewal = GET_TICK() + std::max(minutes, 10u) * 60 * 1000;
-		}
-		else
-		{
-			if (m_listeners_count)
-			{
-			TimerManager::getInstance()->removeListener(this);
-				--m_listeners_count;
-		}
-		}
-		
-		return 0;
-	}
-	
-	// move the preferred mapper to the top of the stack.
-	const auto& setting = SETTING(MAPPER);
-	for (auto i = mappers.cbegin(); i != mappers.cend(); ++i)
-	{
-		if (i->first == setting)
-		{
-			if (i != mappers.cbegin())
-			{
-				auto mapper = *i;
-				mappers.erase(i);
-				mappers.insert(mappers.begin(), mapper);
-			}
-			break;
-		}
-	}
-	
-	for (auto i = mappers.cbegin(); i != mappers.cend(); ++i)
-	{
-		unique_ptr<Mapper> pMapper(i->second());
-		Mapper& mapper = *pMapper;
-		
-		ScopedFunctor([&mapper] { mapper.uninit(); });
-		if (!mapper.init())
-		{
-			log("Failed to initalize the " + mapper.getName() + " interface");
-			continue;
-		}
-		
-		auto addRule = [this, &mapper](const unsigned short port, Mapper::Protocol protocol, const string & description) -> bool
-		{
-			if (port && !mapper.open(port, protocol, APPNAME + description + " port (" + Util::toString(port) + " " + Mapper::protocols[protocol] + ")"))
-			{
-				this->log("Failed to map the " + description + " port (" + Util::toString(port) + " " + Mapper::protocols[protocol] + ") with the " + mapper.getName() + " interface");
-				mapper.close();
-				return false;
-			}
-			return true;
-		};
-		
-		if (!(addRule(conn_port, Mapper::PROTOCOL_TCP, ("Transfer")) &&
-		        addRule(secure_port, Mapper::PROTOCOL_TCP, ("Encrypted transfer")) &&
-		        addRule(search_port, Mapper::PROTOCOL_UDP, ("Search")) &&
-		        addRule(dht_port, Mapper::PROTOCOL_UDP, ("DHT"))))
-			continue;
-			
-		log(STRING(UPNP_SUCCESSFULLY_CREATED_MAPPINGS));
-		
-		working = move(pMapper);
-		
-		if (!BOOLSETTING(NO_IP_OVERRIDE))
-		{
-			string externalIP = mapper.getExternalIP();
-			if (!externalIP.empty())
-			{
-				SettingsManager::getInstance()->set(SettingsManager::EXTERNAL_IP, externalIP);
-			}
-			else
-			{
-				// no cleanup because the mappings work and hubs will likely provide the correct IP.
-				log(STRING(UPNP_FAILED_TO_GET_EXTERNAL_IP));
-			}
-		}
-		
-		ConnectivityManager::getInstance()->mappingFinished(mapper.getName());
-		
-		auto minutes = mapper.renewal();
-		if (minutes)
-		{
-			renewal = GET_TICK() + std::max(minutes, 10u) * 60 * 1000;
-			if (m_listeners_count == 0)
-			{
-			TimerManager::getInstance()->addListener(this);
-				++m_listeners_count;
-		}
-		}
-		break;
-	}
-	
-	if (!getOpened())
-	{
-		log(STRING(UPNP_FAILED_TO_CREATE_MAPPINGS));
-		ConnectivityManager::getInstance()->mappingFinished(Util::emptyString);
-	}
-	
-	return 0;
+    ScopedFunctor([this] { busy.clear(); });
+    
+    // cache these
+    const unsigned short
+    conn_port = ConnectionManager::getInstance()->getPort(),
+    secure_port = ConnectionManager::getInstance()->getSecurePort(),
+    search_port = SearchManager::getInstance()->getPort(),
+    dht_port = dht::DHT::getInstance()->getPort();
+    
+    if (renewal
+            && getOpened()) //[+]FlylinkDC++ Team
+    {
+        Mapper& mapper = *working;
+        
+        ScopedFunctor([&mapper] { mapper.uninit(); });
+        if (!mapper.init())
+        {
+            // can't renew; try again later.
+            renewal = GET_TICK() + std::max(mapper.renewal(), 10u) * 60 * 1000;
+            return 0;
+        }
+        
+        auto addRule = [this, &mapper](const unsigned short port, Mapper::Protocol protocol, const string & description)
+        {
+            // just launch renewal requests - don't bother with possible failures.
+            if (port)
+            {
+                mapper.open(port, protocol, APPNAME + description + " port (" + Util::toString(port) + " " + Mapper::protocols[protocol] + ")");
+            }
+        };
+        
+        addRule(conn_port, Mapper::PROTOCOL_TCP, ("Transfer"));
+        addRule(secure_port, Mapper::PROTOCOL_TCP, ("Encrypted transfer"));
+        addRule(search_port, Mapper::PROTOCOL_UDP, ("Search"));
+        addRule(dht_port, Mapper::PROTOCOL_UDP, ("DHT"));
+        
+        auto minutes = mapper.renewal();
+        if (minutes)
+        {
+            renewal = GET_TICK() + std::max(minutes, 10u) * 60 * 1000;
+        }
+        else
+        {
+            if (m_listeners_count)
+            {
+            TimerManager::getInstance()->removeListener(this);
+                --m_listeners_count;
+        }
+        }
+        
+        return 0;
+    }
+    
+    // move the preferred mapper to the top of the stack.
+    const auto& setting = SETTING(MAPPER);
+    for (auto i = mappers.cbegin(); i != mappers.cend(); ++i)
+    {
+        if (i->first == setting)
+        {
+            if (i != mappers.cbegin())
+            {
+                auto mapper = *i;
+                mappers.erase(i);
+                mappers.insert(mappers.begin(), mapper);
+            }
+            break;
+        }
+    }
+    
+    for (auto i = mappers.cbegin(); i != mappers.cend(); ++i)
+    {
+        unique_ptr<Mapper> pMapper(i->second());
+        Mapper& mapper = *pMapper;
+        
+        ScopedFunctor([&mapper] { mapper.uninit(); });
+        if (!mapper.init())
+        {
+            log("Failed to initalize the " + mapper.getName() + " interface");
+            continue;
+        }
+        
+        auto addRule = [this, &mapper](const unsigned short port, Mapper::Protocol protocol, const string & description) -> bool
+        {
+            if (port && !mapper.open(port, protocol, APPNAME + description + " port (" + Util::toString(port) + " " + Mapper::protocols[protocol] + ")"))
+            {
+                this->log("Failed to map the " + description + " port (" + Util::toString(port) + " " + Mapper::protocols[protocol] + ") with the " + mapper.getName() + " interface");
+                mapper.close();
+                return false;
+            }
+            return true;
+        };
+        
+        if (!(addRule(conn_port, Mapper::PROTOCOL_TCP, ("Transfer")) &&
+                addRule(secure_port, Mapper::PROTOCOL_TCP, ("Encrypted transfer")) &&
+                addRule(search_port, Mapper::PROTOCOL_UDP, ("Search")) &&
+                addRule(dht_port, Mapper::PROTOCOL_UDP, ("DHT"))))
+            continue;
+            
+        log(STRING(UPNP_SUCCESSFULLY_CREATED_MAPPINGS));
+        
+        working = move(pMapper);
+        
+        if (!BOOLSETTING(NO_IP_OVERRIDE))
+        {
+            string externalIP = mapper.getExternalIP();
+            if (!externalIP.empty())
+            {
+                SettingsManager::getInstance()->set(SettingsManager::EXTERNAL_IP, externalIP);
+            }
+            else
+            {
+                // no cleanup because the mappings work and hubs will likely provide the correct IP.
+                log(STRING(UPNP_FAILED_TO_GET_EXTERNAL_IP));
+            }
+        }
+        
+        ConnectivityManager::getInstance()->mappingFinished(mapper.getName());
+        
+        auto minutes = mapper.renewal();
+        if (minutes)
+        {
+            renewal = GET_TICK() + std::max(minutes, 10u) * 60 * 1000;
+            if (m_listeners_count == 0)
+            {
+            TimerManager::getInstance()->addListener(this);
+                ++m_listeners_count;
+        }
+        }
+        break;
+    }
+    
+    if (!getOpened())
+    {
+        log(STRING(UPNP_FAILED_TO_CREATE_MAPPINGS));
+        ConnectivityManager::getInstance()->mappingFinished(Util::emptyString);
+    }
+    
+    return 0;
 }
 
 void MappingManager::close(Mapper& mapper)
 {
-	if (mapper.hasRules())
-	{
-		bool ret = mapper.init();
-		if (ret)
-		{
-			ret = mapper.close();
-			mapper.uninit();
-		}
-		if (!ret)
-			log(STRING(UPNP_FAILED_TO_REMOVE_MAPPINGS));
-	}
+    if (mapper.hasRules())
+    {
+        bool ret = mapper.init();
+        if (ret)
+        {
+            ret = mapper.close();
+            mapper.uninit();
+        }
+        if (!ret)
+            log(STRING(UPNP_FAILED_TO_REMOVE_MAPPINGS));
+    }
 }
 
 void MappingManager::log(const string& message)
 {
-	LogManager::getInstance()->message("Port mapping: " + message);
+    LogManager::getInstance()->message("Port mapping: " + message);
 }
 
 string MappingManager::deviceString(Mapper& mapper) const
 {
-	string name(mapper.getDeviceName());
-	if (name.empty())
-		name = ("Generic");
-	return '"' + name + '"';
+    string name(mapper.getDeviceName());
+    if (name.empty())
+        name = ("Generic");
+    return '"' + name + '"';
 }
 
 void MappingManager::on(TimerManagerListener::Minute, uint64_t tick) noexcept
 {
-	if (tick >= renewal && !busy.test_and_set())
-		start();
+    if (tick >= renewal && !busy.test_and_set())
+        start();
 }
 
 } // namespace dcpp

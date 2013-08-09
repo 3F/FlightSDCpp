@@ -24,131 +24,131 @@ namespace dcpp
 
 class HubEntry
 {
-	public:
-		typedef vector<HubEntry> List;
-		
-		HubEntry() : reliability(0), shared(0), minShare(0), users(0), minSlots(0), maxHubs(0), maxUsers(0)
-		{
-		}
-	HubEntry(const string& aName, const string& aServer, const string& aDescription, const string& aUsers) noexcept :
-		name(aName), server(aServer), description(aDescription), country(Util::emptyString),
-		rating(Util::emptyString), reliability(0.0), shared(0), minShare(0), users(Util::toInt(aUsers)), minSlots(0), maxHubs(0), maxUsers(0) { }
-		
-		HubEntry(const string& aName, const string& aServer, const string& aDescription, const string& aUsers, const string& aCountry,
-		         const string& aShared, const string& aMinShare, const string& aMinSlots, const string& aMaxHubs, const string& aMaxUsers,
-		         const string& aReliability, const string& aRating) : name(aName), server(aServer), description(aDescription), country(aCountry),
-			rating(aRating), reliability((float)(Util::toFloat(aReliability) / 100.0)), shared(Util::toInt64(aShared)), minShare(Util::toInt64(aMinShare)),
-			users(Util::toInt(aUsers)), minSlots(Util::toInt(aMinSlots)), maxHubs(Util::toInt(aMaxHubs)), maxUsers(Util::toInt(aMaxUsers))
-		{
-		
-		}
-		
+    public:
+        typedef vector<HubEntry> List;
+        
+        HubEntry() : reliability(0), shared(0), minShare(0), users(0), minSlots(0), maxHubs(0), maxUsers(0)
+        {
+        }
+    HubEntry(const string& aName, const string& aServer, const string& aDescription, const string& aUsers) noexcept :
+        name(aName), server(aServer), description(aDescription), country(Util::emptyString),
+        rating(Util::emptyString), reliability(0.0), shared(0), minShare(0), users(Util::toInt(aUsers)), minSlots(0), maxHubs(0), maxUsers(0) { }
+        
+        HubEntry(const string& aName, const string& aServer, const string& aDescription, const string& aUsers, const string& aCountry,
+                 const string& aShared, const string& aMinShare, const string& aMinSlots, const string& aMaxHubs, const string& aMaxUsers,
+                 const string& aReliability, const string& aRating) : name(aName), server(aServer), description(aDescription), country(aCountry),
+            rating(aRating), reliability((float)(Util::toFloat(aReliability) / 100.0)), shared(Util::toInt64(aShared)), minShare(Util::toInt64(aMinShare)),
+            users(Util::toInt(aUsers)), minSlots(Util::toInt(aMinSlots)), maxHubs(Util::toInt(aMaxHubs)), maxUsers(Util::toInt(aMaxUsers))
+        {
+        
+        }
+        
 #ifdef PPA_INCLUDE_DEAD_CODE
-	HubEntry(const HubEntry& rhs) noexcept :
-		name(rhs.name), server(rhs.server), description(rhs.description), country(rhs.country),
-		     rating(rhs.rating), reliability(rhs.reliability), shared(rhs.shared), minShare(rhs.minShare), users(rhs.users), minSlots(rhs.minSlots),
-		maxHubs(rhs.maxHubs), maxUsers(rhs.maxUsers) { }
+    HubEntry(const HubEntry& rhs) noexcept :
+        name(rhs.name), server(rhs.server), description(rhs.description), country(rhs.country),
+             rating(rhs.rating), reliability(rhs.reliability), shared(rhs.shared), minShare(rhs.minShare), users(rhs.users), minSlots(rhs.minSlots),
+        maxHubs(rhs.maxHubs), maxUsers(rhs.maxUsers) { }
 #endif
-		
-		virtual ~HubEntry() noexcept { }
-		
-		GETSET(string, name, Name);
-		GETSET(string, server, Server);
-		GETSET(string, description, Description);
-		GETSET(string, country, Country);
-		GETSET(string, rating, Rating);
-		GETSET(float, reliability, Reliability);
-		GETSET(int64_t, shared, Shared);
-		GETSET(int64_t, minShare, MinShare);
-		GETSET(int, users, Users);
-		GETSET(int, minSlots, MinSlots);
-		GETSET(int, maxHubs, MaxHubs);
-		GETSET(int, maxUsers, MaxUsers);
+        
+        virtual ~HubEntry() noexcept { }
+        
+        GETSET(string, name, Name);
+        GETSET(string, server, Server);
+        GETSET(string, description, Description);
+        GETSET(string, country, Country);
+        GETSET(string, rating, Rating);
+        GETSET(float, reliability, Reliability);
+        GETSET(int64_t, shared, Shared);
+        GETSET(int64_t, minShare, MinShare);
+        GETSET(int, users, Users);
+        GETSET(int, minSlots, MinSlots);
+        GETSET(int, maxHubs, MaxHubs);
+        GETSET(int, maxUsers, MaxUsers);
 };
 const string DEF_FAKE_ID = "FakeDC V:1.0"; // !SMT!-S
 class FavoriteHubEntry
 {
-	public:
-		typedef FavoriteHubEntry* Ptr;
-		typedef vector<Ptr> List;
-		typedef List::const_iterator Iter;
-		
-	FavoriteHubEntry() noexcept :
-		connect(false), encoding(Text::systemCharset), chatusersplit(0), stealth(false), userliststate(true), mode(0), ip(Util::emptyString), searchInterval(SETTING(MINIMUM_SEARCH_INTERVAL)),
-		        overrideId(0), clientId(DEF_FAKE_ID) //!SMT!
-		        , ISPsync(false)
-		{ }
+    public:
+        typedef FavoriteHubEntry* Ptr;
+        typedef vector<Ptr> List;
+        typedef List::const_iterator Iter;
+        
+    FavoriteHubEntry() noexcept :
+        connect(false), encoding(Text::systemCharset), chatusersplit(0), stealth(false), userliststate(true), mode(0), ip(Util::emptyString), searchInterval(SETTING(MINIMUM_SEARCH_INTERVAL)),
+                overrideId(0), clientId(DEF_FAKE_ID) //!SMT!
+                , ISPsync(false)
+        { }
 #ifdef PPA_INCLUDE_DEAD_CODE
-	FavoriteHubEntry(const HubEntry& rhs) noexcept :
-		name(rhs.getName()), server(rhs.getServer()), encoding(Text::systemCharset), searchInterval(SETTING(MINIMUM_SEARCH_INTERVAL)),
-		description(rhs.getDescription()), connect(false), chatusersplit(0), stealth(false), userliststate(true), mode(0), ip(Util::emptyString),
-		overrideId(0), clientId(DEF_FAKE_ID)//!SMT!
-		{ }
-	FavoriteHubEntry(const FavoriteHubEntry& rhs) noexcept :
-		userdescription(rhs.userdescription), name(rhs.getName()),
-		server(rhs.getServer()), description(rhs.getDescription()), password(rhs.getPassword()), connect(rhs.getConnect()),
-		nick(rhs.nick), chatusersplit(rhs.chatusersplit), stealth(rhs.stealth), searchInterval(rhs.searchInterval),
-		userliststate(rhs.userliststate), mode(rhs.mode), ip(rhs.ip), encoding(rhs.getEncoding()), group(rhs.getGroup()),
-		rawOne(rhs.rawOne), rawTwo(rhs.rawTwo), rawThree(rhs.rawThree), rawFour(rhs.rawFour), rawFive(rhs.rawFive),
-		overrideId(rhs.overrideId), clientId(rhs.clientId) //!SMT!
-		{ }
+    FavoriteHubEntry(const HubEntry& rhs) noexcept :
+        name(rhs.getName()), server(rhs.getServer()), encoding(Text::systemCharset), searchInterval(SETTING(MINIMUM_SEARCH_INTERVAL)),
+        description(rhs.getDescription()), connect(false), chatusersplit(0), stealth(false), userliststate(true), mode(0), ip(Util::emptyString),
+        overrideId(0), clientId(DEF_FAKE_ID)//!SMT!
+        { }
+    FavoriteHubEntry(const FavoriteHubEntry& rhs) noexcept :
+        userdescription(rhs.userdescription), name(rhs.getName()),
+        server(rhs.getServer()), description(rhs.getDescription()), password(rhs.getPassword()), connect(rhs.getConnect()),
+        nick(rhs.nick), chatusersplit(rhs.chatusersplit), stealth(rhs.stealth), searchInterval(rhs.searchInterval),
+        userliststate(rhs.userliststate), mode(rhs.mode), ip(rhs.ip), encoding(rhs.getEncoding()), group(rhs.getGroup()),
+        rawOne(rhs.rawOne), rawTwo(rhs.rawTwo), rawThree(rhs.rawThree), rawFour(rhs.rawFour), rawFive(rhs.rawFive),
+        overrideId(rhs.overrideId), clientId(rhs.clientId) //!SMT!
+        { }
 #endif
-		virtual ~FavoriteHubEntry() noexcept { }
-		
-		const string& getNick(bool useDefault = true) const
-		{
-			return (!nick.empty() || !useDefault) ? nick : SETTING(NICK);
-		}
-		
-		void setNick(const string& aNick)
-		{
-			nick = aNick;
-		}
-		
-		GETSET(string, userdescription, UserDescription);
-		GETSET(string, name, Name);
-		GETSET(string, server, Server);
-		GETSET(string, description, Description);
-		GETSET(string, password, Password);
-		GETSET(string, headerOrder, HeaderOrder);
-		GETSET(string, headerWidths, HeaderWidths);
-		GETSET(string, headerVisible, HeaderVisible);
-		GETSET(string, encoding, Encoding);
-		GETSET(bool, ISPsync, ISPsync);
-		GETSET(string, rawOne, RawOne);
-		GETSET(string, rawTwo, RawTwo);
-		GETSET(string, rawThree, RawThree);
-		GETSET(string, rawFour, RawFour);
-		GETSET(string, rawFive, RawFive);
-		GETSET(string, ip, IP);
-		GETSET(uint32_t, searchInterval, SearchInterval);
-		GETSET(int, mode, Mode); // 0 = default, 1 = active, 2 = passive
-		GETSET(int, chatusersplit, ChatUserSplit);
-		GETSET(bool, connect, Connect);
-		GETSET(bool, stealth, Stealth);
-		GETSET(bool, userliststate, UserListState);
-		GETSET(string, group, Group);
-		GETSET(string, clientId, ClientId); // !SMT!-S
-		GETSET(bool, overrideId, OverrideId); // !SMT!-S
-		
-	private:
-		string nick;
+        virtual ~FavoriteHubEntry() noexcept { }
+        
+        const string& getNick(bool useDefault = true) const
+        {
+            return (!nick.empty() || !useDefault) ? nick : SETTING(NICK);
+        }
+        
+        void setNick(const string& aNick)
+        {
+            nick = aNick;
+        }
+        
+        GETSET(string, userdescription, UserDescription);
+        GETSET(string, name, Name);
+        GETSET(string, server, Server);
+        GETSET(string, description, Description);
+        GETSET(string, password, Password);
+        GETSET(string, headerOrder, HeaderOrder);
+        GETSET(string, headerWidths, HeaderWidths);
+        GETSET(string, headerVisible, HeaderVisible);
+        GETSET(string, encoding, Encoding);
+        GETSET(bool, ISPsync, ISPsync);
+        GETSET(string, rawOne, RawOne);
+        GETSET(string, rawTwo, RawTwo);
+        GETSET(string, rawThree, RawThree);
+        GETSET(string, rawFour, RawFour);
+        GETSET(string, rawFive, RawFive);
+        GETSET(string, ip, IP);
+        GETSET(uint32_t, searchInterval, SearchInterval);
+        GETSET(int, mode, Mode); // 0 = default, 1 = active, 2 = passive
+        GETSET(int, chatusersplit, ChatUserSplit);
+        GETSET(bool, connect, Connect);
+        GETSET(bool, stealth, Stealth);
+        GETSET(bool, userliststate, UserListState);
+        GETSET(string, group, Group);
+        GETSET(string, clientId, ClientId); // !SMT!-S
+        GETSET(bool, overrideId, OverrideId); // !SMT!-S
+        
+    private:
+        string nick;
 };
 
 class RecentHubEntry
 {
-	public:
-		typedef RecentHubEntry* Ptr;
-		typedef vector<Ptr> List;
-		typedef List::const_iterator Iter;
-		
-		~RecentHubEntry() noexcept { }
-		
-		GETSET(string, name, Name);
-		GETSET(string, server, Server);
-		GETSET(string, description, Description);
-		GETSET(string, users, Users);
-		GETSET(string, shared, Shared);
+    public:
+        typedef RecentHubEntry* Ptr;
+        typedef vector<Ptr> List;
+        typedef List::const_iterator Iter;
+        
+        ~RecentHubEntry() noexcept { }
+        
+        GETSET(string, name, Name);
+        GETSET(string, server, Server);
+        GETSET(string, description, Description);
+        GETSET(string, users, Users);
+        GETSET(string, shared, Shared);
 };
 
 }

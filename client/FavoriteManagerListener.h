@@ -27,40 +27,40 @@ namespace dcpp
 
 class FavoriteManagerListener
 {
-	public:
-		virtual ~FavoriteManagerListener() { }
-		template<int I> struct X
-		{
-			enum { TYPE = I };
-		};
-		
-		typedef X<0> DownloadStarting;
-		typedef X<1> DownloadFailed;
-		typedef X<2> DownloadFinished;
-		typedef X<3> FavoriteAdded;
-		typedef X<4> FavoriteRemoved;
-		typedef X<5> UserAdded;
-		typedef X<6> UserRemoved;
-		typedef X<7> StatusChanged;
-		typedef X<8> LoadedFromCache;
-		typedef X<9> Corrupted;
-		typedef X<10> RecentAdded;
-		typedef X<11> RecentRemoved;
-		typedef X<12> RecentUpdated;
-		
-		virtual void on(DownloadStarting, const string&) noexcept { }
-		virtual void on(DownloadFailed, const string&) noexcept { }
-		virtual void on(DownloadFinished, const string&, bool) noexcept { }
-		virtual void on(FavoriteAdded, const FavoriteHubEntry*) noexcept { }
-		virtual void on(FavoriteRemoved, const FavoriteHubEntry*) noexcept { }
-		virtual void on(UserAdded, const FavoriteUser&) noexcept { }
-		virtual void on(UserRemoved, const FavoriteUser&) noexcept { }
-		virtual void on(StatusChanged, const UserPtr&) noexcept { }
-		virtual void on(LoadedFromCache, const string&, const string&) noexcept { }
-		virtual void on(Corrupted, const string&) noexcept { }
-		virtual void on(RecentAdded, const RecentHubEntry*) noexcept { }
-		virtual void on(RecentRemoved, const RecentHubEntry*) noexcept { }
-		virtual void on(RecentUpdated, const RecentHubEntry*) noexcept { }
+    public:
+        virtual ~FavoriteManagerListener() { }
+        template<int I> struct X
+        {
+            enum { TYPE = I };
+        };
+        
+        typedef X<0> DownloadStarting;
+        typedef X<1> DownloadFailed;
+        typedef X<2> DownloadFinished;
+        typedef X<3> FavoriteAdded;
+        typedef X<4> FavoriteRemoved;
+        typedef X<5> UserAdded;
+        typedef X<6> UserRemoved;
+        typedef X<7> StatusChanged;
+        typedef X<8> LoadedFromCache;
+        typedef X<9> Corrupted;
+        typedef X<10> RecentAdded;
+        typedef X<11> RecentRemoved;
+        typedef X<12> RecentUpdated;
+        
+        virtual void on(DownloadStarting, const string&) noexcept { }
+        virtual void on(DownloadFailed, const string&) noexcept { }
+        virtual void on(DownloadFinished, const string&, bool) noexcept { }
+        virtual void on(FavoriteAdded, const FavoriteHubEntry*) noexcept { }
+        virtual void on(FavoriteRemoved, const FavoriteHubEntry*) noexcept { }
+        virtual void on(UserAdded, const FavoriteUser&) noexcept { }
+        virtual void on(UserRemoved, const FavoriteUser&) noexcept { }
+        virtual void on(StatusChanged, const UserPtr&) noexcept { }
+        virtual void on(LoadedFromCache, const string&, const string&) noexcept { }
+        virtual void on(Corrupted, const string&) noexcept { }
+        virtual void on(RecentAdded, const RecentHubEntry*) noexcept { }
+        virtual void on(RecentRemoved, const RecentHubEntry*) noexcept { }
+        virtual void on(RecentUpdated, const RecentHubEntry*) noexcept { }
 };
 
 } // namespace dcpp

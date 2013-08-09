@@ -25,71 +25,71 @@
 
 class UpdateDlg : public CDialogImpl<UpdateDlg>, HttpConnectionListener
 {
-		CEdit ctrlCurrentVersion;
-		CEdit ctrlLatestVersion;
-		CEdit ctrlStatus;
-		CEdit ctrlChangeLog;
-		CButton ctrlDownload;
-		CButton ctrlClose;
-	public:
-	
-		enum { IDD = IDD_UPDATE };
-		
-		enum
-		{
-			UPDATE_CURRENT_VERSION,
-			UPDATE_LATEST_VERSION,
-			UPDATE_STATUS,
-			UPDATE_CONTENT
-		};
-		
-		BEGIN_MSG_MAP(UpdateDlg)
-		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-		MESSAGE_HANDLER(WM_SETFOCUS, onFocus)
-		MESSAGE_HANDLER(WM_SPEAKER, onSpeaker)
-		MESSAGE_HANDLER(WM_CLOSE, onClose)
-		COMMAND_ID_HANDLER(IDC_UPDATE_DOWNLOAD, OnDownload)
-		COMMAND_ID_HANDLER(IDCLOSE, OnCloseCmd)
-		END_MSG_MAP()
-		
-		UpdateDlg() : hc(NULL), m_hIcon(NULL) { };
-		~UpdateDlg();
-		
-		LRESULT onFocus(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-		{
-			ctrlClose.SetFocus();
-			return FALSE;
-		}
-		
-		LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		
-		LRESULT onSpeaker(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		
-		LRESULT OnDownload(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		
-		LRESULT onClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-		{
-			EndDialog(0);
-			return 0;
-		}
-		
-		LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-		{
-			EndDialog(wID);
-			return 0;
-		}
-		
-	private:
-		HttpConnection* hc;
-		string xmldata;
-		string downloadURL;
-		
-		HICON m_hIcon;
-		
-		void on(HttpConnectionListener::Complete, HttpConnection* conn, string const& /*aLine*/, bool /*fromCoral*/) noexcept;
-		void on(HttpConnectionListener::Data, HttpConnection* conn, const uint8_t* buf, size_t len) noexcept;
-		void on(HttpConnectionListener::Failed, HttpConnection* conn, const string& aLine) noexcept;
-		
+        CEdit ctrlCurrentVersion;
+        CEdit ctrlLatestVersion;
+        CEdit ctrlStatus;
+        CEdit ctrlChangeLog;
+        CButton ctrlDownload;
+        CButton ctrlClose;
+    public:
+    
+        enum { IDD = IDD_UPDATE };
+        
+        enum
+        {
+            UPDATE_CURRENT_VERSION,
+            UPDATE_LATEST_VERSION,
+            UPDATE_STATUS,
+            UPDATE_CONTENT
+        };
+        
+        BEGIN_MSG_MAP(UpdateDlg)
+        MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+        MESSAGE_HANDLER(WM_SETFOCUS, onFocus)
+        MESSAGE_HANDLER(WM_SPEAKER, onSpeaker)
+        MESSAGE_HANDLER(WM_CLOSE, onClose)
+        COMMAND_ID_HANDLER(IDC_UPDATE_DOWNLOAD, OnDownload)
+        COMMAND_ID_HANDLER(IDCLOSE, OnCloseCmd)
+        END_MSG_MAP()
+        
+        UpdateDlg() : hc(NULL), m_hIcon(NULL) { };
+        ~UpdateDlg();
+        
+        LRESULT onFocus(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+        {
+            ctrlClose.SetFocus();
+            return FALSE;
+        }
+        
+        LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        
+        LRESULT onSpeaker(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        
+        LRESULT OnDownload(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        
+        LRESULT onClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+        {
+            EndDialog(0);
+            return 0;
+        }
+        
+        LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+        {
+            EndDialog(wID);
+            return 0;
+        }
+        
+    private:
+        HttpConnection* hc;
+        string xmldata;
+        string downloadURL;
+        
+        HICON m_hIcon;
+        
+        void on(HttpConnectionListener::Complete, HttpConnection* conn, string const& /*aLine*/, bool /*fromCoral*/) noexcept;
+        void on(HttpConnectionListener::Data, HttpConnection* conn, const uint8_t* buf, size_t len) noexcept;
+        void on(HttpConnectionListener::Failed, HttpConnection* conn, const string& aLine) noexcept;
+        
 };
 
 #endif // __UPDATE_DLG

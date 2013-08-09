@@ -26,30 +26,30 @@
 LRESULT PreviewDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 #define ATTACH(id, var) var.Attach(GetDlgItem(id))
-	ATTACH(IDC_PREVIEW_NAME, ctrlName);
-	ATTACH(IDC_PREVIEW_APPLICATION, ctrlApplication);
-	ATTACH(IDC_PREVIEW_ARGUMENTS, ctrlArguments);
-	ATTACH(IDC_PREVIEW_EXTENSION, ctrlExtensions);
-	
-	ctrlName.SetWindowText(name.c_str());
-	ctrlApplication.SetWindowText(application.c_str());
-	ctrlArguments.SetWindowText(argument.c_str());
-	ctrlExtensions.SetWindowText(extensions.c_str());
-	
-	return 0;
+    ATTACH(IDC_PREVIEW_NAME, ctrlName);
+    ATTACH(IDC_PREVIEW_APPLICATION, ctrlApplication);
+    ATTACH(IDC_PREVIEW_ARGUMENTS, ctrlArguments);
+    ATTACH(IDC_PREVIEW_EXTENSION, ctrlExtensions);
+    
+    ctrlName.SetWindowText(name.c_str());
+    ctrlApplication.SetWindowText(application.c_str());
+    ctrlArguments.SetWindowText(argument.c_str());
+    ctrlExtensions.SetWindowText(extensions.c_str());
+    
+    return 0;
 }
 
 LRESULT PreviewDlg::OnBrowse(UINT /*uMsg*/, WPARAM /*wParam*/, HWND /*lParam*/, BOOL& /*bHandled*/)
 {
-	TCHAR buf[MAX_PATH];
-	
-	GetDlgItemText(IDC_PREVIEW_APPLICATION, buf, MAX_PATH);
-	tstring x = buf;
-	
-	if (WinUtil::browseFile(x, m_hWnd, false,  Util::emptyStringT, _T("Programs\0*.exe")) == IDOK)
-	{
-		SetDlgItemText(IDC_PREVIEW_APPLICATION, x.c_str());
-	}
-	
-	return 0;
+    TCHAR buf[MAX_PATH];
+    
+    GetDlgItemText(IDC_PREVIEW_APPLICATION, buf, MAX_PATH);
+    tstring x = buf;
+    
+    if (WinUtil::browseFile(x, m_hWnd, false,  Util::emptyStringT, _T("Programs\0*.exe")) == IDOK)
+    {
+        SetDlgItemText(IDC_PREVIEW_APPLICATION, x.c_str());
+    }
+    
+    return 0;
 }

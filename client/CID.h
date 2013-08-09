@@ -27,64 +27,64 @@ namespace dcpp
 
 class CID
 {
-	public:
-		enum { SIZE = 192 / 8 };
-		
-		CID()
-		{
-			memzero(cid, sizeof(cid));
-		}
-		explicit CID(const uint8_t* data)
-		{
-			memcpy(cid, data, sizeof(cid));
-		}
-		explicit CID(const string& base32)
-		{
-			Encoder::fromBase32(base32.c_str(), cid, sizeof(cid));
-		}
-		
-		bool operator==(const CID& rhs) const
-		{
-			return memcmp(cid, rhs.cid, sizeof(cid)) == 0;
-		}
-		bool operator<(const CID& rhs) const
-		{
-			return memcmp(cid, rhs.cid, sizeof(cid)) < 0;
-		}
-		
-		string toBase32() const
-		{
-			return Encoder::toBase32(cid, sizeof(cid));
-		}
-		string& toBase32(string& tmp) const
-		{
-			return Encoder::toBase32(cid, sizeof(cid), tmp);
-		}
-		
-		size_t toHash() const
-		{
-			// RVO should handle this as efficiently as reinterpret_cast version
-			size_t cidHash;
-			memcpy(&cidHash, cid, sizeof(size_t));
-			return cidHash;
-		}
-		const uint8_t* data() const
-		{
-			return cid;
-		}
-		
-		bool isZero() const
-		{
-			return find_if(cid, cid + SIZE, [](uint8_t c)
-			{
-				return c != 0;
-			}) == (cid + SIZE);
-		}
-		
-		static CID generate();
-		
-	private:
-		uint8_t cid[SIZE];
+    public:
+        enum { SIZE = 192 / 8 };
+        
+        CID()
+        {
+            memzero(cid, sizeof(cid));
+        }
+        explicit CID(const uint8_t* data)
+        {
+            memcpy(cid, data, sizeof(cid));
+        }
+        explicit CID(const string& base32)
+        {
+            Encoder::fromBase32(base32.c_str(), cid, sizeof(cid));
+        }
+        
+        bool operator==(const CID& rhs) const
+        {
+            return memcmp(cid, rhs.cid, sizeof(cid)) == 0;
+        }
+        bool operator<(const CID& rhs) const
+        {
+            return memcmp(cid, rhs.cid, sizeof(cid)) < 0;
+        }
+        
+        string toBase32() const
+        {
+            return Encoder::toBase32(cid, sizeof(cid));
+        }
+        string& toBase32(string& tmp) const
+        {
+            return Encoder::toBase32(cid, sizeof(cid), tmp);
+        }
+        
+        size_t toHash() const
+        {
+            // RVO should handle this as efficiently as reinterpret_cast version
+            size_t cidHash;
+            memcpy(&cidHash, cid, sizeof(size_t));
+            return cidHash;
+        }
+        const uint8_t* data() const
+        {
+            return cid;
+        }
+        
+        bool isZero() const
+        {
+            return find_if(cid, cid + SIZE, [](uint8_t c)
+            {
+                return c != 0;
+            }) == (cid + SIZE);
+        }
+        
+        static CID generate();
+        
+    private:
+        uint8_t cid[SIZE];
 };
 
 } // namespace dcpp
@@ -94,30 +94,30 @@ namespace std
 template<>
 struct hash<dcpp::CID>
 {
-	size_t operator()(const dcpp::CID& rhs) const
-	{
-		size_t hvHash;
-		memcpy(&hvHash, rhs.data(), sizeof(size_t));
-		return hvHash;
-	}
+    size_t operator()(const dcpp::CID& rhs) const
+    {
+        size_t hvHash;
+        memcpy(&hvHash, rhs.data(), sizeof(size_t));
+        return hvHash;
+    }
 };
 
 template<>
 struct hash<dcpp::CID*>
 {
-	size_t operator()(const dcpp::CID* rhs) const
-	{
-		return *reinterpret_cast<const size_t*>(rhs);
-	}
+    size_t operator()(const dcpp::CID* rhs) const
+    {
+        return *reinterpret_cast<const size_t*>(rhs);
+    }
 };
 
 template<>
 struct equal_to<dcpp::CID*>
 {
-	bool operator()(const dcpp::CID* lhs, const dcpp::CID* rhs) const
-	{
-		return (*lhs) == (*rhs);
-	}
+    bool operator()(const dcpp::CID* lhs, const dcpp::CID* rhs) const
+    {
+        return (*lhs) == (*rhs);
+    }
 };
 }
 

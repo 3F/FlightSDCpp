@@ -25,24 +25,24 @@
 
 class FinishedFrame : public FinishedFrameBase<FinishedFrame, ResourceManager::FINISHED_DOWNLOADS, IDC_FINISHED, IDR_FINISHED_DL>
 {
-	public:
-		FinishedFrame()
-		{
-			upload = false;
-			boldFinished = SettingsManager::BOLD_FINISHED_DOWNLOADS;
-			columnOrder = SettingsManager::FINISHED_ORDER;
-			columnWidth = SettingsManager::FINISHED_WIDTHS;
-			columnVisible = SettingsManager::FINISHED_VISIBLE;
-		}
-		~FinishedFrame() { }
-		
-		DECLARE_FRAME_WND_CLASS_EX(_T("FinishedFrame"), IDR_FINISHED_DL, 0, COLOR_3DFACE);
-		
-	private:
-		void on(AddedDl, FinishedItem* entry) noexcept
-		{
-			PostMessage(WM_SPEAKER, SPEAK_ADD_LINE, (WPARAM)entry);
-		}
+    public:
+        FinishedFrame()
+        {
+            upload = false;
+            boldFinished = SettingsManager::BOLD_FINISHED_DOWNLOADS;
+            columnOrder = SettingsManager::FINISHED_ORDER;
+            columnWidth = SettingsManager::FINISHED_WIDTHS;
+            columnVisible = SettingsManager::FINISHED_VISIBLE;
+        }
+        ~FinishedFrame() { }
+        
+        DECLARE_FRAME_WND_CLASS_EX(_T("FinishedFrame"), IDR_FINISHED_DL, 0, COLOR_3DFACE);
+        
+    private:
+        void on(AddedDl, FinishedItem* entry) noexcept
+        {
+            PostMessage(WM_SPEAKER, SPEAK_ADD_LINE, (WPARAM)entry);
+        }
 };
 
 #endif // !defined(FINISHED_FRAME_H)

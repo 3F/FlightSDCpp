@@ -27,58 +27,58 @@
 
 class UCPage : public CPropertyPage<IDD_UCPAGE>, public PropPage
 {
-	public:
-		UCPage(SettingsManager *s) : PropPage(s)
-		{
-			title = _tcsdup((TSTRING(SETTINGS_ADVANCED) + _T('\\') + TSTRING(SETTINGS_USER_COMMANDS)).c_str());
-			SetTitle(title);
-			m_psp.dwFlags |= PSP_RTLREADING;
-		}
-		
-		~UCPage()
-		{
-			ctrlCommands.Detach();
-			free(title);
-		}
-		
-		BEGIN_MSG_MAP_EX(UCPage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		COMMAND_ID_HANDLER(IDC_ADD_MENU, onAddMenu)
-		COMMAND_ID_HANDLER(IDC_REMOVE_MENU, onRemoveMenu)
-		COMMAND_ID_HANDLER(IDC_CHANGE_MENU, onChangeMenu)
-		COMMAND_ID_HANDLER(IDC_MOVE_UP, onMoveUp)
-		COMMAND_ID_HANDLER(IDC_MOVE_DOWN, onMoveDown)
-		NOTIFY_HANDLER(IDC_MENU_ITEMS, LVN_KEYDOWN, onKeyDown)
-		NOTIFY_HANDLER(IDC_MENU_ITEMS, NM_DBLCLK, onDoubleClick)
-		NOTIFY_HANDLER(IDC_MENU_ITEMS, LVN_ITEMCHANGED, onItemchangedDirectories)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		
-		LRESULT onAddMenu(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onChangeMenu(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onRemoveMenu(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onMoveUp(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onMoveDown(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onKeyDown(int /*idCtrl*/, LPNMHDR pnmh, BOOL& bHandled);
-		LRESULT onDoubleClick(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/);
-		LRESULT onItemchangedDirectories(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-		ExListViewCtrl ctrlCommands;
-		
-		static Item items[];
-		static TextItem texts[];
-		TCHAR* title;
-		
-		void addEntry(const UserCommand& uc, int pos);
+    public:
+        UCPage(SettingsManager *s) : PropPage(s)
+        {
+            title = _tcsdup((TSTRING(SETTINGS_ADVANCED) + _T('\\') + TSTRING(SETTINGS_USER_COMMANDS)).c_str());
+            SetTitle(title);
+            m_psp.dwFlags |= PSP_RTLREADING;
+        }
+        
+        ~UCPage()
+        {
+            ctrlCommands.Detach();
+            free(title);
+        }
+        
+        BEGIN_MSG_MAP_EX(UCPage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        COMMAND_ID_HANDLER(IDC_ADD_MENU, onAddMenu)
+        COMMAND_ID_HANDLER(IDC_REMOVE_MENU, onRemoveMenu)
+        COMMAND_ID_HANDLER(IDC_CHANGE_MENU, onChangeMenu)
+        COMMAND_ID_HANDLER(IDC_MOVE_UP, onMoveUp)
+        COMMAND_ID_HANDLER(IDC_MOVE_DOWN, onMoveDown)
+        NOTIFY_HANDLER(IDC_MENU_ITEMS, LVN_KEYDOWN, onKeyDown)
+        NOTIFY_HANDLER(IDC_MENU_ITEMS, NM_DBLCLK, onDoubleClick)
+        NOTIFY_HANDLER(IDC_MENU_ITEMS, LVN_ITEMCHANGED, onItemchangedDirectories)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        
+        LRESULT onAddMenu(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onChangeMenu(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onRemoveMenu(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onMoveUp(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onMoveDown(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onKeyDown(int /*idCtrl*/, LPNMHDR pnmh, BOOL& bHandled);
+        LRESULT onDoubleClick(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/);
+        LRESULT onItemchangedDirectories(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+        ExListViewCtrl ctrlCommands;
+        
+        static Item items[];
+        static TextItem texts[];
+        TCHAR* title;
+        
+        void addEntry(const UserCommand& uc, int pos);
 };
 
 #endif // !defined(UC_PAGE_H)

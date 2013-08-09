@@ -51,16 +51,16 @@
 
 class CFlySafeGuard
 {
-		volatile LONG& m_flag;
-	public:
-		CFlySafeGuard(volatile LONG& p_flag) : m_flag(p_flag)
-		{
-			InterlockedIncrement(&m_flag);
-		}
-		~CFlySafeGuard()
-		{
-			InterlockedDecrement(&m_flag);
-		}
+        volatile LONG& m_flag;
+    public:
+        CFlySafeGuard(volatile LONG& p_flag) : m_flag(p_flag)
+        {
+            InterlockedIncrement(&m_flag);
+        }
+        ~CFlySafeGuard()
+        {
+            InterlockedDecrement(&m_flag);
+        }
 };
 
 #endif

@@ -24,30 +24,30 @@ const UINT WMU_WHERE_ARE_YOU = ::RegisterWindowMessage(_T("WMU_WHERE_ARE_YOU_MSG
 
 class SingleInstance
 {
-		DWORD  LastError;
-		HANDLE hMutex;
-		
-	public:
-		SingleInstance(const TCHAR* strMutexName)
-		{
-			// strMutexName must be unique
-			hMutex = CreateMutex(NULL, FALSE, strMutexName);
-			LastError = GetLastError();
-		}
-		
-		~SingleInstance()
-		{
-			if (hMutex)
-			{
-				CloseHandle(hMutex);
-				hMutex = NULL;
-			}
-		}
-		
-		BOOL IsAnotherInstanceRunning()
-		{
-			return (ERROR_ALREADY_EXISTS == LastError);
-		}
+        DWORD  LastError;
+        HANDLE hMutex;
+        
+    public:
+        SingleInstance(const TCHAR* strMutexName)
+        {
+            // strMutexName must be unique
+            hMutex = CreateMutex(NULL, FALSE, strMutexName);
+            LastError = GetLastError();
+        }
+        
+        ~SingleInstance()
+        {
+            if (hMutex)
+            {
+                CloseHandle(hMutex);
+                hMutex = NULL;
+            }
+        }
+        
+        BOOL IsAnotherInstanceRunning()
+        {
+            return (ERROR_ALREADY_EXISTS == LastError);
+        }
 };
 
 #endif // !defined(SINGLE_INSTANCE_H)

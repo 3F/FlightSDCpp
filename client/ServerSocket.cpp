@@ -26,12 +26,12 @@ namespace dcpp
 
 void ServerSocket::listen(uint16_t aPort)
 {
-	socket.disconnect();
-	socket.create(Socket::TYPE_TCP);
-	// Set reuse address option...
-	socket.setSocketOpt(SO_REUSEADDR, 1);
-	socket.bind(aPort, Socket::getBindAddress());
-	socket.listen();
+    socket.disconnect();
+    socket.create(Socket::TYPE_TCP);
+    // Set reuse address option...
+    socket.setSocketOpt(SO_REUSEADDR, 1);
+    socket.bind(aPort, Socket::getBindAddress());
+    socket.listen();
 }
 
 } // namespace dcpp

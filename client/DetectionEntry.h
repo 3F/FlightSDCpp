@@ -24,37 +24,37 @@ namespace dcpp
 
 class DetectionEntry
 {
-	public:
-		typedef deque<pair<string, string> > INFMap;
-		
-		enum
-		{
-			GREEN = 1,
-			YELLOW,
-			RED
-		};
-		
-		DetectionEntry() : Id(0), name(""), cheat(""), comment(""), rawToSend(0), clientFlag(1), checkMismatch(false), isEnabled(true) { };
-		~DetectionEntry()
-		{
-			defaultMap.clear();
-			adcMap.clear();
-			nmdcMap.clear();
-		};
-		
-		uint32_t Id;
-		INFMap defaultMap;
-		INFMap adcMap;
-		INFMap nmdcMap;
-		
-		string name;
-		string cheat;
-		string comment;
-		uint32_t rawToSend;
-		uint32_t clientFlag;
-		bool checkMismatch;
-		bool isEnabled;
-		
+    public:
+        typedef deque<pair<string, string> > INFMap;
+        
+        enum
+        {
+            GREEN = 1,
+            YELLOW,
+            RED
+        };
+        
+        DetectionEntry() : Id(0), name(""), cheat(""), comment(""), rawToSend(0), clientFlag(1), checkMismatch(false), isEnabled(true) { };
+        ~DetectionEntry()
+        {
+            defaultMap.clear();
+            adcMap.clear();
+            nmdcMap.clear();
+        };
+        
+        uint32_t Id;
+        INFMap defaultMap;
+        INFMap adcMap;
+        INFMap nmdcMap;
+        
+        string name;
+        string cheat;
+        string comment;
+        uint32_t rawToSend;
+        uint32_t clientFlag;
+        bool checkMismatch;
+        bool isEnabled;
+        
 };
 
 } // namespace dcpp

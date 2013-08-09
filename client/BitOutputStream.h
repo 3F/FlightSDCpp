@@ -24,43 +24,43 @@ namespace dcpp
 
 class BitOutputStream
 #ifdef _DEBUG
-	: boost::noncopyable
+    : boost::noncopyable
 #endif
 {
-	public:
-		explicit BitOutputStream(string& aStream) : is(aStream), bitPos(0), next(0) { }
-		~BitOutputStream() { }
-		
-		void put(const ByteVector& b)
-		{
-			for (auto i = b.cbegin(); i != b.cend(); ++i)
-			{
-				next |= (*i) << bitPos++;
-				
-				if (bitPos > 7)
-				{
-					bitPos -= 8;
-					is += next;
-					next = 0;
-				}
-				
-			}
-		}
-		
-		void skipToByte()
-		{
-			if (bitPos > 0)
-			{
-				bitPos = 0;
-				is += next;
-				next = 0;
-			}
-		}
-		
-	private:
-		string& is;
-		int bitPos;
-		uint8_t next;
+    public:
+        explicit BitOutputStream(string& aStream) : is(aStream), bitPos(0), next(0) { }
+        ~BitOutputStream() { }
+        
+        void put(const ByteVector& b)
+        {
+            for (auto i = b.cbegin(); i != b.cend(); ++i)
+            {
+                next |= (*i) << bitPos++;
+                
+                if (bitPos > 7)
+                {
+                    bitPos -= 8;
+                    is += next;
+                    next = 0;
+                }
+                
+            }
+        }
+        
+        void skipToByte()
+        {
+            if (bitPos > 0)
+            {
+                bitPos = 0;
+                is += next;
+                next = 0;
+            }
+        }
+        
+    private:
+        string& is;
+        int bitPos;
+        uint8_t next;
 };
 
 } // namespace dcpp

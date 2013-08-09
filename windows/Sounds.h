@@ -27,54 +27,54 @@
 
 class Sounds : public CPropertyPage<IDD_SOUNDS>, public PropPage
 {
-	public:
-		Sounds(SettingsManager *s) : PropPage(s)
-		{
-			title = _tcsdup((TSTRING(SETTINGS_APPEARANCE) + _T('\\') + TSTRING(SETTINGS_SOUNDS)).c_str());
-			SetTitle(title);
-			m_psp.dwFlags |= PSP_RTLREADING;
-		};
-		
-		~Sounds()
-		{
-			ctrlSounds.Detach();
-			free(title);
-		};
-		
-		BEGIN_MSG_MAP(Sounds)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		COMMAND_HANDLER(IDC_BROWSE, BN_CLICKED, onBrowse)
-		COMMAND_HANDLER(IDC_PLAY, BN_CLICKED, onPlay)
-		COMMAND_ID_HANDLER(IDC_NONE, onClickedNone)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT, WPARAM, LPARAM, BOOL&);
-		LRESULT onBrowse(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
-		LRESULT onPlay(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
-		LRESULT onClickedNone(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-		static Item items[];
-		static TextItem texts[];
-		TCHAR* title;
-		
-		struct snds
-		{
-			ResourceManager::Strings name;
-			int setting;
-			string value;
-		};
-		
-		static snds sounds[];
-		
-		ExListViewCtrl ctrlSounds;
+    public:
+        Sounds(SettingsManager *s) : PropPage(s)
+        {
+            title = _tcsdup((TSTRING(SETTINGS_APPEARANCE) + _T('\\') + TSTRING(SETTINGS_SOUNDS)).c_str());
+            SetTitle(title);
+            m_psp.dwFlags |= PSP_RTLREADING;
+        };
+        
+        ~Sounds()
+        {
+            ctrlSounds.Detach();
+            free(title);
+        };
+        
+        BEGIN_MSG_MAP(Sounds)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        COMMAND_HANDLER(IDC_BROWSE, BN_CLICKED, onBrowse)
+        COMMAND_HANDLER(IDC_PLAY, BN_CLICKED, onPlay)
+        COMMAND_ID_HANDLER(IDC_NONE, onClickedNone)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT, WPARAM, LPARAM, BOOL&);
+        LRESULT onBrowse(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+        LRESULT onPlay(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+        LRESULT onClickedNone(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+        static Item items[];
+        static TextItem texts[];
+        TCHAR* title;
+        
+        struct snds
+        {
+            ResourceManager::Strings name;
+            int setting;
+            string value;
+        };
+        
+        static snds sounds[];
+        
+        ExListViewCtrl ctrlSounds;
 };
 
 #endif //Sounds_H

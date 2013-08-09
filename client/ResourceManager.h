@@ -45,44 +45,44 @@ namespace dcpp
 
 class ResourceManager : public Singleton<ResourceManager>
 {
-	public:
-	
+    public:
+    
 #include "StringDefs.h"
-	
-		void loadLanguage(const string& aFile);
-		const string& getString(Strings x) const
-		{
-			/*dcassert(x >= 0 && x < LAST);*/ return strings[x];
-		}
-		const wstring& getStringW(Strings x) const
-		{
-			/*dcassert(x >= 0 && x < LAST);*/ return wstrings[x];
-		}
-		bool isRTL()
-		{
-			return rtl;
-		}
-		
-	private:
-		friend class Singleton<ResourceManager>;
-		
-		typedef unordered_map<string, Strings> NameMap;
-		typedef NameMap::const_iterator NameIter;
-		
-		ResourceManager() : rtl(false)
-		{
-			createWide();
-		}
-		
-		~ResourceManager() { }
-		
-		static string strings[LAST];
-		static wstring wstrings[LAST];
-		static string names[LAST];
-		
-		bool rtl;
-		
-		void createWide();
+    
+        void loadLanguage(const string& aFile);
+        const string& getString(Strings x) const
+        {
+            /*dcassert(x >= 0 && x < LAST);*/ return strings[x];
+        }
+        const wstring& getStringW(Strings x) const
+        {
+            /*dcassert(x >= 0 && x < LAST);*/ return wstrings[x];
+        }
+        bool isRTL()
+        {
+            return rtl;
+        }
+        
+    private:
+        friend class Singleton<ResourceManager>;
+        
+        typedef unordered_map<string, Strings> NameMap;
+        typedef NameMap::const_iterator NameIter;
+        
+        ResourceManager() : rtl(false)
+        {
+            createWide();
+        }
+        
+        ~ResourceManager() { }
+        
+        static string strings[LAST];
+        static wstring wstrings[LAST];
+        static string names[LAST];
+        
+        bool rtl;
+        
+        void createWide();
 };
 
 } // namespace dcpp

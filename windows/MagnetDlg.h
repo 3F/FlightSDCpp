@@ -31,27 +31,27 @@
 
 class MagnetDlg : public CDialogImpl<MagnetDlg >
 {
-	public:
-		enum { IDD = IDD_MAGNET };
-		
-		MagnetDlg(const tstring& aHash, const tstring& aFileName, const int64_t aSize) : mHash(aHash), mFileName(aFileName), mSize(aSize) { }
-		~MagnetDlg() { }
-		
-		BEGIN_MSG_MAP(MagnetDlg)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		COMMAND_ID_HANDLER(IDOK, onCloseCmd)
-		COMMAND_ID_HANDLER(IDCANCEL, onCloseCmd)
-		COMMAND_ID_HANDLER(IDC_MAGNET_QUEUE, onRadioButton)
-		COMMAND_ID_HANDLER(IDC_MAGNET_NOTHING, onRadioButton)
-		COMMAND_ID_HANDLER(IDC_MAGNET_SEARCH, onRadioButton)
-		END_MSG_MAP();
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		LRESULT onCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onRadioButton(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-	private:
-		tstring mHash, mFileName;
-		int64_t mSize;
+    public:
+        enum { IDD = IDD_MAGNET };
+        
+        MagnetDlg(const tstring& aHash, const tstring& aFileName, const int64_t aSize) : mHash(aHash), mFileName(aFileName), mSize(aSize) { }
+        ~MagnetDlg() { }
+        
+        BEGIN_MSG_MAP(MagnetDlg)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        COMMAND_ID_HANDLER(IDOK, onCloseCmd)
+        COMMAND_ID_HANDLER(IDCANCEL, onCloseCmd)
+        COMMAND_ID_HANDLER(IDC_MAGNET_QUEUE, onRadioButton)
+        COMMAND_ID_HANDLER(IDC_MAGNET_NOTHING, onRadioButton)
+        COMMAND_ID_HANDLER(IDC_MAGNET_SEARCH, onRadioButton)
+        END_MSG_MAP();
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT onCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onRadioButton(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+    private:
+        tstring mHash, mFileName;
+        int64_t mSize;
 };
 
 #endif // !defined(MAGNET_DLG_H)

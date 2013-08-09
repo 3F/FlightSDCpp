@@ -28,69 +28,69 @@ namespace dcpp
 
 class DetectionManager : public Singleton<DetectionManager>
 {
-	public:
-		typedef vector<DetectionEntry> DetectionItems;
-		
-		DetectionManager() : profileVersion("N/A"), profileMessage("N/A"), profileUrl("N/A"), lastId(0) { }
-		~DetectionManager() noexcept
-		{
-			save();
-			det.clear();
-		}
-		
-		void load();
-		void save();
-		
-		const DetectionItems& reload();
-		const DetectionItems& reloadFromHttp(bool bz2 = false);
-		
-		void addDetectionItem(DetectionEntry& e);
-		void updateDetectionItem(const uint32_t aOrigId, const DetectionEntry& e);
-		void removeDetectionItem(const uint32_t id) noexcept;
-		
-		bool getNextDetectionItem(const uint32_t aId, int pos, DetectionEntry& e) noexcept;
-		bool getDetectionItem(const uint32_t aId, DetectionEntry& e) noexcept;
-		bool moveDetectionItem(const uint32_t aId, int pos);
-		void setItemEnabled(const uint32_t aId, bool enabled) noexcept;
-		
-		const DetectionItems& getProfiles() noexcept
-		{
-			Lock l(cs);
-			return det;
-		}
-		
-		const DetectionItems& getProfiles(StringMap& p) noexcept
-		{
-			Lock l(cs);
-			// don't override other params
-			for (auto i = params.cbegin(); i != params.cend(); ++i)
-				p[i->first] = i->second;
-			return det;
-		}
-		
-		StringMap& getParams() noexcept
-		{
-			Lock l(cs);
-			return params;
-		}
-		
-		GETSET(string, profileVersion, ProfileVersion);
-		GETSET(string, profileMessage, ProfileMessage);
-		GETSET(string, profileUrl, ProfileUrl);
-		
-	private:
-		void loadCompressedProfiles();
-		
-		DetectionItems det;
-		
-		StringMap params;
-		uint32_t lastId;
-		
-		void validateItem(const DetectionEntry& e, bool checkIds);
-		void importProfiles(SimpleXML& xml);
-		
-		friend class Singleton<DetectionManager>;
-		CriticalSection cs;
+    public:
+        typedef vector<DetectionEntry> DetectionItems;
+        
+        DetectionManager() : profileVersion("N/A"), profileMessage("N/A"), profileUrl("N/A"), lastId(0) { }
+        ~DetectionManager() noexcept
+        {
+            save();
+            det.clear();
+        }
+        
+        void load();
+        void save();
+        
+        const DetectionItems& reload();
+        const DetectionItems& reloadFromHttp(bool bz2 = false);
+        
+        void addDetectionItem(DetectionEntry& e);
+        void updateDetectionItem(const uint32_t aOrigId, const DetectionEntry& e);
+        void removeDetectionItem(const uint32_t id) noexcept;
+        
+        bool getNextDetectionItem(const uint32_t aId, int pos, DetectionEntry& e) noexcept;
+        bool getDetectionItem(const uint32_t aId, DetectionEntry& e) noexcept;
+        bool moveDetectionItem(const uint32_t aId, int pos);
+        void setItemEnabled(const uint32_t aId, bool enabled) noexcept;
+        
+        const DetectionItems& getProfiles() noexcept
+        {
+            Lock l(cs);
+            return det;
+        }
+        
+        const DetectionItems& getProfiles(StringMap& p) noexcept
+        {
+            Lock l(cs);
+            // don't override other params
+            for (auto i = params.cbegin(); i != params.cend(); ++i)
+                p[i->first] = i->second;
+            return det;
+        }
+        
+        StringMap& getParams() noexcept
+        {
+            Lock l(cs);
+            return params;
+        }
+        
+        GETSET(string, profileVersion, ProfileVersion);
+        GETSET(string, profileMessage, ProfileMessage);
+        GETSET(string, profileUrl, ProfileUrl);
+        
+    private:
+        void loadCompressedProfiles();
+        
+        DetectionItems det;
+        
+        StringMap params;
+        uint32_t lastId;
+        
+        void validateItem(const DetectionEntry& e, bool checkIds);
+        void importProfiles(SimpleXML& xml);
+        
+        friend class Singleton<DetectionManager>;
+        CriticalSection cs;
 };
 
 }; // namespace dcpp

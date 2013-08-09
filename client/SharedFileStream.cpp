@@ -35,95 +35,95 @@ CriticalSection SharedFileStream::critical_section;
 SharedFileStream::SharedFileHandleMap SharedFileStream::file_handle_pool;
 
 SharedFileHandle::SharedFileHandle(const string& aFileName, int access, int mode) :
-	ref_cnt(1), File(aFileName, access, mode)
+    ref_cnt(1), File(aFileName, access, mode)
 {
 #ifdef _WIN32
-	if (!SETTING(ANTI_FRAG))
-	{
-		// avoid allocation of large ranges of zeroes for unused segments
-		DWORD bytesReturned;
-		DeviceIoControl(h, FSCTL_SET_SPARSE, NULL, 0, NULL, 0, &bytesReturned, NULL);
-	}
+    if (!SETTING(ANTI_FRAG))
+    {
+        // avoid allocation of large ranges of zeroes for unused segments
+        DWORD bytesReturned;
+        DeviceIoControl(h, FSCTL_SET_SPARSE, NULL, 0, NULL, 0, &bytesReturned, NULL);
+    }
 #endif
 }
 
 SharedFileStream::SharedFileStream(const string& aFileName, int access, int mode): pos(-1)
 {
-	Lock l(critical_section);
-	
-	if (file_handle_pool.count(aFileName) > 0)
-	{
-		shared_handle_ptr = file_handle_pool[aFileName];
-		shared_handle_ptr->ref_cnt++;
-	}
-	else
-	{
-		shared_handle_ptr = new SharedFileHandle(aFileName, access, mode);
-		shared_handle_ptr->ref_cnt = 1;
-		file_handle_pool[aFileName] = shared_handle_ptr;
-	}
+    Lock l(critical_section);
+    
+    if (file_handle_pool.count(aFileName) > 0)
+    {
+        shared_handle_ptr = file_handle_pool[aFileName];
+        shared_handle_ptr->ref_cnt++;
+    }
+    else
+    {
+        shared_handle_ptr = new SharedFileHandle(aFileName, access, mode);
+        shared_handle_ptr->ref_cnt = 1;
+        file_handle_pool[aFileName] = shared_handle_ptr;
+    }
 }
 
 SharedFileStream::~SharedFileStream()
 {
-	Lock l(critical_section);
-	
-	shared_handle_ptr->ref_cnt--;
-	
-	if (!shared_handle_ptr->ref_cnt)
-	{
-		for (SharedFileHandleMap::iterator i = file_handle_pool.begin();
-		        i != file_handle_pool.end();
-		        i++)
-		{
-			if (i->second == shared_handle_ptr)
-			{
-				file_handle_pool.erase(i);
-				delete shared_handle_ptr;
-				return;
-			}
-		}
-		
-		dcassert(0);
-	}
+    Lock l(critical_section);
+    
+    shared_handle_ptr->ref_cnt--;
+    
+    if (!shared_handle_ptr->ref_cnt)
+    {
+        for (SharedFileHandleMap::iterator i = file_handle_pool.begin();
+                i != file_handle_pool.end();
+                i++)
+        {
+            if (i->second == shared_handle_ptr)
+            {
+                file_handle_pool.erase(i);
+                delete shared_handle_ptr;
+                return;
+            }
+        }
+        
+        dcassert(0);
+    }
 }
 
 size_t SharedFileStream::write(const void* buf, size_t len)
 {
-	Lock l(*shared_handle_ptr);
-	
-	dcassert(pos != -1);
-	
-	shared_handle_ptr->setPos(pos);
-	shared_handle_ptr->write(buf, len);
-	
-	pos += len;
-	return len;
+    Lock l(*shared_handle_ptr);
+    
+    dcassert(pos != -1);
+    
+    shared_handle_ptr->setPos(pos);
+    shared_handle_ptr->write(buf, len);
+    
+    pos += len;
+    return len;
 }
 
 size_t SharedFileStream::read(void* buf, size_t& len)
 {
-	Lock l(*shared_handle_ptr);
-	
-	dcassert(pos != -1);
-	
-	shared_handle_ptr->setPos(pos);
-	len = shared_handle_ptr->read(buf, len);
-	
-	pos += len;
-	return len;
+    Lock l(*shared_handle_ptr);
+    
+    dcassert(pos != -1);
+    
+    shared_handle_ptr->setPos(pos);
+    len = shared_handle_ptr->read(buf, len);
+    
+    pos += len;
+    return len;
 }
 
 int64_t SharedFileStream::getSize() const
 {
-	Lock l(*shared_handle_ptr);
-	return shared_handle_ptr->getSize();
+    Lock l(*shared_handle_ptr);
+    return shared_handle_ptr->getSize();
 }
 
 void SharedFileStream::setSize(int64_t newSize)
 {
-	Lock l(*shared_handle_ptr);
-	shared_handle_ptr->setSize(newSize);
+    Lock l(*shared_handle_ptr);
+    shared_handle_ptr->setSize(newSize);
 }
 
 }

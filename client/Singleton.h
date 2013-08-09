@@ -28,56 +28,56 @@ namespace dcpp
 template<typename T>
 class Singleton
 #ifdef _DEBUG
-	: boost::noncopyable // [+] IRainman fix.
+    : boost::noncopyable // [+] IRainman fix.
 #endif
 {
-	public:
-		explicit Singleton() { }
-		virtual ~Singleton() { }
-		
-		static bool isValidInstance() //[+]PPA
-		{
-			return instance != nullptr;
-		}
-		static T* getInstance()
-		{
+    public:
+        explicit Singleton() { }
+        virtual ~Singleton() { }
+        
+        static bool isValidInstance() //[+]PPA
+        {
+            return instance != nullptr;
+        }
+        static T* getInstance()
+        {
 #ifdef _DEBUG
-			if (!instance)
-				::MessageBoxA(nullptr, typeid(T).name(), "getInstance is null", MB_OK);
-			dcassert(instance);
+            if (!instance)
+                ::MessageBoxA(nullptr, typeid(T).name(), "getInstance is null", MB_OK);
+            dcassert(instance);
 #endif
-			return instance;
-		}
-		
-		static void newInstance()
-		{
-			// [!] PVS V809 Verifying that a pointer value is not NULL is not required. The 'if (instance)' check can be removed. singleton.h 50
+            return instance;
+        }
+        
+        static void newInstance()
+        {
+            // [!] PVS V809 Verifying that a pointer value is not NULL is not required. The 'if (instance)' check can be removed. singleton.h 50
 #ifdef _DEBUG
-			if (instance)
-			{
-				::MessageBoxA(nullptr, typeid(T).name(), "recreate instance!", MB_OK);
-				dcassert(0);
-			}
+            if (instance)
+            {
+                ::MessageBoxA(nullptr, typeid(T).name(), "recreate instance!", MB_OK);
+                dcassert(0);
+            }
 #endif
-			delete instance;
-			instance = new T();
-		}
-		
-		static void deleteInstance()
-		{
-			dcassert(instance); // [+] PPA найдем места попытки двойного уничтожения
+            delete instance;
+            instance = new T();
+        }
+        
+        static void deleteInstance()
+        {
+            dcassert(instance); // [+] PPA найдем места попытки двойного уничтожения
 #ifdef _DEBUG
-			if (!instance)
-			{
-				::MessageBoxA(nullptr, typeid(T).name(), "attempt to delete the deleted object!", MB_OK);
-				dcassert(0);
-			}
+            if (!instance)
+            {
+                ::MessageBoxA(nullptr, typeid(T).name(), "attempt to delete the deleted object!", MB_OK);
+                dcassert(0);
+            }
 #endif
-			delete instance;
-			instance = nullptr;
-		}
-	protected:
-		static T* instance;
+            delete instance;
+            instance = nullptr;
+        }
+    protected:
+        static T* instance;
 };
 
 template<class T> T* Singleton<T>::instance = nullptr;

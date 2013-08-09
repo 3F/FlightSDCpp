@@ -24,11 +24,11 @@ namespace dcpp
 
 struct FavHubGroupProperties
 {
-	/**
-	* Designates a private group; hubs in a private group don't share their users with any other
-	* hub when trying to match an online user, and are not shared with any peer.
-	*/
-	bool priv;
+    /**
+    * Designates a private group; hubs in a private group don't share their users with any other
+    * hub when trying to match an online user, and are not shared with any peer.
+    */
+    bool priv;
 };
 
 typedef std::unordered_map<string, FavHubGroupProperties> FavHubGroups;

@@ -25,76 +25,76 @@
 
 class TreePropertySheet : public CPropertySheetImpl<TreePropertySheet>
 {
-	public:
-		virtual ~TreePropertySheet()
-		{
-			tree_icons.Destroy();
-		};
-		enum { WM_USER_INITDIALOG = WM_APP + 501 };
-		enum { TAB_MESSAGE_MAP = 13 };
-		TreePropertySheet(ATL::_U_STRINGorID title = (LPCTSTR)NULL, UINT uStartPage = 0, HWND hWndParent = NULL) :
-			CPropertySheetImpl<TreePropertySheet>(title, uStartPage, hWndParent), tabContainer(WC_TABCONTROL, this, TAB_MESSAGE_MAP)
-		{
-		
-			m_psh.pfnCallback = &PropSheetProc;
-			m_psh.dwFlags |= PSH_RTLREADING;
-		}
-		
-		typedef CPropertySheetImpl<TreePropertySheet> baseClass;
-		BEGIN_MSG_MAP(TreePropertySheet)
-		MESSAGE_HANDLER(WM_COMMAND, baseClass::OnCommand)
-		MESSAGE_HANDLER(WM_USER_INITDIALOG, onInitDialog)
-		MESSAGE_HANDLER(WM_NOTIFYFORMAT, onNotifyFormat)
-		NOTIFY_HANDLER(IDC_PAGE, TVN_SELCHANGED, onSelChanged)
-		CHAIN_MSG_MAP(baseClass)
-		ALT_MSG_MAP(TAB_MESSAGE_MAP)
-		MESSAGE_HANDLER(TCM_SETCURSEL, onSetCurSel)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		LRESULT onSetCurSel(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		
-		LRESULT onSelChanged(int idCtrl, LPNMHDR pnmh, BOOL& bHandled);
-		
-		LRESULT onNotifyFormat(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-		{
+    public:
+        virtual ~TreePropertySheet()
+        {
+            tree_icons.Destroy();
+        };
+        enum { WM_USER_INITDIALOG = WM_APP + 501 };
+        enum { TAB_MESSAGE_MAP = 13 };
+        TreePropertySheet(ATL::_U_STRINGorID title = (LPCTSTR)NULL, UINT uStartPage = 0, HWND hWndParent = NULL) :
+            CPropertySheetImpl<TreePropertySheet>(title, uStartPage, hWndParent), tabContainer(WC_TABCONTROL, this, TAB_MESSAGE_MAP)
+        {
+        
+            m_psh.pfnCallback = &PropSheetProc;
+            m_psh.dwFlags |= PSH_RTLREADING;
+        }
+        
+        typedef CPropertySheetImpl<TreePropertySheet> baseClass;
+        BEGIN_MSG_MAP(TreePropertySheet)
+        MESSAGE_HANDLER(WM_COMMAND, baseClass::OnCommand)
+        MESSAGE_HANDLER(WM_USER_INITDIALOG, onInitDialog)
+        MESSAGE_HANDLER(WM_NOTIFYFORMAT, onNotifyFormat)
+        NOTIFY_HANDLER(IDC_PAGE, TVN_SELCHANGED, onSelChanged)
+        CHAIN_MSG_MAP(baseClass)
+        ALT_MSG_MAP(TAB_MESSAGE_MAP)
+        MESSAGE_HANDLER(TCM_SETCURSEL, onSetCurSel)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+        LRESULT onSetCurSel(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+        
+        LRESULT onSelChanged(int idCtrl, LPNMHDR pnmh, BOOL& bHandled);
+        
+        LRESULT onNotifyFormat(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+        {
 #ifdef _UNICODE
-			return NFR_UNICODE;
+            return NFR_UNICODE;
 #else
-			return NFR_ANSI;
+            return NFR_ANSI;
 #endif
-		}
-		
-		static int CALLBACK PropSheetProc(HWND hwndDlg, UINT uMsg, LPARAM lParam);
-	private:
-	
-		enum
-		{
-			SPACE_MID = 5,
-			SPACE_TOP = 10,
-			SPACE_BOTTOM = 10,
-			SPACE_LEFT = 10,
-			SPACE_RIGHT = 10,
-			TREE_WIDTH = 210,
-		};
-		
-		enum
-		{
-			MAX_NAME_LENGTH = 256
-		};
-		
-		void hideTab();
-		void addTree();
-		void fillTree();
-		
-		HTREEITEM createTree(const tstring& str, HTREEITEM parent, int page);
-		HTREEITEM findItem(const tstring& str, HTREEITEM start);
-		HTREEITEM findItem(int page, HTREEITEM start);
-		
-		CImageList tree_icons;
-		CTreeViewCtrl ctrlTree;
-		CContainedWindow tabContainer;
-		
+        }
+        
+        static int CALLBACK PropSheetProc(HWND hwndDlg, UINT uMsg, LPARAM lParam);
+    private:
+    
+        enum
+        {
+            SPACE_MID = 5,
+            SPACE_TOP = 10,
+            SPACE_BOTTOM = 10,
+            SPACE_LEFT = 10,
+            SPACE_RIGHT = 10,
+            TREE_WIDTH = 210,
+        };
+        
+        enum
+        {
+            MAX_NAME_LENGTH = 256
+        };
+        
+        void hideTab();
+        void addTree();
+        void fillTree();
+        
+        HTREEITEM createTree(const tstring& str, HTREEITEM parent, int page);
+        HTREEITEM findItem(const tstring& str, HTREEITEM start);
+        HTREEITEM findItem(int page, HTREEITEM start);
+        
+        CImageList tree_icons;
+        CTreeViewCtrl ctrlTree;
+        CContainedWindow tabContainer;
+        
 };
 
 #endif // !defined(TREE_PROPERTY_SHEET_H)

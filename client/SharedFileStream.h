@@ -28,47 +28,47 @@ namespace dcpp
 
 struct SharedFileHandle : File, CriticalSection
 {
-	int                 ref_cnt;
-	
-	SharedFileHandle(const string& aFileName, int access, int mode);
-	~SharedFileHandle() noexcept { }
+    int                 ref_cnt;
+    
+    SharedFileHandle(const string& aFileName, int access, int mode);
+    ~SharedFileHandle() noexcept { }
 };
 
 class SharedFileStream : public IOStream
 {
 
-	public:
-	
-		typedef map<string, SharedFileHandle*> SharedFileHandleMap;
-		
-		SharedFileStream(const string& aFileName, int access, int mode);
-		~SharedFileStream();
-		
-		size_t write(const void* buf, size_t len);
-		size_t read(void* buf, size_t& len);
-		
-		int64_t getSize() const;
-		void setSize(int64_t newSize);
-		
-		size_t flush()
-		{
-			Lock l(*shared_handle_ptr);
-			return shared_handle_ptr->flush();
-		}
-		
-		void setPos(int64_t _pos)
-		{
-			pos = _pos;
-		}
-		
-		static CriticalSection critical_section;
-		static SharedFileHandleMap file_handle_pool;
-		
-	private:
-		SharedFileHandle* shared_handle_ptr;
-		int64_t pos;
-		
-		
+    public:
+    
+        typedef map<string, SharedFileHandle*> SharedFileHandleMap;
+        
+        SharedFileStream(const string& aFileName, int access, int mode);
+        ~SharedFileStream();
+        
+        size_t write(const void* buf, size_t len);
+        size_t read(void* buf, size_t& len);
+        
+        int64_t getSize() const;
+        void setSize(int64_t newSize);
+        
+        size_t flush()
+        {
+            Lock l(*shared_handle_ptr);
+            return shared_handle_ptr->flush();
+        }
+        
+        void setPos(int64_t _pos)
+        {
+            pos = _pos;
+        }
+        
+        static CriticalSection critical_section;
+        static SharedFileHandleMap file_handle_pool;
+        
+    private:
+        SharedFileHandle* shared_handle_ptr;
+        int64_t pos;
+        
+        
 };
 
 }

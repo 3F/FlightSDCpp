@@ -22,35 +22,35 @@
 
 template <class T> inline void safe_delete(T* & p)
 {
-	if (p != nullptr)
-	{
-		delete p;
-		p = 0;
-	}
+    if (p != nullptr)
+    {
+        delete p;
+        p = 0;
+    }
 }
 template <class T> inline void safe_delete_array(T* & p)
 {
-	if (p != nullptr)
-	{
-		delete [] p;
-		p = 0;
-	}
+    if (p != nullptr)
+    {
+        delete [] p;
+        p = 0;
+    }
 }
 template <class T> inline void safe_release(T* & p)
 {
-	if (p != nullptr)
-	{
-		p->Release();
-		p = 0;
-	}
+    if (p != nullptr)
+    {
+        p->Release();
+        p = 0;
+    }
 }
 template <class T> inline void DestroyAndDetachWindow(T & p)
 {
-	if (p != nullptr)
-	{
-		p.DestroyWindow();
-		p.Detach();
-	}
+    if (p != nullptr)
+    {
+        p.DestroyWindow();
+        p.Detach();
+    }
 }
 
 #endif // DCPLUSPLUS_DCPP_COMPILER_FLYLINKDC_H

@@ -54,68 +54,68 @@
 bool PropertiesDlg::needUpdate = false;
 PropertiesDlg::PropertiesDlg(HWND parent, SettingsManager *s) : TreePropertySheet(CTSTRING(SETTINGS), 0, parent)
 {
-	int n = 0;
-	pages[n++] = new GeneralPage(s);
-	pages[n++] = new NetworkPage(s);
-	pages[n++] = new DownloadPage(s);
-	pages[n++] = new SharePage(s);
-	pages[n++] = new UploadPage(s);
-	pages[n++] = new AppearancePage(s);
-	pages[n++] = new PropPageTextStyles(s);
-	pages[n++] = new Popups(s);
-	pages[n++] = new OperaColorsPage(s);
-	pages[n++] = new Sounds(s);
-	pages[n++] = new ToolbarPage(s);
-	pages[n++] = new UserListColours(s);
-	pages[n++] = new WindowsPage(s);
-	pages[n++] = new AdvancedPage(s);
-	pages[n++] = new SDCPage(s);
-	pages[n++] = new LogPage(s);
-	pages[n++] = new UCPage(s);
-	pages[n++] = new FavoriteDirsPage(s);
-	pages[n++] = new AVIPreview(s);
-	pages[n++] = new QueuePage(s);
-	pages[n++] = new LimitPage(s);
-	pages[n++] = new FakeDetect(s);
-	pages[n++] = new RangesPage(s);
-	pages[n++] = new ClientsPage(s);
-	pages[n++] = new CertificatesPage(s);
-	
-	for (int i = 0; i < numPages; i++)
-	{
-		AddPage(pages[i]->getPSP());
-	}
-	
-	// Hide "Apply" button
-	m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_NOCONTEXTHELP;
-	m_psh.dwFlags &= ~PSH_HASHELP;
+    int n = 0;
+    pages[n++] = new GeneralPage(s);
+    pages[n++] = new NetworkPage(s);
+    pages[n++] = new DownloadPage(s);
+    pages[n++] = new SharePage(s);
+    pages[n++] = new UploadPage(s);
+    pages[n++] = new AppearancePage(s);
+    pages[n++] = new PropPageTextStyles(s);
+    pages[n++] = new Popups(s);
+    pages[n++] = new OperaColorsPage(s);
+    pages[n++] = new Sounds(s);
+    pages[n++] = new ToolbarPage(s);
+    pages[n++] = new UserListColours(s);
+    pages[n++] = new WindowsPage(s);
+    pages[n++] = new AdvancedPage(s);
+    pages[n++] = new SDCPage(s);
+    pages[n++] = new LogPage(s);
+    pages[n++] = new UCPage(s);
+    pages[n++] = new FavoriteDirsPage(s);
+    pages[n++] = new AVIPreview(s);
+    pages[n++] = new QueuePage(s);
+    pages[n++] = new LimitPage(s);
+    pages[n++] = new FakeDetect(s);
+    pages[n++] = new RangesPage(s);
+    pages[n++] = new ClientsPage(s);
+    pages[n++] = new CertificatesPage(s);
+    
+    for (int i = 0; i < numPages; i++)
+    {
+        AddPage(pages[i]->getPSP());
+    }
+    
+    // Hide "Apply" button
+    m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_NOCONTEXTHELP;
+    m_psh.dwFlags &= ~PSH_HASHELP;
 }
 
 PropertiesDlg::~PropertiesDlg()
 {
-	for (int i = 0; i < numPages; i++)
-	{
-		delete pages[i];
-	}
+    for (int i = 0; i < numPages; i++)
+    {
+        delete pages[i];
+    }
 }
 
 void PropertiesDlg::write()
 {
-	for (int i = 0; i < numPages; i++)
-	{
-		// Check HWND of page to see if it has been created
-		const HWND page = PropSheet_IndexToHwnd((HWND) * this, i);
-		
-		if (page != NULL)
-			pages[i]->write();
-	}
+    for (int i = 0; i < numPages; i++)
+    {
+        // Check HWND of page to see if it has been created
+        const HWND page = PropSheet_IndexToHwnd((HWND) * this, i);
+        
+        if (page != NULL)
+            pages[i]->write();
+    }
 }
 
 LRESULT PropertiesDlg::onOK(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& bHandled)
 {
-	write();
-	bHandled = FALSE;
-	return TRUE;
+    write();
+    bHandled = FALSE;
+    return TRUE;
 }
 
 /**

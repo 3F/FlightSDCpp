@@ -23,34 +23,34 @@
 
 class FavHubGroupsDlg : public CDialogImpl<FavHubGroupsDlg>
 {
-	public:
-		enum { IDD = IDD_FAVHUBGROUPS };
-		
-		BEGIN_MSG_MAP(FavHubGroupsDlg)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		NOTIFY_HANDLER(IDC_GROUPS, LVN_ITEMCHANGED, onItemChanged)
-		COMMAND_ID_HANDLER(IDCANCEL, onClose)
-		COMMAND_ID_HANDLER(IDC_ADD, onAdd)
-		COMMAND_ID_HANDLER(IDC_REMOVE, onRemove)
-		COMMAND_ID_HANDLER(IDC_UPDATE, onUpdate)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		LRESULT onClose(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onItemChanged(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/);
-		LRESULT onAdd(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onRemove(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onUpdate(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		
-	private:
-		void addItem(const dcpp::tstring& name, bool priv, bool select = false);
-		bool getItem(dcpp::tstring& name, bool& priv, bool checkSel);
-		int findGroup(LPCTSTR name);
-		dcpp::tstring getText(int column, int item = -1) const;
-		void updateSelectedGroup(bool forceClean = false);
-		void save();
-		
-		CListViewCtrl ctrlGroups;
+    public:
+        enum { IDD = IDD_FAVHUBGROUPS };
+        
+        BEGIN_MSG_MAP(FavHubGroupsDlg)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        NOTIFY_HANDLER(IDC_GROUPS, LVN_ITEMCHANGED, onItemChanged)
+        COMMAND_ID_HANDLER(IDCANCEL, onClose)
+        COMMAND_ID_HANDLER(IDC_ADD, onAdd)
+        COMMAND_ID_HANDLER(IDC_REMOVE, onRemove)
+        COMMAND_ID_HANDLER(IDC_UPDATE, onUpdate)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT onClose(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onItemChanged(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/);
+        LRESULT onAdd(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onRemove(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onUpdate(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        
+    private:
+        void addItem(const dcpp::tstring& name, bool priv, bool select = false);
+        bool getItem(dcpp::tstring& name, bool& priv, bool checkSel);
+        int findGroup(LPCTSTR name);
+        dcpp::tstring getText(int column, int item = -1) const;
+        void updateSelectedGroup(bool forceClean = false);
+        void save();
+        
+        CListViewCtrl ctrlGroups;
 };
 
 #endif //STRONGDCPLUSPLUS_FAV_HUB_GROUPS_DLG

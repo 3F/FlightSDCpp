@@ -26,33 +26,33 @@ namespace dcpp
 
 const char* Mapper::protocols[PROTOCOL_LAST] =
 {
-	"TCP",
-	"UDP"
+    "TCP",
+    "UDP"
 };
 
 bool Mapper::open(const unsigned short port, const Protocol protocol, const string& description)
 {
-	if (!add(port, protocol, description))
-		return false;
-		
-	rules.push_back(make_pair(port, protocol));
-	return true;
+    if (!add(port, protocol, description))
+        return false;
+        
+    rules.push_back(make_pair(port, protocol));
+    return true;
 }
 
 bool Mapper::close()
 {
-	bool ret = true;
-	
-	for (auto i = rules.cbegin(), iend = rules.cend(); i != iend; ++i)
-		ret &= remove(i->first, i->second);
-	rules.clear();
-	
-	return ret;
+    bool ret = true;
+    
+    for (auto i = rules.cbegin(), iend = rules.cend(); i != iend; ++i)
+        ret &= remove(i->first, i->second);
+    rules.clear();
+    
+    return ret;
 }
 
 bool Mapper::hasRules() const
 {
-	return !rules.empty();
+    return !rules.empty();
 }
 
 } // namespace dcpp

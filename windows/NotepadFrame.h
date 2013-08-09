@@ -27,64 +27,64 @@
 #define NOTEPAD_MESSAGE_MAP 13
 
 class NotepadFrame : public MDITabChildWindowImpl<NotepadFrame, RGB(0, 0, 0), IDR_NOTEPAD>, public StaticFrame<NotepadFrame, ResourceManager::NOTEPAD, IDC_NOTEPAD>,
-	private SettingsManagerListener
+    private SettingsManagerListener
 {
-	public:
-		DECLARE_FRAME_WND_CLASS_EX(_T("NotepadFrame"), IDR_NOTEPAD, 0, COLOR_3DFACE);
-		
-		NotepadFrame() : dirty(false), closed(false),
-			ctrlClientContainer(_T("edit"), this, NOTEPAD_MESSAGE_MAP)
-		{
-			SettingsManager::getInstance()->addListener(this);
-		}
-		~NotepadFrame() { }
-		
-		typedef MDITabChildWindowImpl<NotepadFrame, RGB(0, 0, 0), IDR_NOTEPAD> baseClass;
-		BEGIN_MSG_MAP(NotepadFrame)
-		MESSAGE_HANDLER(WM_SETFOCUS, OnFocus)
-		MESSAGE_HANDLER(WM_CREATE, OnCreate)
-		MESSAGE_HANDLER(WM_CLOSE, onClose)
-		MESSAGE_HANDLER(WM_CTLCOLOREDIT, onCtlColor)
-		MESSAGE_HANDLER(WM_CTLCOLORSTATIC, onCtlColor)
-		CHAIN_MSG_MAP(baseClass)
-		ALT_MSG_MAP(NOTEPAD_MESSAGE_MAP)
-		MESSAGE_HANDLER(WM_LBUTTONDBLCLK, onLButton)
-		END_MSG_MAP()
-		
-		LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		LRESULT onClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		LRESULT onLButton(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		void UpdateLayout(BOOL bResizeBars = TRUE);
-		
-		LRESULT onCtlColor(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			HWND hWnd = (HWND)lParam;
-			HDC hDC = (HDC)wParam;
-			if (hWnd == ctrlPad.m_hWnd)
-			{
-				::SetBkColor(hDC, WinUtil::bgColor);
-				::SetTextColor(hDC, WinUtil::textColor);
-				return (LRESULT)WinUtil::bgBrush;
-			}
-			bHandled = FALSE;
-			return FALSE;
-		}
-		
-		
-		LRESULT OnFocus(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-		{
-			ctrlPad.SetFocus();
-			return 0;
-		}
-		
-	private:
-	
-		bool dirty;
-		bool closed;
-		CEdit ctrlPad;
-		CContainedWindow ctrlClientContainer;
-		
-		void on(SettingsManagerListener::Save, SimpleXML& /*xml*/) noexcept;
+    public:
+        DECLARE_FRAME_WND_CLASS_EX(_T("NotepadFrame"), IDR_NOTEPAD, 0, COLOR_3DFACE);
+        
+        NotepadFrame() : dirty(false), closed(false),
+            ctrlClientContainer(_T("edit"), this, NOTEPAD_MESSAGE_MAP)
+        {
+            SettingsManager::getInstance()->addListener(this);
+        }
+        ~NotepadFrame() { }
+        
+        typedef MDITabChildWindowImpl<NotepadFrame, RGB(0, 0, 0), IDR_NOTEPAD> baseClass;
+        BEGIN_MSG_MAP(NotepadFrame)
+        MESSAGE_HANDLER(WM_SETFOCUS, OnFocus)
+        MESSAGE_HANDLER(WM_CREATE, OnCreate)
+        MESSAGE_HANDLER(WM_CLOSE, onClose)
+        MESSAGE_HANDLER(WM_CTLCOLOREDIT, onCtlColor)
+        MESSAGE_HANDLER(WM_CTLCOLORSTATIC, onCtlColor)
+        CHAIN_MSG_MAP(baseClass)
+        ALT_MSG_MAP(NOTEPAD_MESSAGE_MAP)
+        MESSAGE_HANDLER(WM_LBUTTONDBLCLK, onLButton)
+        END_MSG_MAP()
+        
+        LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+        LRESULT onClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+        LRESULT onLButton(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+        void UpdateLayout(BOOL bResizeBars = TRUE);
+        
+        LRESULT onCtlColor(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+        {
+            HWND hWnd = (HWND)lParam;
+            HDC hDC = (HDC)wParam;
+            if (hWnd == ctrlPad.m_hWnd)
+            {
+                ::SetBkColor(hDC, WinUtil::bgColor);
+                ::SetTextColor(hDC, WinUtil::textColor);
+                return (LRESULT)WinUtil::bgBrush;
+            }
+            bHandled = FALSE;
+            return FALSE;
+        }
+        
+        
+        LRESULT OnFocus(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+        {
+            ctrlPad.SetFocus();
+            return 0;
+        }
+        
+    private:
+    
+        bool dirty;
+        bool closed;
+        CEdit ctrlPad;
+        CContainedWindow ctrlClientContainer;
+        
+        void on(SettingsManagerListener::Save, SimpleXML& /*xml*/) noexcept;
 };
 
 #endif // !defined(NOTEPAD_FRAME_H)

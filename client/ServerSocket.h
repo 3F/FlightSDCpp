@@ -27,47 +27,47 @@ namespace dcpp
 
 class ServerSocketListener
 {
-	public:
-		virtual ~ServerSocketListener() { }
-		template<int I> struct X
-		{
-			enum { TYPE = I };
-		};
-		
-		typedef X<0> IncomingConnection;
-		virtual void on(IncomingConnection) noexcept = 0;
+    public:
+        virtual ~ServerSocketListener() { }
+        template<int I> struct X
+        {
+            enum { TYPE = I };
+        };
+        
+        typedef X<0> IncomingConnection;
+        virtual void on(IncomingConnection) noexcept = 0;
 };
 
 class ServerSocket : public Speaker<ServerSocketListener>
 {
-	public:
-		ServerSocket() noexcept { }
-		
-		void listen(uint16_t port);
-		void disconnect() noexcept { socket.disconnect(); }
-		
-		/** This is called by windows whenever an "FD_ACCEPT" is sent...doesn't work with unix... */
-		void incoming()
-		{
-			fire(ServerSocketListener::IncomingConnection());
-		}
-		
-		socket_t getSock() const
-		{
-			return socket.sock;
-		}
-		operator const Socket&() const
-		{
-			return socket;
-		}
-	private:
-		ServerSocket(const ServerSocket&);
-		ServerSocket& operator=(const ServerSocket&);
-		
-		friend class Socket;
-		friend class WebServerSocket;
-		
-		Socket socket;
+    public:
+        ServerSocket() noexcept { }
+        
+        void listen(uint16_t port);
+        void disconnect() noexcept { socket.disconnect(); }
+        
+        /** This is called by windows whenever an "FD_ACCEPT" is sent...doesn't work with unix... */
+        void incoming()
+        {
+            fire(ServerSocketListener::IncomingConnection());
+        }
+        
+        socket_t getSock() const
+        {
+            return socket.sock;
+        }
+        operator const Socket&() const
+        {
+            return socket;
+        }
+    private:
+        ServerSocket(const ServerSocket&);
+        ServerSocket& operator=(const ServerSocket&);
+        
+        friend class Socket;
+        friend class WebServerSocket;
+        
+        Socket socket;
 };
 
 } // namespace dcpp

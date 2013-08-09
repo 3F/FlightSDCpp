@@ -27,17 +27,17 @@
 
 inline void CDECL debugTrace(const char* format, ...)
 {
-	va_list args;
-	va_start(args, format);
+    va_list args;
+    va_start(args, format);
 #if defined _WIN32 && defined _MSC_VER
-	char buf[512];
-	buf[0] = 0;
-	_vsnprintf(buf, _countof(buf), format, args);
-	OutputDebugStringA(buf);
+    char buf[512];
+    buf[0] = 0;
+    _vsnprintf(buf, _countof(buf), format, args);
+    OutputDebugStringA(buf);
 #else // _WIN32
-	vprintf(format, args);
+    vprintf(format, args);
 #endif // _WIN32
-	va_end(args);
+    va_end(args);
 }
 
 #define dcdebug debugTrace
@@ -46,10 +46,10 @@ inline void CDECL debugTrace(const char* format, ...)
 #include <crtdbg.h>
 
 #define dcassert(exp) \
-	do { if (!(exp)) { \
-			dcdebug("Assertion hit in %s(%d): " #exp "\n", __FILE__, __LINE__); \
-			if(1 == _CrtDbgReport(_CRT_ASSERT, __FILE__, __LINE__, NULL, #exp)) \
-				_CrtDbgBreak(); } } while(false)
+    do { if (!(exp)) { \
+            dcdebug("Assertion hit in %s(%d): " #exp "\n", __FILE__, __LINE__); \
+            if(1 == _CrtDbgReport(_CRT_ASSERT, __FILE__, __LINE__, NULL, #exp)) \
+                _CrtDbgBreak(); } } while(false)
 #else
 #define dcassert(exp) assert(exp)
 #endif

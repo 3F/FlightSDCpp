@@ -26,56 +26,56 @@
 
 class TextFrame : public MDITabChildWindowImpl<TextFrame>, private SettingsManagerListener
 {
-	public:
-		static void openWindow(const tstring& aFileName);
-		
-		DECLARE_FRAME_WND_CLASS_EX(_T("TextFrame"), IDR_NOTEPAD, 0, COLOR_3DFACE);
-		
-		TextFrame(const tstring& fileName) : file(fileName)
-		{
-			SettingsManager::getInstance()->addListener(this);
-		}
-		~TextFrame() { }
-		
-		typedef MDITabChildWindowImpl<TextFrame> baseClass;
-		BEGIN_MSG_MAP(TextFrame)
-		MESSAGE_HANDLER(WM_SETFOCUS, OnFocus)
-		MESSAGE_HANDLER(WM_CREATE, OnCreate)
-		MESSAGE_HANDLER(WM_CTLCOLOREDIT, onCtlColor)
-		MESSAGE_HANDLER(WM_CTLCOLORSTATIC, onCtlColor)
-		MESSAGE_HANDLER(WM_CLOSE, onClose)
-		CHAIN_MSG_MAP(baseClass)
-		END_MSG_MAP()
-		
-		LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		LRESULT onClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-		void UpdateLayout(BOOL bResizeBars = TRUE);
-		
-		LRESULT onCtlColor(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			HWND hWnd = (HWND)lParam;
-			HDC hDC = (HDC)wParam;
-			if (hWnd == ctrlPad.m_hWnd)
-			{
-				::SetBkColor(hDC, WinUtil::bgColor);
-				::SetTextColor(hDC, WinUtil::textColor);
-				return (LRESULT)WinUtil::bgBrush;
-			}
-			bHandled = FALSE;
-			return FALSE;
-		}
-		
-		LRESULT OnFocus(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-		{
-			ctrlPad.SetFocus();
-			return 0;
-		}
-		
-	private:
-	
-		tstring file;
-		CEdit ctrlPad;
-		void on(SettingsManagerListener::Save, SimpleXML& /*xml*/) noexcept;
+    public:
+        static void openWindow(const tstring& aFileName);
+        
+        DECLARE_FRAME_WND_CLASS_EX(_T("TextFrame"), IDR_NOTEPAD, 0, COLOR_3DFACE);
+        
+        TextFrame(const tstring& fileName) : file(fileName)
+        {
+            SettingsManager::getInstance()->addListener(this);
+        }
+        ~TextFrame() { }
+        
+        typedef MDITabChildWindowImpl<TextFrame> baseClass;
+        BEGIN_MSG_MAP(TextFrame)
+        MESSAGE_HANDLER(WM_SETFOCUS, OnFocus)
+        MESSAGE_HANDLER(WM_CREATE, OnCreate)
+        MESSAGE_HANDLER(WM_CTLCOLOREDIT, onCtlColor)
+        MESSAGE_HANDLER(WM_CTLCOLORSTATIC, onCtlColor)
+        MESSAGE_HANDLER(WM_CLOSE, onClose)
+        CHAIN_MSG_MAP(baseClass)
+        END_MSG_MAP()
+        
+        LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+        LRESULT onClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+        void UpdateLayout(BOOL bResizeBars = TRUE);
+        
+        LRESULT onCtlColor(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+        {
+            HWND hWnd = (HWND)lParam;
+            HDC hDC = (HDC)wParam;
+            if (hWnd == ctrlPad.m_hWnd)
+            {
+                ::SetBkColor(hDC, WinUtil::bgColor);
+                ::SetTextColor(hDC, WinUtil::textColor);
+                return (LRESULT)WinUtil::bgBrush;
+            }
+            bHandled = FALSE;
+            return FALSE;
+        }
+        
+        LRESULT OnFocus(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+        {
+            ctrlPad.SetFocus();
+            return 0;
+        }
+        
+    private:
+    
+        tstring file;
+        CEdit ctrlPad;
+        void on(SettingsManagerListener::Save, SimpleXML& /*xml*/) noexcept;
 };
 
 #endif // !defined(TEXT_FRAME_H)

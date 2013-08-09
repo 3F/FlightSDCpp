@@ -28,56 +28,56 @@ namespace dcpp
 
 class ConnectivityManagerListener
 {
-	public:
-		virtual ~ConnectivityManagerListener() { }
-		template<int I> struct X
-		{
-			enum { TYPE = I };
-		};
-		
-		typedef X<0> Message;
-		typedef X<1> Started;
-		typedef X<2> Finished;
-		typedef X<3> SettingChanged; // auto-detection has been enabled / disabled
-		
-		virtual void on(Message, const string&) noexcept { }
-		virtual void on(Started) noexcept { }
-		virtual void on(Finished) noexcept { }
-		virtual void on(SettingChanged) noexcept { }
+    public:
+        virtual ~ConnectivityManagerListener() { }
+        template<int I> struct X
+        {
+            enum { TYPE = I };
+        };
+        
+        typedef X<0> Message;
+        typedef X<1> Started;
+        typedef X<2> Finished;
+        typedef X<3> SettingChanged; // auto-detection has been enabled / disabled
+        
+        virtual void on(Message, const string&) noexcept { }
+        virtual void on(Started) noexcept { }
+        virtual void on(Finished) noexcept { }
+        virtual void on(SettingChanged) noexcept { }
 };
 
 class ConnectivityManager : public Singleton<ConnectivityManager>, public Speaker<ConnectivityManagerListener>
 {
-	public:
-		void detectConnection();
-		void setup(bool settingsChanged);
-		bool isRunning() const
-		{
-			return running;
-		}
-		const string& getStatus()
-		{
-			return status;
-		}
-		
-	private:
-		friend class Singleton<ConnectivityManager>;
-		friend class MappingManager;
-		
-		ConnectivityManager();
-		~ConnectivityManager() { }
-		
-		void mappingFinished(const string& mapper);
-		void log(const string& msg);
-		
-		void startSocket();
-		void listen();
-		void disconnect();
-		
-		bool autoDetected;
-		bool running;
-		
-		string status;
+    public:
+        void detectConnection();
+        void setup(bool settingsChanged);
+        bool isRunning() const
+        {
+            return running;
+        }
+        const string& getStatus()
+        {
+            return status;
+        }
+        
+    private:
+        friend class Singleton<ConnectivityManager>;
+        friend class MappingManager;
+        
+        ConnectivityManager();
+        ~ConnectivityManager() { }
+        
+        void mappingFinished(const string& mapper);
+        void log(const string& msg);
+        
+        void startSocket();
+        void listen();
+        void disconnect();
+        
+        bool autoDetected;
+        bool running;
+        
+        string status;
 };
 
 } // namespace dcpp

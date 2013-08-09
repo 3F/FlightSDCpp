@@ -27,43 +27,43 @@
 
 class Popups : public CPropertyPage<IDD_POPUPS>, public PropPage
 {
-	public:
-		Popups(SettingsManager *s) : PropPage(s)
-		{
-			title = _tcsdup((TSTRING(SETTINGS_APPEARANCE) + _T('\\') + TSTRING(BALLOON_POPUPS)).c_str());
-			SetTitle(title);
-			m_psp.dwFlags |= PSP_RTLREADING;
-		};
-		
-		~Popups()
-		{
-			ctrlPopupType.Detach();
-			free(title);
-		};
-		
-		BEGIN_MSG_MAP(Sounds)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		COMMAND_HANDLER(IDC_PREVIEW, BN_CLICKED, onPreview)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT, WPARAM, LPARAM, BOOL&);
-		LRESULT onPreview(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-		static ListItem listItems[];
-		static Item items[];
-		static TextItem texts[];
-		TCHAR* title;
-		
-		ExListViewCtrl ctrlPopups;
-		CComboBox ctrlPopupType;
+    public:
+        Popups(SettingsManager *s) : PropPage(s)
+        {
+            title = _tcsdup((TSTRING(SETTINGS_APPEARANCE) + _T('\\') + TSTRING(BALLOON_POPUPS)).c_str());
+            SetTitle(title);
+            m_psp.dwFlags |= PSP_RTLREADING;
+        };
+        
+        ~Popups()
+        {
+            ctrlPopupType.Detach();
+            free(title);
+        };
+        
+        BEGIN_MSG_MAP(Sounds)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        COMMAND_HANDLER(IDC_PREVIEW, BN_CLICKED, onPreview)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT, WPARAM, LPARAM, BOOL&);
+        LRESULT onPreview(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+        static ListItem listItems[];
+        static Item items[];
+        static TextItem texts[];
+        TCHAR* title;
+        
+        ExListViewCtrl ctrlPopups;
+        CComboBox ctrlPopupType;
 };
 
 #endif //Popups_H

@@ -26,56 +26,56 @@ namespace dcpp
 
 struct Search
 {
-	int32_t   sizeType;
-	int64_t   size;
-	int32_t   fileType;
-	string    query;
-	string    token;
-	StringList  exts;
-	set<void*> owners;
-	
-	bool operator==(const Search& rhs) const
-	{
-		return sizeType == rhs.sizeType &&
-		       size == rhs.size &&
-		       fileType == rhs.fileType &&
-		       query == rhs.query;
-	}
+    int32_t   sizeType;
+    int64_t   size;
+    int32_t   fileType;
+    string    query;
+    string    token;
+    StringList  exts;
+    set<void*> owners;
+    
+    bool operator==(const Search& rhs) const
+    {
+        return sizeType == rhs.sizeType &&
+               size == rhs.size &&
+               fileType == rhs.fileType &&
+               query == rhs.query;
+    }
 };
 
 class SearchQueue
 {
-	public:
-	
-		SearchQueue(uint32_t aInterval = 0)
-			: lastSearchTime(0), interval(aInterval)
-		{
-		}
-		
-		bool add(const Search& s);
-		bool pop(Search& s);
-		
-		void clear()
-		{
-			Lock l(cs);
-			searchQueue.clear();
-		}
-		
-		bool cancelSearch(void* aOwner);
-		
-		/** return 0 means not in queue */
-		uint64_t getSearchTime(void* aOwner);
-		
-		/**
-		    by milli-seconds
-		    0 means no interval, no auto search and manual search is sent immediately
-		*/
-		uint32_t interval;
-		
-	private:
-		deque<Search>   searchQueue;
-		uint64_t       lastSearchTime;
-		CriticalSection cs;
+    public:
+    
+        SearchQueue(uint32_t aInterval = 0)
+            : lastSearchTime(0), interval(aInterval)
+        {
+        }
+        
+        bool add(const Search& s);
+        bool pop(Search& s);
+        
+        void clear()
+        {
+            Lock l(cs);
+            searchQueue.clear();
+        }
+        
+        bool cancelSearch(void* aOwner);
+        
+        /** return 0 means not in queue */
+        uint64_t getSearchTime(void* aOwner);
+        
+        /**
+            by milli-seconds
+            0 means no interval, no auto search and manual search is sent immediately
+        */
+        uint32_t interval;
+        
+    private:
+        deque<Search>   searchQueue;
+        uint64_t       lastSearchTime;
+        CriticalSection cs;
 };
 
 }

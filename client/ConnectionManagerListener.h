@@ -26,29 +26,29 @@ class ConnectionQueueItem;
 
 class ConnectionManagerListener
 {
-	public:
-		virtual ~ConnectionManagerListener() { }
-		template<int I> struct X
-		{
-			enum { TYPE = I };
-		};
-		
-		typedef X<0> Added;
-		
+    public:
+        virtual ~ConnectionManagerListener() { }
+        template<int I> struct X
+        {
+            enum { TYPE = I };
+        };
+        
+        typedef X<0> Added;
+        
 #ifdef FLYLINKDC_USE_CONNECTED_EVENT
-		typedef X<1> Connected;
+        typedef X<1> Connected;
 #endif
-		typedef X<2> Removed;
-		typedef X<3> Failed;
-		typedef X<4> StatusChanged;
-		
-		virtual void on(Added, const ConnectionQueueItem*) noexcept { }
+        typedef X<2> Removed;
+        typedef X<3> Failed;
+        typedef X<4> StatusChanged;
+        
+        virtual void on(Added, const ConnectionQueueItem*) noexcept { }
 #ifdef FLYLINKDC_USE_CONNECTED_EVENT
-		virtual void on(Connected, const ConnectionQueueItem*) noexcept { }
+        virtual void on(Connected, const ConnectionQueueItem*) noexcept { }
 #endif
-		virtual void on(Removed, const ConnectionQueueItem*) noexcept { }
-		virtual void on(Failed, const ConnectionQueueItem*, const string&) noexcept { }
-		virtual void on(StatusChanged, const ConnectionQueueItem*) noexcept { }
+        virtual void on(Removed, const ConnectionQueueItem*) noexcept { }
+        virtual void on(Failed, const ConnectionQueueItem*, const string&) noexcept { }
+        virtual void on(StatusChanged, const ConnectionQueueItem*) noexcept { }
 };
 
 } // namespace dcpp

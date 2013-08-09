@@ -26,54 +26,54 @@ namespace dcpp
 
 struct Task
 {
-	virtual ~Task() { }
+    virtual ~Task() { }
 };
 
 struct StringTask : public Task
 {
-	StringTask(const string& str_) : str(str_) { }
-	const string str;
+    StringTask(const string& str_) : str(str_) { }
+    const string str;
 };
 
 class TaskQueue
 {
-	public:
-		typedef pair<uint8_t, unique_ptr<Task>> Pair;
-		typedef vector<Pair> List;
-		typedef List::const_iterator Iter;
-		
-		TaskQueue()
-		{
-		}
-		
-		~TaskQueue()
-		{
-			clear();
-		}
-		
-		void add(uint8_t type, std::unique_ptr<Task> && data)
-		{
-			Lock l(cs);
-			tasks.push_back(make_pair(type, move(data)));
-		}
-		void get(List& list)
-		{
-			Lock l(cs);
-			swap(tasks, list);
-		}
-		void clear()
-		{
-			Lock l(cs); //[+]PPA
-			List tmp;
-			get(tmp);
-		}
-	private:
-	
-		TaskQueue(const TaskQueue&);
-		TaskQueue& operator=(const TaskQueue&);
-		
-		CriticalSection cs;
-		List tasks;
+    public:
+        typedef pair<uint8_t, unique_ptr<Task>> Pair;
+        typedef vector<Pair> List;
+        typedef List::const_iterator Iter;
+        
+        TaskQueue()
+        {
+        }
+        
+        ~TaskQueue()
+        {
+            clear();
+        }
+        
+        void add(uint8_t type, std::unique_ptr<Task> && data)
+        {
+            Lock l(cs);
+            tasks.push_back(make_pair(type, move(data)));
+        }
+        void get(List& list)
+        {
+            Lock l(cs);
+            swap(tasks, list);
+        }
+        void clear()
+        {
+            Lock l(cs); //[+]PPA
+            List tmp;
+            get(tmp);
+        }
+    private:
+    
+        TaskQueue(const TaskQueue&);
+        TaskQueue& operator=(const TaskQueue&);
+        
+        CriticalSection cs;
+        List tasks;
 };
 
 } // namespace dcpp

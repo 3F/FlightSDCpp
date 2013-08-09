@@ -25,41 +25,41 @@ using namespace yaSSL;
 template<typename T, void (__cdecl *Release)(T*)>
 class scoped_handle
 #ifdef _DEBUG
-	: boost::noncopyable // [+] IRainman fix.
+    : boost::noncopyable // [+] IRainman fix.
 #endif
 {
-	public:
-		explicit scoped_handle(T* t_ = 0) : t(t_) { }
-		~scoped_handle()
-		{
-			Release(t);
-		}
-		
-		operator T*()
-		{
-			return t;
-		}
-		operator const T*() const
-		{
-			return t;
-		}
-		
-		T* operator->()
-		{
-			return t;
-		}
-		const T* operator->() const
-		{
-			return t;
-		}
-		
-		void reset(T* t_ = NULL)
-		{
-			Release(t);
-			t = t_;
-		}
-	private:
-		T* t;
+    public:
+        explicit scoped_handle(T* t_ = 0) : t(t_) { }
+        ~scoped_handle()
+        {
+            Release(t);
+        }
+        
+        operator T*()
+        {
+            return t;
+        }
+        operator const T*() const
+        {
+            return t;
+        }
+        
+        T* operator->()
+        {
+            return t;
+        }
+        const T* operator->() const
+        {
+            return t;
+        }
+        
+        void reset(T* t_ = NULL)
+        {
+            Release(t);
+            t = t_;
+        }
+    private:
+        T* t;
 };
 
 

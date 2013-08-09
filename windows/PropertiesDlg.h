@@ -26,26 +26,26 @@
 
 class PropertiesDlg : public TreePropertySheet
 {
-	public:
-		enum { numPages = 25 };
-		
-		BEGIN_MSG_MAP(PropertiesDlg)
-		COMMAND_ID_HANDLER(IDOK, onOK)
-		CHAIN_MSG_MAP(TreePropertySheet)
-		ALT_MSG_MAP(TreePropertySheet::TAB_MESSAGE_MAP)
-		MESSAGE_HANDLER(TCM_SETCURSEL, TreePropertySheet::onSetCurSel)
-		END_MSG_MAP()
-		
-		PropertiesDlg(HWND parent, SettingsManager *s);
-		~PropertiesDlg();
-		static bool needUpdate;
-		
-		LRESULT onOK(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
-		
-	protected:
-		void write();
-		
-		PropPage *pages[numPages];
+    public:
+        enum { numPages = 25 };
+        
+        BEGIN_MSG_MAP(PropertiesDlg)
+        COMMAND_ID_HANDLER(IDOK, onOK)
+        CHAIN_MSG_MAP(TreePropertySheet)
+        ALT_MSG_MAP(TreePropertySheet::TAB_MESSAGE_MAP)
+        MESSAGE_HANDLER(TCM_SETCURSEL, TreePropertySheet::onSetCurSel)
+        END_MSG_MAP()
+        
+        PropertiesDlg(HWND parent, SettingsManager *s);
+        ~PropertiesDlg();
+        static bool needUpdate;
+        
+        LRESULT onOK(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+        
+    protected:
+        void write();
+        
+        PropPage *pages[numPages];
 };
 
 #endif // !defined(PROPERTIES_DLG_H)

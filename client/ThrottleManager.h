@@ -33,56 +33,56 @@ namespace dcpp
  * Inspired by Token Bucket algorithm: http://en.wikipedia.org/wiki/Token_bucket
  */
 class ThrottleManager :
-	public Singleton<ThrottleManager>, private TimerManagerListener
+    public Singleton<ThrottleManager>, private TimerManagerListener
 {
-	public:
-	
-		/*
-		 * Limits a traffic and reads a packet from the network
-		 */
-		int read(Socket* sock, void* buffer, size_t len);
-		
-		/*
-		 * Limits a traffic and writes a packet to the network
-		 * We must handle this a little bit differently than downloads, because of that stupidity in OpenSSL
-		 */
-		int write(Socket* sock, void* buffer, size_t& len);
-		
-		/*
-		 * Returns current download limit.
-		 */
-		size_t getDownloadLimit() const;
-		
-		/*
-		 * Returns current download limit.
-		 */
-		size_t getUploadLimit() const;
-		
-	private:
-	
-		// download limiter
-		size_t                      downLimit;
-		size_t                      downTokens;
-		boost::condition_variable   downCond;
-		boost::mutex                downMutex;
-		
-		// upload limiter
-		size_t                      upLimit;
-		size_t                      upTokens;
-		boost::condition_variable   upCond;
-		boost::mutex                upMutex;
-		
-		friend class Singleton<ThrottleManager>;
-		
-		// constructor
-		ThrottleManager(void);
-		
-		// destructor
-		~ThrottleManager(void);
-		
-		// TimerManagerListener
-		void on(TimerManagerListener::Second, uint64_t aTick) noexcept;
-		
+    public:
+    
+        /*
+         * Limits a traffic and reads a packet from the network
+         */
+        int read(Socket* sock, void* buffer, size_t len);
+        
+        /*
+         * Limits a traffic and writes a packet to the network
+         * We must handle this a little bit differently than downloads, because of that stupidity in OpenSSL
+         */
+        int write(Socket* sock, void* buffer, size_t& len);
+        
+        /*
+         * Returns current download limit.
+         */
+        size_t getDownloadLimit() const;
+        
+        /*
+         * Returns current download limit.
+         */
+        size_t getUploadLimit() const;
+        
+    private:
+    
+        // download limiter
+        size_t                      downLimit;
+        size_t                      downTokens;
+        boost::condition_variable   downCond;
+        boost::mutex                downMutex;
+        
+        // upload limiter
+        size_t                      upLimit;
+        size_t                      upTokens;
+        boost::condition_variable   upCond;
+        boost::mutex                upMutex;
+        
+        friend class Singleton<ThrottleManager>;
+        
+        // constructor
+        ThrottleManager(void);
+        
+        // destructor
+        ~ThrottleManager(void);
+        
+        // TimerManagerListener
+        void on(TimerManagerListener::Second, uint64_t aTick) noexcept;
+        
 };
 
 }   // namespace dcpp

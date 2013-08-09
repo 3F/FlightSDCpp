@@ -107,7 +107,7 @@ namespace reg { namespace text {
         inline static tstring _uppercase(tstring str) throw()
         {
             transform(str.begin(), str.end(), str.begin(), towupper);
-	        return str;
+            return str;
         };
 
         //[+]

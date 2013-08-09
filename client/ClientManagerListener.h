@@ -27,30 +27,30 @@ namespace dcpp
 
 class ClientManagerListener
 {
-	public:
-		virtual ~ClientManagerListener() { }
-		template<int I> struct X
-		{
-			enum { TYPE = I };
-		};
-		
-		typedef X<0> UserConnected;
-		typedef X<1> UserUpdated;
-		typedef X<2> UserDisconnected;
-		typedef X<3> IncomingSearch;
-		typedef X<4> ClientConnected;
-		typedef X<5> ClientUpdated;
-		typedef X<6> ClientDisconnected;
-		
-		/** User online in at least one hub */
-		virtual void on(UserConnected, const UserPtr&) noexcept { }
-		virtual void on(UserUpdated, const OnlineUser&) noexcept { }
-		/** User offline in all hubs */
-		virtual void on(UserDisconnected, const UserPtr&) noexcept { }
-		virtual void on(IncomingSearch, const string&) noexcept { }
-		virtual void on(ClientConnected, const Client*) noexcept { }
-		virtual void on(ClientUpdated, const Client*) noexcept { }
-		virtual void on(ClientDisconnected, const Client*) noexcept { }
+    public:
+        virtual ~ClientManagerListener() { }
+        template<int I> struct X
+        {
+            enum { TYPE = I };
+        };
+        
+        typedef X<0> UserConnected;
+        typedef X<1> UserUpdated;
+        typedef X<2> UserDisconnected;
+        typedef X<3> IncomingSearch;
+        typedef X<4> ClientConnected;
+        typedef X<5> ClientUpdated;
+        typedef X<6> ClientDisconnected;
+        
+        /** User online in at least one hub */
+        virtual void on(UserConnected, const UserPtr&) noexcept { }
+        virtual void on(UserUpdated, const OnlineUser&) noexcept { }
+        /** User offline in all hubs */
+        virtual void on(UserDisconnected, const UserPtr&) noexcept { }
+        virtual void on(IncomingSearch, const string&) noexcept { }
+        virtual void on(ClientConnected, const Client*) noexcept { }
+        virtual void on(ClientUpdated, const Client*) noexcept { }
+        virtual void on(ClientDisconnected, const Client*) noexcept { }
 };
 
 } // namespace dcpp

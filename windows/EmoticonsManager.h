@@ -27,31 +27,31 @@
 
 class Emoticon
 {
-	public:
-		typedef list<Emoticon*> List;
-		typedef List::const_iterator Iter;
-		
-		Emoticon(const tstring& _emoticonText, const string& _imagePath);
-		~Emoticon() {   }
-		
-		const tstring& getEmoticonText() const
-		{
-			return emoticonText;
-		}
-		HBITMAP getEmoticonBmp() const
-		{
-			return emoticonBitmap;
-		}
-		HBITMAP getEmoticonBmp(const COLORREF &clrBkColor);
-		const string& getEmoticonBmpPath() const
-		{
-			return imagePath;
-		}
-		
-	private:
-		tstring     emoticonText;
-		string      imagePath;
-		HBITMAP     emoticonBitmap;
+    public:
+        typedef list<Emoticon*> List;
+        typedef List::const_iterator Iter;
+        
+        Emoticon(const tstring& _emoticonText, const string& _imagePath);
+        ~Emoticon() {   }
+        
+        const tstring& getEmoticonText() const
+        {
+            return emoticonText;
+        }
+        HBITMAP getEmoticonBmp() const
+        {
+            return emoticonBitmap;
+        }
+        HBITMAP getEmoticonBmp(const COLORREF &clrBkColor);
+        const string& getEmoticonBmpPath() const
+        {
+            return imagePath;
+        }
+        
+    private:
+        tstring     emoticonText;
+        string      imagePath;
+        HBITMAP     emoticonBitmap;
 };
 
 /**
@@ -59,29 +59,29 @@ class Emoticon
  */
 class EmoticonsManager : public intrusive_ptr_base<EmoticonsManager>
 {
-	public:
-		EmoticonsManager()
-		{
-			Load();
-		}
-		~EmoticonsManager()
-		{
-			Unload();
-		}
-		
-		// Variables
-		GETSET(bool, useEmoticons, UseEmoticons);
-		
-		const Emoticon::List& getEmoticonsList() const
-		{
-			return emoticons;
-		}
-		
-		void Load();
-		void Unload();
-		
-	private:
-		Emoticon::List emoticons;
+    public:
+        EmoticonsManager()
+        {
+            Load();
+        }
+        ~EmoticonsManager()
+        {
+            Unload();
+        }
+        
+        // Variables
+        GETSET(bool, useEmoticons, UseEmoticons);
+        
+        const Emoticon::List& getEmoticonsList() const
+        {
+            return emoticons;
+        }
+        
+        void Load();
+        void Unload();
+        
+    private:
+        Emoticon::List emoticons;
 };
 
 #endif // EMOTICONSMANAGER_H

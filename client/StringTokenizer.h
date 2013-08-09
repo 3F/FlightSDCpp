@@ -25,40 +25,40 @@ namespace dcpp
 template<class T>
 class StringTokenizer
 {
-	private:
-		vector<T> tokens;
-	public:
-		explicit StringTokenizer(const T& aString, const typename T::value_type& aToken)
-		{
-			T::size_type i = 0;
-			T::size_type j = 0;
-			while ((i = aString.find(aToken, j)) != T::npos)
-			{
-				tokens.push_back(aString.substr(j, i - j));
-				j = i + 1;
-			}
-			if (j < aString.size())
-				tokens.push_back(aString.substr(j, aString.size() - j)); // 2012-05-03_22-05-14_YNJS7AEGAWCUMRBY2HTUTLYENU4OS2PKNJXT6ZY_F4B220A1_crash-stack-r502-beta24-x64-build-9900.dmp
-		}
-		
-		explicit StringTokenizer(const T& aString, const typename T::value_type* aToken)
-		{
-			T::size_type i = 0;
-			T::size_type j = 0;
-			size_t l = strlen(aToken);
-			while ((i = aString.find(aToken, j)) != T::npos)
-			{
-				tokens.push_back(aString.substr(j, i - j));
-				j = i + l;
-			}
-			if (j < aString.size())
-				tokens.push_back(aString.substr(j, aString.size() - j));
-		}
-		
-		const vector<T>& getTokens() const
-		{
-			return tokens;
-		}
+    private:
+        vector<T> tokens;
+    public:
+        explicit StringTokenizer(const T& aString, const typename T::value_type& aToken)
+        {
+            T::size_type i = 0;
+            T::size_type j = 0;
+            while ((i = aString.find(aToken, j)) != T::npos)
+            {
+                tokens.push_back(aString.substr(j, i - j));
+                j = i + 1;
+            }
+            if (j < aString.size())
+                tokens.push_back(aString.substr(j, aString.size() - j)); // 2012-05-03_22-05-14_YNJS7AEGAWCUMRBY2HTUTLYENU4OS2PKNJXT6ZY_F4B220A1_crash-stack-r502-beta24-x64-build-9900.dmp
+        }
+        
+        explicit StringTokenizer(const T& aString, const typename T::value_type* aToken)
+        {
+            T::size_type i = 0;
+            T::size_type j = 0;
+            size_t l = strlen(aToken);
+            while ((i = aString.find(aToken, j)) != T::npos)
+            {
+                tokens.push_back(aString.substr(j, i - j));
+                j = i + l;
+            }
+            if (j < aString.size())
+                tokens.push_back(aString.substr(j, aString.size() - j));
+        }
+        
+        const vector<T>& getTokens() const
+        {
+            return tokens;
+        }
 };
 
 } // namespace dcpp

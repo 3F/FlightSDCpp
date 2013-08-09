@@ -26,15 +26,15 @@ class OMenu;
 
 struct OMenuItem
 {
-	typedef vector<OMenuItem*> List;
-	typedef List::iterator Iter;
-	
-	OMenuItem() : ownerdrawn(true), text(), parent(NULL), data(NULL) {}
-	
-	tstring text;
-	OMenu* parent;
-	void* data;
-	bool ownerdrawn;
+    typedef vector<OMenuItem*> List;
+    typedef List::iterator Iter;
+    
+    OMenuItem() : ownerdrawn(true), text(), parent(NULL), data(NULL) {}
+    
+    tstring text;
+    OMenu* parent;
+    void* data;
+    bool ownerdrawn;
 };
 
 /*
@@ -42,78 +42,78 @@ struct OMenuItem
  */
 class OMenu : public CMenu
 {
-	public:
-		OMenu() : CMenu() { }
-		~OMenu();
-		
-		BOOL CreatePopupMenu();
-		
-		void InsertSeparator(UINT uItem, BOOL byPosition, const tstring& caption, bool accels = false);
-		inline void InsertSeparatorFirst(const tstring& caption/*, bool accels = false*/)
-		{
-			InsertSeparator(0, TRUE, caption);
-		}
-		inline void InsertSeparatorLast(const tstring& caption/*, bool accels = false*/)
-		{
-			InsertSeparator(GetMenuItemCount(), TRUE, caption);
-		}
-		
-		void CheckOwnerDrawn(UINT uItem, BOOL byPosition);
-		
-		inline void RemoveFirstItem()
-		{
-			RemoveMenu(0, MF_BYPOSITION);
-		}
-		inline void RemoveFirstItem(int amount)
-		{
-			for (int i = 0; i < amount; ++i)
-			{
-				RemoveMenu(0, MF_BYPOSITION);
-			}
-		}
-		BOOL DeleteMenu(UINT nPosition, UINT nFlags)
-		{
-			CheckOwnerDrawn(nPosition, nFlags & MF_BYPOSITION);
-			return CMenu::DeleteMenu(nPosition, nFlags);
-		}
-		BOOL RemoveMenu(UINT nPosition, UINT nFlags)
-		{
-			CheckOwnerDrawn(nPosition, nFlags & MF_BYPOSITION);
-			return CMenu::RemoveMenu(nPosition, nFlags);
-		}
-		
-		inline void ClearMenu()
-		{
-			RemoveFirstItem(GetMenuItemCount());
-		}
-		
-		BOOL InsertMenuItem(UINT uItem, BOOL bByPosition, LPMENUITEMINFO lpmii);
-		
-		static LRESULT onInitMenuPopup(HWND hWnd, UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled);
-		static LRESULT onMeasureItem(HWND hWnd, UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled);
-		static LRESULT onDrawItem(HWND hWnd, UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled);
-		
-	private:
-		OMenuItem::List items;
-		
-		static void CalcTextSize(const tstring& text, HFONT font, LPSIZE size)
-		{
-			HDC dc = CreateCompatibleDC(NULL);
-			HGDIOBJ old = SelectObject(dc, font);
-			::GetTextExtentPoint32(dc, text.c_str(), min((int)text.length(), (int)8192), size);
-			SelectObject(dc, old);
-			DeleteDC(dc);
-		}
+    public:
+        OMenu() : CMenu() { }
+        ~OMenu();
+        
+        BOOL CreatePopupMenu();
+        
+        void InsertSeparator(UINT uItem, BOOL byPosition, const tstring& caption, bool accels = false);
+        inline void InsertSeparatorFirst(const tstring& caption/*, bool accels = false*/)
+        {
+            InsertSeparator(0, TRUE, caption);
+        }
+        inline void InsertSeparatorLast(const tstring& caption/*, bool accels = false*/)
+        {
+            InsertSeparator(GetMenuItemCount(), TRUE, caption);
+        }
+        
+        void CheckOwnerDrawn(UINT uItem, BOOL byPosition);
+        
+        inline void RemoveFirstItem()
+        {
+            RemoveMenu(0, MF_BYPOSITION);
+        }
+        inline void RemoveFirstItem(int amount)
+        {
+            for (int i = 0; i < amount; ++i)
+            {
+                RemoveMenu(0, MF_BYPOSITION);
+            }
+        }
+        BOOL DeleteMenu(UINT nPosition, UINT nFlags)
+        {
+            CheckOwnerDrawn(nPosition, nFlags & MF_BYPOSITION);
+            return CMenu::DeleteMenu(nPosition, nFlags);
+        }
+        BOOL RemoveMenu(UINT nPosition, UINT nFlags)
+        {
+            CheckOwnerDrawn(nPosition, nFlags & MF_BYPOSITION);
+            return CMenu::RemoveMenu(nPosition, nFlags);
+        }
+        
+        inline void ClearMenu()
+        {
+            RemoveFirstItem(GetMenuItemCount());
+        }
+        
+        BOOL InsertMenuItem(UINT uItem, BOOL bByPosition, LPMENUITEMINFO lpmii);
+        
+        static LRESULT onInitMenuPopup(HWND hWnd, UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled);
+        static LRESULT onMeasureItem(HWND hWnd, UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled);
+        static LRESULT onDrawItem(HWND hWnd, UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled);
+        
+    private:
+        OMenuItem::List items;
+        
+        static void CalcTextSize(const tstring& text, HFONT font, LPSIZE size)
+        {
+            HDC dc = CreateCompatibleDC(NULL);
+            HGDIOBJ old = SelectObject(dc, font);
+            ::GetTextExtentPoint32(dc, text.c_str(), min((int)text.length(), (int)8192), size);
+            SelectObject(dc, old);
+            DeleteDC(dc);
+        }
 };
 
 #define MESSAGE_HANDLER_HWND(msg, func) \
-	if(uMsg == msg) \
-	{ \
-		bHandled = TRUE; \
-		lResult = func(hWnd, uMsg, wParam, lParam, bHandled); \
-		if(bHandled) \
-			return TRUE; \
-	}
+    if(uMsg == msg) \
+    { \
+        bHandled = TRUE; \
+        lResult = func(hWnd, uMsg, wParam, lParam, bHandled); \
+        if(bHandled) \
+            return TRUE; \
+    }
 
 } // namespace dcpp
 

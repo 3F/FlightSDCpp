@@ -35,106 +35,106 @@ namespace dcpp
  */
 class StringSearch
 {
-	public:
-		typedef vector<StringSearch> List;
-		
-	explicit StringSearch(const string& aPattern) noexcept :
-		pattern(Text::toLower(aPattern))
-		{
-			initDelta1();
-		}
-	StringSearch(const StringSearch& rhs) noexcept :
-		pattern(rhs.pattern)
-		{
-			memcpy(delta1, rhs.delta1, sizeof(delta1));
-		}
-		const StringSearch& operator=(const StringSearch& rhs)
-		{
-			memcpy(delta1, rhs.delta1, sizeof(delta1));
-			pattern = rhs.pattern;
-			return *this;
-		}
-		const StringSearch& operator=(const string& rhs)
-		{
-			pattern = Text::toLower(rhs);
-			initDelta1();
-			return *this;
-		}
-		
-		bool operator==(const StringSearch& rhs)
-		{
-			return pattern == rhs.pattern;
-		}
-		
-		const string& getPattern() const
-		{
-			return pattern;
-		}
-		
-		/** Match a text against the pattern */
-		bool match(const string& aText, bool p_lower = false) const noexcept
-		{
-		
-		    const string::size_type plen = pattern.length();
-		    if (aText.length() < plen)
-	{
-//			static int l_cnt = 0;
-//			dcdebug("aText.length() < plen %d, [name: %s  pattern: %s] [%d %d]\n",
-//				 ++l_cnt,aText.c_str(),pattern.c_str(),aText.length(), pattern.length());
-		return false;
-	}
-	// Lower-case representation of UTF-8 string, since we no longer have that 1 char = 1 byte...
-	string lower;
-	if (!p_lower)
-		Text::toLower(aText, lower);
-		else
-			lower = aText;
-			
-			// uint8_t to avoid problems with signed char pointer arithmetic
-			uint8_t *tx = (uint8_t*)lower.c_str();
-			uint8_t *px = (uint8_t*)pattern.c_str();
-			
-			uint8_t *end = tx + aText.length() - plen + 1;
-			while (tx < end)
-			{
-				size_t i = 0;
-				for (; px[i] && (px[i] == tx[i]); ++i)
-						;       // Empty!
-						
-					if (px[i] == 0)
-						return true;
-						
-					tx += delta1[tx[plen]];
-				}
-				
-		return false;
-		}
-		
-	private:
-		enum { ASIZE = 256 };
-		/**
-		 * Delta1 shift, uint16_t because we expect all patterns to be shorter than 2^16
-		 * chars.
-		 */
-		uint16_t delta1[ASIZE];
-		string pattern;
-		
-		void initDelta1()
-		{
-			uint16_t x = (uint16_t)(pattern.length() + 1);
-			uint16_t i;
-			for (i = 0; i < ASIZE; ++i)
-			{
-				delta1[i] = x;
-			}
-			// x = pattern.length();
-			x--;
-			uint8_t* p = (uint8_t*)pattern.data();
-			for (i = 0; i < x; ++i)
-			{
-				delta1[p[i]] = (uint16_t)(x - i);
-			}
-		}
+    public:
+        typedef vector<StringSearch> List;
+        
+    explicit StringSearch(const string& aPattern) noexcept :
+        pattern(Text::toLower(aPattern))
+        {
+            initDelta1();
+        }
+    StringSearch(const StringSearch& rhs) noexcept :
+        pattern(rhs.pattern)
+        {
+            memcpy(delta1, rhs.delta1, sizeof(delta1));
+        }
+        const StringSearch& operator=(const StringSearch& rhs)
+        {
+            memcpy(delta1, rhs.delta1, sizeof(delta1));
+            pattern = rhs.pattern;
+            return *this;
+        }
+        const StringSearch& operator=(const string& rhs)
+        {
+            pattern = Text::toLower(rhs);
+            initDelta1();
+            return *this;
+        }
+        
+        bool operator==(const StringSearch& rhs)
+        {
+            return pattern == rhs.pattern;
+        }
+        
+        const string& getPattern() const
+        {
+            return pattern;
+        }
+        
+        /** Match a text against the pattern */
+        bool match(const string& aText, bool p_lower = false) const noexcept
+        {
+        
+            const string::size_type plen = pattern.length();
+            if (aText.length() < plen)
+    {
+//            static int l_cnt = 0;
+//            dcdebug("aText.length() < plen %d, [name: %s  pattern: %s] [%d %d]\n",
+//                 ++l_cnt,aText.c_str(),pattern.c_str(),aText.length(), pattern.length());
+        return false;
+    }
+    // Lower-case representation of UTF-8 string, since we no longer have that 1 char = 1 byte...
+    string lower;
+    if (!p_lower)
+        Text::toLower(aText, lower);
+        else
+            lower = aText;
+            
+            // uint8_t to avoid problems with signed char pointer arithmetic
+            uint8_t *tx = (uint8_t*)lower.c_str();
+            uint8_t *px = (uint8_t*)pattern.c_str();
+            
+            uint8_t *end = tx + aText.length() - plen + 1;
+            while (tx < end)
+            {
+                size_t i = 0;
+                for (; px[i] && (px[i] == tx[i]); ++i)
+                        ;       // Empty!
+                        
+                    if (px[i] == 0)
+                        return true;
+                        
+                    tx += delta1[tx[plen]];
+                }
+                
+        return false;
+        }
+        
+    private:
+        enum { ASIZE = 256 };
+        /**
+         * Delta1 shift, uint16_t because we expect all patterns to be shorter than 2^16
+         * chars.
+         */
+        uint16_t delta1[ASIZE];
+        string pattern;
+        
+        void initDelta1()
+        {
+            uint16_t x = (uint16_t)(pattern.length() + 1);
+            uint16_t i;
+            for (i = 0; i < ASIZE; ++i)
+            {
+                delta1[i] = x;
+            }
+            // x = pattern.length();
+            x--;
+            uint8_t* p = (uint8_t*)pattern.data();
+            for (i = 0; i < x; ++i)
+            {
+                delta1[p[i]] = (uint16_t)(x - i);
+            }
+        }
 };
 
 } // namespace dcpp

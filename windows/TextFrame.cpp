@@ -28,67 +28,67 @@
 
 void TextFrame::openWindow(const tstring& aFileName)
 {
-	TextFrame* frame = new TextFrame(aFileName);
-	frame->CreateEx(WinUtil::mdiClient);
+    TextFrame* frame = new TextFrame(aFileName);
+    frame->CreateEx(WinUtil::mdiClient);
 }
 
 LRESULT TextFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled)
 {
-	ctrlPad.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |
-	               WS_VSCROLL | ES_AUTOVSCROLL | ES_MULTILINE | ES_NOHIDESEL | ES_READONLY, WS_EX_CLIENTEDGE);
-	               
-	ctrlPad.LimitText(0);
-	ctrlPad.SetFont(WinUtil::font);
-	string tmp;
-	try
-	{
-		tmp = Text::toDOS(File(Text::fromT(file), File::READ, File::OPEN).read(MAX_TEXT_LEN));
-		string::size_type i = 0;
-		while ((i = tmp.find('\n', i)) != string::npos)
-		{
-			if (i == 0 || tmp[i - 1] != '\r')
-			{
-				tmp.insert(i, 1, '\r');
-				i++;
-			}
-			i++;
-		}
-		ctrlPad.SetWindowText(Text::toT(Text::acpToUtf8(tmp)).c_str());
-		ctrlPad.EmptyUndoBuffer();
-		SetWindowText(Text::toT(Util::getFileName(Text::fromT(file))).c_str());
-	}
-	catch (const FileException& e)
-	{
-		SetWindowText(Text::toT(Util::getFileName(Text::fromT(file)) + ": " + e.getError()).c_str());
-	}
-	
-	bHandled = FALSE;
-	return 1;
+    ctrlPad.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |
+                   WS_VSCROLL | ES_AUTOVSCROLL | ES_MULTILINE | ES_NOHIDESEL | ES_READONLY, WS_EX_CLIENTEDGE);
+                   
+    ctrlPad.LimitText(0);
+    ctrlPad.SetFont(WinUtil::font);
+    string tmp;
+    try
+    {
+        tmp = Text::toDOS(File(Text::fromT(file), File::READ, File::OPEN).read(MAX_TEXT_LEN));
+        string::size_type i = 0;
+        while ((i = tmp.find('\n', i)) != string::npos)
+        {
+            if (i == 0 || tmp[i - 1] != '\r')
+            {
+                tmp.insert(i, 1, '\r');
+                i++;
+            }
+            i++;
+        }
+        ctrlPad.SetWindowText(Text::toT(Text::acpToUtf8(tmp)).c_str());
+        ctrlPad.EmptyUndoBuffer();
+        SetWindowText(Text::toT(Util::getFileName(Text::fromT(file))).c_str());
+    }
+    catch (const FileException& e)
+    {
+        SetWindowText(Text::toT(Util::getFileName(Text::fromT(file)) + ": " + e.getError()).c_str());
+    }
+    
+    bHandled = FALSE;
+    return 1;
 }
 
 LRESULT TextFrame::onClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled)
 {
-	SettingsManager::getInstance()->removeListener(this);
-	bHandled = FALSE;
-	return 0;
+    SettingsManager::getInstance()->removeListener(this);
+    bHandled = FALSE;
+    return 0;
 }
 
 void TextFrame::UpdateLayout(BOOL /*bResizeBars*/ /* = TRUE */)
 {
-	CRect rc;
-	
-	GetClientRect(rc);
-	
-	rc.bottom -= 1;
-	rc.top += 1;
-	rc.left += 1;
-	rc.right -= 1;
-	ctrlPad.MoveWindow(rc);
+    CRect rc;
+    
+    GetClientRect(rc);
+    
+    rc.bottom -= 1;
+    rc.top += 1;
+    rc.left += 1;
+    rc.right -= 1;
+    ctrlPad.MoveWindow(rc);
 }
 
 void TextFrame::on(SettingsManagerListener::Save, SimpleXML& /*xml*/) noexcept
 {
-	RedrawWindow(NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN);
+    RedrawWindow(NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN);
 }
 
 /**

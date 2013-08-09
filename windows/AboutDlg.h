@@ -31,78 +31,78 @@ static const TCHAR g_thanks[] =
     ;
 class AboutDlg : public CDialogImpl<AboutDlg>
 {
-	public:
-		enum { IDD = IDD_ABOUTBOX };
-		
-		AboutDlg() { }
-		virtual ~AboutDlg() { }
-		
-		BEGIN_MSG_MAP(AboutDlg)
-		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-		COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
-		COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
-		COMMAND_ID_HANDLER(IDC_LINK_BLOG, onBlogLink)
-		END_MSG_MAP()
-		
-		LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-		{
-			SetDlgItemText(IDC_VERSION,
-			               _T("*!is not public release!\r\ndo not use this client is not for debugging or testing\r\n") T_VERSIONSTRING
-			               _T("\r\n\r\nBased on: StrongDC++ sqlite (FlylinkDC++ Team)"));
-			CEdit ctrlThanks(GetDlgItem(IDC_THANKS));
-			ctrlThanks.FmtLines(TRUE);
-			ctrlThanks.AppendText(g_thanks, TRUE);
-			ctrlThanks.Detach();
+    public:
+        enum { IDD = IDD_ABOUTBOX };
+        
+        AboutDlg() { }
+        virtual ~AboutDlg() { }
+        
+        BEGIN_MSG_MAP(AboutDlg)
+        MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+        COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
+        COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
+        COMMAND_ID_HANDLER(IDC_LINK_BLOG, onBlogLink)
+        END_MSG_MAP()
+        
+        LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+        {
+            SetDlgItemText(IDC_VERSION,
+                           _T("*!is not public release!\r\ndo not use this client is not for debugging or testing\r\n") T_VERSIONSTRING
+                           _T("\r\n\r\nBased on: StrongDC++ sqlite (FlylinkDC++ Team)"));
+            CEdit ctrlThanks(GetDlgItem(IDC_THANKS));
+            ctrlThanks.FmtLines(TRUE);
+            ctrlThanks.AppendText(g_thanks, TRUE);
+            ctrlThanks.Detach();
 #ifdef FLY_INCLUDE_EXE_TTH
-			SetDlgItemText(IDC_TTH, WinUtil::tth.c_str());
+            SetDlgItemText(IDC_TTH, WinUtil::tth.c_str());
 #endif
-			SetDlgItemText(IDC_TOTALS, (_T("Upload: ") + Util::formatBytesW(SETTING(TOTAL_UPLOAD)) + _T(", Download: ") +
-			                            Util::formatBytesW(SETTING(TOTAL_DOWNLOAD))).c_str());
-			                            
-			SetDlgItemText(IDC_LINK_BLOG, _T("http://flylinkdc.blogspot.com"));
-			m_url_blog.SubclassWindow(GetDlgItem(IDC_LINK_BLOG));
-			m_url_blog.SetHyperLinkExtendedStyle(HLINK_COMMANDBUTTON | HLINK_UNDERLINEHOVER);
-			
-			if (SETTING(TOTAL_DOWNLOAD) > 0)
-			{
-				TCHAR buf[64];
-				buf[0] = 0;
-				snwprintf(buf, _countof(buf), _T("Ratio (up/down): %.2f"), ((double)SETTING(TOTAL_UPLOAD)) / ((double)SETTING(TOTAL_DOWNLOAD)));
-				
-				SetDlgItemText(IDC_RATIO, buf);
-				/*  sprintf(buf, "Uptime: %s", Util::formatTime(Util::getUptime()));
-				    SetDlgItemText(IDC_UPTIME, Text::toT(buf).c_str());*/
-			}
-			CenterWindow(GetParent());
-			return TRUE;
-		}
-		
-		LRESULT onVersionData(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-		{
-			tstring* x = (tstring*) wParam;
-			SetDlgItemText(IDC_LATEST, x->c_str());
-			delete x;
-			return 0;
-		}
-		LRESULT onBlogLink(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-		{
-			WinUtil::openLink(_T("http://flylinkdc.blogspot.com"));
-			return 0;
-		}
-		
-		LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-		{
-			EndDialog(wID);
-			return 0;
-		}
-		
-	private:
-		CHyperLink m_url_blog;
-		AboutDlg(const AboutDlg&)
-		{
-			dcassert(0);
-		}
-		
+            SetDlgItemText(IDC_TOTALS, (_T("Upload: ") + Util::formatBytesW(SETTING(TOTAL_UPLOAD)) + _T(", Download: ") +
+                                        Util::formatBytesW(SETTING(TOTAL_DOWNLOAD))).c_str());
+                                        
+            SetDlgItemText(IDC_LINK_BLOG, _T("http://flylinkdc.blogspot.com"));
+            m_url_blog.SubclassWindow(GetDlgItem(IDC_LINK_BLOG));
+            m_url_blog.SetHyperLinkExtendedStyle(HLINK_COMMANDBUTTON | HLINK_UNDERLINEHOVER);
+            
+            if (SETTING(TOTAL_DOWNLOAD) > 0)
+            {
+                TCHAR buf[64];
+                buf[0] = 0;
+                snwprintf(buf, _countof(buf), _T("Ratio (up/down): %.2f"), ((double)SETTING(TOTAL_UPLOAD)) / ((double)SETTING(TOTAL_DOWNLOAD)));
+                
+                SetDlgItemText(IDC_RATIO, buf);
+                /*  sprintf(buf, "Uptime: %s", Util::formatTime(Util::getUptime()));
+                    SetDlgItemText(IDC_UPTIME, Text::toT(buf).c_str());*/
+            }
+            CenterWindow(GetParent());
+            return TRUE;
+        }
+        
+        LRESULT onVersionData(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+        {
+            tstring* x = (tstring*) wParam;
+            SetDlgItemText(IDC_LATEST, x->c_str());
+            delete x;
+            return 0;
+        }
+        LRESULT onBlogLink(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+        {
+            WinUtil::openLink(_T("http://flylinkdc.blogspot.com"));
+            return 0;
+        }
+        
+        LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+        {
+            EndDialog(wID);
+            return 0;
+        }
+        
+    private:
+        CHyperLink m_url_blog;
+        AboutDlg(const AboutDlg&)
+        {
+            dcassert(0);
+        }
+        
 };
 
 #endif // !defined(ABOUT_DLG_H)

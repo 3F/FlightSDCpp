@@ -25,50 +25,50 @@ namespace dcpp
 /** abstract class to represent an implementation usable by MappingManager. */
 class Mapper
 #ifdef _DEBUG
-	: boost::noncopyable
+    : boost::noncopyable
 #endif
 {
-	public:
-		Mapper() { }
-		virtual ~Mapper() { }
-		
-		enum Protocol
-		{
-			PROTOCOL_TCP,
-			PROTOCOL_UDP,
-			PROTOCOL_LAST
-		};
-		static const char* protocols[PROTOCOL_LAST];
-		
-		/** begin the initialization phase.
-		@return true if the initialization passed; false otherwise. */
-		virtual bool init() = 0;
-		/** end the initialization phase. called regardless of the return value of init(). */
-		virtual void uninit() = 0;
-		
-		bool open(const unsigned short port, const Protocol protocol, const string& description);
-		bool close();
-		bool hasRules() const;
-		
-		/** interval after which ports should be re-mapped, in minutes. 0 = no renewal. */
-		virtual uint32_t renewal() const = 0;
-		
-		virtual string getDeviceName() = 0;
-		virtual string getExternalIP() = 0;
-		
-		/* by contract, implementations of this class should define a public user-friendly name in:
-		static const string name; */
-		
-		/** user-friendly name for this implementation. */
-		virtual const string& getName() const = 0;
-		
-	private:
-		/** add a port mapping rule. */
-		virtual bool add(const unsigned short port, const Protocol protocol, const string& description) = 0;
-		/** remove a port mapping rule. */
-		virtual bool remove(const unsigned short port, const Protocol protocol) = 0;
-		
-		std::vector<std::pair<unsigned short, Protocol>> rules;
+    public:
+        Mapper() { }
+        virtual ~Mapper() { }
+        
+        enum Protocol
+        {
+            PROTOCOL_TCP,
+            PROTOCOL_UDP,
+            PROTOCOL_LAST
+        };
+        static const char* protocols[PROTOCOL_LAST];
+        
+        /** begin the initialization phase.
+        @return true if the initialization passed; false otherwise. */
+        virtual bool init() = 0;
+        /** end the initialization phase. called regardless of the return value of init(). */
+        virtual void uninit() = 0;
+        
+        bool open(const unsigned short port, const Protocol protocol, const string& description);
+        bool close();
+        bool hasRules() const;
+        
+        /** interval after which ports should be re-mapped, in minutes. 0 = no renewal. */
+        virtual uint32_t renewal() const = 0;
+        
+        virtual string getDeviceName() = 0;
+        virtual string getExternalIP() = 0;
+        
+        /* by contract, implementations of this class should define a public user-friendly name in:
+        static const string name; */
+        
+        /** user-friendly name for this implementation. */
+        virtual const string& getName() const = 0;
+        
+    private:
+        /** add a port mapping rule. */
+        virtual bool add(const unsigned short port, const Protocol protocol, const string& description) = 0;
+        /** remove a port mapping rule. */
+        virtual bool remove(const unsigned short port, const Protocol protocol) = 0;
+        
+        std::vector<std::pair<unsigned short, Protocol>> rules;
 };
 
 } // namespace dcpp

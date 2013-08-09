@@ -27,37 +27,37 @@
 
 class AppearancePage : public CPropertyPage<IDD_APPEARANCEPAGE>, public PropPage
 {
-	public:
-		AppearancePage(SettingsManager *s) : PropPage(s)
-		{
-			SetTitle(CTSTRING(SETTINGS_APPEARANCE));
-			m_psp.dwFlags |= PSP_RTLREADING;
-		}
-		
-		~AppearancePage();
-		
-		BEGIN_MSG_MAP_EX(AppearancePage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		COMMAND_ID_HANDLER(IDC_BROWSE, onBrowse)
-		COMMAND_HANDLER(IDC_TIMESTAMP_HELP, BN_CLICKED, onClickedHelp)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		LRESULT onBrowse(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onClickedHelp(WORD /* wNotifyCode */, WORD wID, HWND /* hWndCtl */, BOOL& /* bHandled */);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-		static Item items[];
-		static TextItem texts[];
-		static ListItem listItems[];
-		static ListItem boldItems[];
+    public:
+        AppearancePage(SettingsManager *s) : PropPage(s)
+        {
+            SetTitle(CTSTRING(SETTINGS_APPEARANCE));
+            m_psp.dwFlags |= PSP_RTLREADING;
+        }
+        
+        ~AppearancePage();
+        
+        BEGIN_MSG_MAP_EX(AppearancePage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        COMMAND_ID_HANDLER(IDC_BROWSE, onBrowse)
+        COMMAND_HANDLER(IDC_TIMESTAMP_HELP, BN_CLICKED, onClickedHelp)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT onBrowse(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onClickedHelp(WORD /* wNotifyCode */, WORD wID, HWND /* hWndCtl */, BOOL& /* bHandled */);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+        static Item items[];
+        static TextItem texts[];
+        static ListItem listItems[];
+        static ListItem boldItems[];
 };
 
 #endif // !defined(APPEARANCE_PAGE_H)

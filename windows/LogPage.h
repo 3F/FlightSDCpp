@@ -27,52 +27,52 @@
 
 class LogPage : public CPropertyPage<IDD_LOGPAGE>, public PropPage
 {
-	public:
-		LogPage(SettingsManager *s) : PropPage(s), oldSelection(-1)
-		{
-			title = _tcsdup((TSTRING(SETTINGS_ADVANCED) + _T('\\') + TSTRING(SETTINGS_LOGS)).c_str());
-			SetTitle(title);
-			m_psp.dwFlags |= PSP_RTLREADING;
-		}
-		
-		~LogPage()
-		{
-			free(title);
-		}
-		
-		BEGIN_MSG_MAP_EX(LogPage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		COMMAND_ID_HANDLER(IDC_BROWSE_LOG, onClickedBrowseDir)
-		NOTIFY_HANDLER(IDC_LOG_OPTIONS, LVN_ITEMCHANGED, onItemChanged)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		LRESULT onClickedBrowseDir(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onItemChanged(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-		static Item items[];
-		static TextItem texts[];
-		static ListItem listItems[];
-		TCHAR* title;
-		
-		ExListViewCtrl logOptions;
-		
-		int oldSelection;
-		
-		//store all log options here so we can discard them
-		//if the user cancels the dialog.
-		//.first is filename and .second is format
-		TStringPairList options;
-		
-		void getValues();
+    public:
+        LogPage(SettingsManager *s) : PropPage(s), oldSelection(-1)
+        {
+            title = _tcsdup((TSTRING(SETTINGS_ADVANCED) + _T('\\') + TSTRING(SETTINGS_LOGS)).c_str());
+            SetTitle(title);
+            m_psp.dwFlags |= PSP_RTLREADING;
+        }
+        
+        ~LogPage()
+        {
+            free(title);
+        }
+        
+        BEGIN_MSG_MAP_EX(LogPage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        COMMAND_ID_HANDLER(IDC_BROWSE_LOG, onClickedBrowseDir)
+        NOTIFY_HANDLER(IDC_LOG_OPTIONS, LVN_ITEMCHANGED, onItemChanged)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT onClickedBrowseDir(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onItemChanged(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+        static Item items[];
+        static TextItem texts[];
+        static ListItem listItems[];
+        TCHAR* title;
+        
+        ExListViewCtrl logOptions;
+        
+        int oldSelection;
+        
+        //store all log options here so we can discard them
+        //if the user cancels the dialog.
+        //.first is filename and .second is format
+        TStringPairList options;
+        
+        void getValues();
 };
 
 #endif // !defined(LOG_PAGE_H)

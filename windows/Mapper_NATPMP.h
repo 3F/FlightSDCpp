@@ -23,33 +23,33 @@
 
 class Mapper_NATPMP : public Mapper
 {
-	public:
-		Mapper_NATPMP() : Mapper(), lifetime(0) { }
-		
-		static const string name;
-		
-	private:
-		bool init();
-		void uninit();
-		
-		bool add(const unsigned short port, const Protocol protocol, const string& description);
-		bool remove(const unsigned short port, const Protocol protocol);
-		
-		uint32_t renewal() const
-		{
-			return lifetime / 2;
-		}
-		
-		string getDeviceName();
-		string getExternalIP();
-		
-		const string& getName() const
-		{
-			return name;
-		}
-		
-		string gateway;
-		uint32_t lifetime;
+    public:
+        Mapper_NATPMP() : Mapper(), lifetime(0) { }
+        
+        static const string name;
+        
+    private:
+        bool init();
+        void uninit();
+        
+        bool add(const unsigned short port, const Protocol protocol, const string& description);
+        bool remove(const unsigned short port, const Protocol protocol);
+        
+        uint32_t renewal() const
+        {
+            return lifetime / 2;
+        }
+        
+        string getDeviceName();
+        string getExternalIP();
+        
+        const string& getName() const
+        {
+            return name;
+        }
+        
+        string gateway;
+        uint32_t lifetime;
 };
 
 #endif

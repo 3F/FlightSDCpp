@@ -26,41 +26,41 @@
 
 class SDCPage : public CPropertyPage<IDD_SDCPAGE>, public PropPage
 {
-	public:
-		SDCPage(SettingsManager *s) : PropPage(s)
-		{
-			title = _tcsdup((TSTRING(SETTINGS_ADVANCED) + _T('\\') + TSTRING(SETTINGS_ADVANCED3)).c_str());
-			SetTitle(title);
-			m_psp.dwFlags |= PSP_RTLREADING;
-		};
-		
-		~SDCPage()
-		{
-			ctrlShutdownAction.Detach();
-			free(title);
-		};
-		
-		BEGIN_MSG_MAP(SDCPage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT, WPARAM, LPARAM, BOOL&);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-		static Item items[];
-		static TextItem texts[];
-		
-		CComboBox ctrlShutdownAction;
-		CComboBox userlistaction, transferlistaction, chataction;
-		
-		TCHAR* title;
+    public:
+        SDCPage(SettingsManager *s) : PropPage(s)
+        {
+            title = _tcsdup((TSTRING(SETTINGS_ADVANCED) + _T('\\') + TSTRING(SETTINGS_ADVANCED3)).c_str());
+            SetTitle(title);
+            m_psp.dwFlags |= PSP_RTLREADING;
+        };
+        
+        ~SDCPage()
+        {
+            ctrlShutdownAction.Detach();
+            free(title);
+        };
+        
+        BEGIN_MSG_MAP(SDCPage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT, WPARAM, LPARAM, BOOL&);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+        static Item items[];
+        static TextItem texts[];
+        
+        CComboBox ctrlShutdownAction;
+        CComboBox userlistaction, transferlistaction, chataction;
+        
+        TCHAR* title;
 };
 
 #endif //SDCPage_H

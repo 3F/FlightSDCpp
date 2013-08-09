@@ -26,40 +26,40 @@
 
 class GeneralPage : public CPropertyPage<IDD_GENERALPAGE>, public PropPage
 {
-	public:
-		GeneralPage(SettingsManager *s) : PropPage(s)
-		{
-			SetTitle(CTSTRING(SETTINGS_GENERAL));
-			m_psp.dwFlags |= PSP_RTLREADING;
-		}
-		~GeneralPage() { }
-		
-		BEGIN_MSG_MAP_EX(GeneralPage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		COMMAND_HANDLER(IDC_NICK, EN_CHANGE, onTextChanged)
-		COMMAND_HANDLER(IDC_EMAIL, EN_CHANGE, onTextChanged)
-		COMMAND_HANDLER(IDC_DESCRIPTION, EN_CHANGE, onTextChanged)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		LRESULT onGetIP(WORD /* wNotifyCode */, WORD /* wID */, HWND /* hWndCtl */, BOOL& /* bHandled */);
-		LRESULT onTextChanged(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onClickedRadioButton(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	private:
-		static Item items[];
-		static TextItem texts[];
-		CComboBox ctrlConnection;
-		CEdit nick;
-		CEdit desc;
-		
+    public:
+        GeneralPage(SettingsManager *s) : PropPage(s)
+        {
+            SetTitle(CTSTRING(SETTINGS_GENERAL));
+            m_psp.dwFlags |= PSP_RTLREADING;
+        }
+        ~GeneralPage() { }
+        
+        BEGIN_MSG_MAP_EX(GeneralPage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        COMMAND_HANDLER(IDC_NICK, EN_CHANGE, onTextChanged)
+        COMMAND_HANDLER(IDC_EMAIL, EN_CHANGE, onTextChanged)
+        COMMAND_HANDLER(IDC_DESCRIPTION, EN_CHANGE, onTextChanged)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT onGetIP(WORD /* wNotifyCode */, WORD /* wID */, HWND /* hWndCtl */, BOOL& /* bHandled */);
+        LRESULT onTextChanged(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onClickedRadioButton(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    private:
+        static Item items[];
+        static TextItem texts[];
+        CComboBox ctrlConnection;
+        CEdit nick;
+        CEdit desc;
+        
 };
 
 #endif // !defined(GENERAL_PAGE_H)

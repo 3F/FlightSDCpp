@@ -28,123 +28,123 @@ namespace dcpp
 
 bool SearchQueue::add(const Search& s)
 {
-	dcassert(s.owners.size() == 1);
-	dcassert(interval >= 10000); // min interval is 10 seconds.
-	
-	Lock l(cs);
-	
-	for (auto i = searchQueue.begin(); i != searchQueue.end(); ++i)
-	{
-		// check dupe
-		if (*i == s)
-		{
-			void* aOwner = *s.owners.begin();
-			i->owners.insert(aOwner);
-			
-			// if previous search was autosearch and current one isn't, it should be readded before autosearches
-			if (s.token != "auto" && i->token == "auto")
-			{
-				searchQueue.erase(i);
-				break;
-			}
-			
-			return false;
-		}
-	}
-	
-	if (s.token == "auto")
-	{
-		// Insert last (automatic search)
-		searchQueue.push_back(s);
-	}
-	else
-	{
-		bool added = false;
-		if (searchQueue.empty())
-		{
-			searchQueue.push_front(s);
-			added = true;
-		}
-		else
-		{
-			// Insert before the automatic searches (manual search)
-			for (auto i = searchQueue.cbegin(); i != searchQueue.cend(); ++i)
-			{
-				if (i->token == "auto")
-				{
-					searchQueue.insert(i, s);
-					added = true;
-					break;
-				}
-			}
-		}
-		if (!added)
-		{
-			searchQueue.push_back(s);
-		}
-	}
-	return true;
+    dcassert(s.owners.size() == 1);
+    dcassert(interval >= 10000); // min interval is 10 seconds.
+    
+    Lock l(cs);
+    
+    for (auto i = searchQueue.begin(); i != searchQueue.end(); ++i)
+    {
+        // check dupe
+        if (*i == s)
+        {
+            void* aOwner = *s.owners.begin();
+            i->owners.insert(aOwner);
+            
+            // if previous search was autosearch and current one isn't, it should be readded before autosearches
+            if (s.token != "auto" && i->token == "auto")
+            {
+                searchQueue.erase(i);
+                break;
+            }
+            
+            return false;
+        }
+    }
+    
+    if (s.token == "auto")
+    {
+        // Insert last (automatic search)
+        searchQueue.push_back(s);
+    }
+    else
+    {
+        bool added = false;
+        if (searchQueue.empty())
+        {
+            searchQueue.push_front(s);
+            added = true;
+        }
+        else
+        {
+            // Insert before the automatic searches (manual search)
+            for (auto i = searchQueue.cbegin(); i != searchQueue.cend(); ++i)
+            {
+                if (i->token == "auto")
+                {
+                    searchQueue.insert(i, s);
+                    added = true;
+                    break;
+                }
+            }
+        }
+        if (!added)
+        {
+            searchQueue.push_back(s);
+        }
+    }
+    return true;
 }
 
 bool SearchQueue::pop(Search& s)
 {
-	dcassert(interval);
-	
-	uint64_t now = GET_TICK();
-	if (now <= lastSearchTime + interval)
-		return false;
-		
-	{
-		Lock l(cs);
-		if (!searchQueue.empty())
-		{
-			s = searchQueue.front();
-			searchQueue.pop_front();
-			lastSearchTime = now;
-			return true;
-		}
-	}
-	
-	return false;
+    dcassert(interval);
+    
+    uint64_t now = GET_TICK();
+    if (now <= lastSearchTime + interval)
+        return false;
+        
+    {
+        Lock l(cs);
+        if (!searchQueue.empty())
+        {
+            s = searchQueue.front();
+            searchQueue.pop_front();
+            lastSearchTime = now;
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 uint64_t SearchQueue::getSearchTime(void* aOwner)
 {
-	Lock l(cs);
-	
-	if (aOwner == 0) return 0xFFFFFFFF;
-	
-	uint64_t x = max(lastSearchTime, uint64_t(GET_TICK() - interval));
-	
-	for (auto i = searchQueue.cbegin(); i != searchQueue.cend(); ++i)
-	{
-		x += interval;
-		
-		if (i->owners.count(aOwner))
-			return x;
-		else if (i->owners.empty())
-			break;
-	}
-	
-	return 0;
+    Lock l(cs);
+    
+    if (aOwner == 0) return 0xFFFFFFFF;
+    
+    uint64_t x = max(lastSearchTime, uint64_t(GET_TICK() - interval));
+    
+    for (auto i = searchQueue.cbegin(); i != searchQueue.cend(); ++i)
+    {
+        x += interval;
+        
+        if (i->owners.count(aOwner))
+            return x;
+        else if (i->owners.empty())
+            break;
+    }
+    
+    return 0;
 }
 
 bool SearchQueue::cancelSearch(void* aOwner)
 {
-	dcassert(aOwner);
-	
-	Lock l(cs);
-	for (auto i = searchQueue.begin(); i != searchQueue.end(); ++i)
-	{
-		if (i->owners.count(aOwner))
-		{
-			i->owners.erase(aOwner);
-			if (i->owners.empty())
-				searchQueue.erase(i);
-			return true;
-		}
-	}
-	return false;
+    dcassert(aOwner);
+    
+    Lock l(cs);
+    for (auto i = searchQueue.begin(); i != searchQueue.end(); ++i)
+    {
+        if (i->owners.count(aOwner))
+        {
+            i->owners.erase(aOwner);
+            if (i->owners.empty())
+                searchQueue.erase(i);
+            return true;
+        }
+    }
+    return false;
 }
 
 }

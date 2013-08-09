@@ -27,127 +27,127 @@
 
 PropPage::TextItem Sounds::texts[] =
 {
-	{ IDC_PRIVATE_MESSAGE_BEEP, ResourceManager::SETTINGS_PM_BEEP },
-	{ IDC_PRIVATE_MESSAGE_BEEP_OPEN, ResourceManager::SETTINGS_PM_BEEP_OPEN },
-	{ IDC_STRONGDC_PM_SOUND, ResourceManager::SETSTRONGDC_PRIVATE_SOUND },
-	{ IDC_BROWSE, ResourceManager::BROWSE },
-	{ IDC_PLAY, ResourceManager::PLAY },
-	{ IDC_NONE, ResourceManager::NONE },
-	{ 0, ResourceManager::SETTINGS_AUTO_AWAY }
+    { IDC_PRIVATE_MESSAGE_BEEP, ResourceManager::SETTINGS_PM_BEEP },
+    { IDC_PRIVATE_MESSAGE_BEEP_OPEN, ResourceManager::SETTINGS_PM_BEEP_OPEN },
+    { IDC_STRONGDC_PM_SOUND, ResourceManager::SETSTRONGDC_PRIVATE_SOUND },
+    { IDC_BROWSE, ResourceManager::BROWSE },
+    { IDC_PLAY, ResourceManager::PLAY },
+    { IDC_NONE, ResourceManager::NONE },
+    { 0, ResourceManager::SETTINGS_AUTO_AWAY }
 };
 
 PropPage::Item Sounds::items[] =
 {
-	{ IDC_PRIVATE_MESSAGE_BEEP, SettingsManager::PRIVATE_MESSAGE_BEEP, PropPage::T_BOOL },
-	{ IDC_PRIVATE_MESSAGE_BEEP_OPEN, SettingsManager::PRIVATE_MESSAGE_BEEP_OPEN, PropPage::T_BOOL },
-	{ 0, 0, PropPage::T_END }
+    { IDC_PRIVATE_MESSAGE_BEEP, SettingsManager::PRIVATE_MESSAGE_BEEP, PropPage::T_BOOL },
+    { IDC_PRIVATE_MESSAGE_BEEP_OPEN, SettingsManager::PRIVATE_MESSAGE_BEEP_OPEN, PropPage::T_BOOL },
+    { 0, 0, PropPage::T_END }
 };
 
 Sounds::snds Sounds::sounds[] =
 {
-	{ ResourceManager::SOUND_DOWNLOAD_BEGINS,   SettingsManager::BEGINFILE, ""},
-	{ ResourceManager::SOUND_DOWNLOAD_FINISHED, SettingsManager::FINISHFILE, ""},
-	{ ResourceManager::SOUND_SOURCE_ADDED,  SettingsManager::SOURCEFILE, ""},
-	{ ResourceManager::SOUND_UPLOAD_FINISHED,   SettingsManager::UPLOADFILE, ""},
-	{ ResourceManager::SOUND_FAKER_FOUND,   SettingsManager::FAKERFILE, ""},
-	{ ResourceManager::SETSTRONGDC_PRIVATE_SOUND,   SettingsManager::BEEPFILE, ""},
-	{ ResourceManager::MYNICK_IN_CHAT,  SettingsManager::CHATNAMEFILE, ""},
-	{ ResourceManager::SOUND_TTH_INVALID,   SettingsManager::SOUND_TTH, ""},
-	{ ResourceManager::SOUND_EXCEPTION, SettingsManager::SOUND_EXC, ""},
-	{ ResourceManager::HUB_CONNECTED,   SettingsManager::SOUND_HUBCON, ""},
-	{ ResourceManager::HUB_DISCONNECTED,    SettingsManager::SOUND_HUBDISCON, ""},
-	{ ResourceManager::FAVUSER_ONLINE,  SettingsManager::SOUND_FAVUSER, ""},
-	{ ResourceManager::SOUND_TYPING_NOTIFY, SettingsManager::SOUND_TYPING_NOTIFY, ""}
+    { ResourceManager::SOUND_DOWNLOAD_BEGINS,   SettingsManager::BEGINFILE, ""},
+    { ResourceManager::SOUND_DOWNLOAD_FINISHED, SettingsManager::FINISHFILE, ""},
+    { ResourceManager::SOUND_SOURCE_ADDED,  SettingsManager::SOURCEFILE, ""},
+    { ResourceManager::SOUND_UPLOAD_FINISHED,   SettingsManager::UPLOADFILE, ""},
+    { ResourceManager::SOUND_FAKER_FOUND,   SettingsManager::FAKERFILE, ""},
+    { ResourceManager::SETSTRONGDC_PRIVATE_SOUND,   SettingsManager::BEEPFILE, ""},
+    { ResourceManager::MYNICK_IN_CHAT,  SettingsManager::CHATNAMEFILE, ""},
+    { ResourceManager::SOUND_TTH_INVALID,   SettingsManager::SOUND_TTH, ""},
+    { ResourceManager::SOUND_EXCEPTION, SettingsManager::SOUND_EXC, ""},
+    { ResourceManager::HUB_CONNECTED,   SettingsManager::SOUND_HUBCON, ""},
+    { ResourceManager::HUB_DISCONNECTED,    SettingsManager::SOUND_HUBDISCON, ""},
+    { ResourceManager::FAVUSER_ONLINE,  SettingsManager::SOUND_FAVUSER, ""},
+    { ResourceManager::SOUND_TYPING_NOTIFY, SettingsManager::SOUND_TYPING_NOTIFY, ""}
 };
 
 LRESULT Sounds::onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
-	PropPage::translate((HWND)(*this), texts);
-	PropPage::read((HWND)*this, items);
-	
-	ctrlSounds.Attach(GetDlgItem(IDC_SOUNDLIST));
-	
-	ctrlSounds.SetExtendedListViewStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-	ctrlSounds.InsertColumn(0, CTSTRING(SETTINGS_SOUNDS), LVCFMT_LEFT, 172, 0);
-	ctrlSounds.InsertColumn(1, CTSTRING(FILENAME), LVCFMT_LEFT, 210, 1);
-	
-	// Do specialized reading here
-	
-	int j;
-	for (int i = 0; i < sizeof(sounds) / sizeof(snds); i++)
-	{
-		j = ctrlSounds.insert(i, Text::toT(ResourceManager::getInstance()->getString(sounds[i].name)).c_str());
-		sounds[i].value = SettingsManager::getInstance()->get((SettingsManager::StrSetting)sounds[i].setting, true);
-		ctrlSounds.SetItemText(j, 1, Text::toT(sounds[i].value).c_str());
-	}
-	
-	return TRUE;
+    PropPage::translate((HWND)(*this), texts);
+    PropPage::read((HWND)*this, items);
+    
+    ctrlSounds.Attach(GetDlgItem(IDC_SOUNDLIST));
+    
+    ctrlSounds.SetExtendedListViewStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+    ctrlSounds.InsertColumn(0, CTSTRING(SETTINGS_SOUNDS), LVCFMT_LEFT, 172, 0);
+    ctrlSounds.InsertColumn(1, CTSTRING(FILENAME), LVCFMT_LEFT, 210, 1);
+    
+    // Do specialized reading here
+    
+    int j;
+    for (int i = 0; i < sizeof(sounds) / sizeof(snds); i++)
+    {
+        j = ctrlSounds.insert(i, Text::toT(ResourceManager::getInstance()->getString(sounds[i].name)).c_str());
+        sounds[i].value = SettingsManager::getInstance()->get((SettingsManager::StrSetting)sounds[i].setting, true);
+        ctrlSounds.SetItemText(j, 1, Text::toT(sounds[i].value).c_str());
+    }
+    
+    return TRUE;
 }
 
 
 void Sounds::write()
 {
-	PropPage::write((HWND)*this, items);
-	
-	TCHAR buf[256];
-	
-	for (int i = 0; i < sizeof(sounds) / sizeof(snds); i++)
-	{
-		ctrlSounds.GetItemText(i, 1, buf, 255);
-		settings->set((SettingsManager::StrSetting)sounds[i].setting, Text::fromT(buf));
-	}
-	
-	// Do specialized writing here
-	// settings->set(XX, YY);
+    PropPage::write((HWND)*this, items);
+    
+    TCHAR buf[256];
+    
+    for (int i = 0; i < sizeof(sounds) / sizeof(snds); i++)
+    {
+        ctrlSounds.GetItemText(i, 1, buf, 255);
+        settings->set((SettingsManager::StrSetting)sounds[i].setting, Text::fromT(buf));
+    }
+    
+    // Do specialized writing here
+    // settings->set(XX, YY);
 }
 
 LRESULT Sounds::onBrowse(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	TCHAR buf[MAX_PATH];
-	LVITEM item = { 0 };
-	item.mask = LVIF_TEXT;
-	item.cchTextMax = 255;
-	item.pszText = buf;
-	if (ctrlSounds.GetSelectedItem(&item))
-	{
-		tstring x = _T("");
-		if (WinUtil::browseFile(x, m_hWnd, false) == IDOK)
-		{
-			ctrlSounds.SetItemText(item.iItem, 1, x.c_str());
-		}
-	}
-	return 0;
+    TCHAR buf[MAX_PATH];
+    LVITEM item = { 0 };
+    item.mask = LVIF_TEXT;
+    item.cchTextMax = 255;
+    item.pszText = buf;
+    if (ctrlSounds.GetSelectedItem(&item))
+    {
+        tstring x = _T("");
+        if (WinUtil::browseFile(x, m_hWnd, false) == IDOK)
+        {
+            ctrlSounds.SetItemText(item.iItem, 1, x.c_str());
+        }
+    }
+    return 0;
 }
 
 LRESULT Sounds::onClickedNone(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	TCHAR buf[MAX_PATH];
-	LVITEM item =  { 0 };
-	item.mask = LVIF_TEXT;
-	item.cchTextMax = 255;
-	item.pszText = buf;
-	if (ctrlSounds.GetSelectedItem(&item))
-	{
-		tstring x = _T("");
-		ctrlSounds.SetItemText(item.iItem, 1, x.c_str());
-	}
-	return 0;
+    TCHAR buf[MAX_PATH];
+    LVITEM item =  { 0 };
+    item.mask = LVIF_TEXT;
+    item.cchTextMax = 255;
+    item.pszText = buf;
+    if (ctrlSounds.GetSelectedItem(&item))
+    {
+        tstring x = _T("");
+        ctrlSounds.SetItemText(item.iItem, 1, x.c_str());
+    }
+    return 0;
 }
 
 LRESULT Sounds::onPlay(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	TCHAR buf[MAX_PATH];
-	LVITEM item = { 0 };
-	item.mask = LVIF_TEXT;
-	item.cchTextMax = 255;
-	item.pszText = buf;
-	if (ctrlSounds.GetSelectedItem(&item))
-	{
-		ctrlSounds.GetItemText(item.iItem, 1, buf, MAX_PATH);
-		PlaySound(buf, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
-		
-	}
-	return 0;
+    TCHAR buf[MAX_PATH];
+    LVITEM item = { 0 };
+    item.mask = LVIF_TEXT;
+    item.cchTextMax = 255;
+    item.pszText = buf;
+    if (ctrlSounds.GetSelectedItem(&item))
+    {
+        ctrlSounds.GetItemText(item.iItem, 1, buf, MAX_PATH);
+        PlaySound(buf, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
+        
+    }
+    return 0;
 }
 /**
  * @file

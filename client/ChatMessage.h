@@ -26,22 +26,22 @@ namespace dcpp
 
 struct ChatMessage
 {
-	string text;
-	
-	OnlineUserPtr from;
-	OnlineUserPtr to;
-	OnlineUserPtr replyTo;
-	
-	bool thirdPerson;
-	time_t timestamp;
-	// [+] IRainman fix.
-	ChatMessage(const string& _text, const OnlineUserPtr& _from, const OnlineUserPtr& _to = nullptr, const OnlineUserPtr& _replyTo = nullptr, bool _thirdPerson = false)
-		: text(_text), from(_from), to(_to), replyTo(_replyTo), thirdPerson(_thirdPerson), timestamp(0)
-	{
-	
-	}
-	
-	string format() const;
+    string text;
+    
+    OnlineUserPtr from;
+    OnlineUserPtr to;
+    OnlineUserPtr replyTo;
+    
+    bool thirdPerson;
+    time_t timestamp;
+    // [+] IRainman fix.
+    ChatMessage(const string& _text, const OnlineUserPtr& _from, const OnlineUserPtr& _to = nullptr, const OnlineUserPtr& _replyTo = nullptr, bool _thirdPerson = false)
+        : text(_text), from(_from), to(_to), replyTo(_replyTo), thirdPerson(_thirdPerson), timestamp(0)
+    {
+    
+    }
+    
+    string format() const;
 };
 
 } // namespace dcpp

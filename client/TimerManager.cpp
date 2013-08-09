@@ -28,8 +28,8 @@ using namespace boost::posix_time;
 
 TimerManager::TimerManager()
 {
-	// This mutex will be unlocked only upon shutdown
-	mtx.lock();
+    // This mutex will be unlocked only upon shutdown
+    mtx.lock();
 }
 
 TimerManager::~TimerManager()
@@ -38,45 +38,45 @@ TimerManager::~TimerManager()
 
 void TimerManager::shutdown()
 {
-	mtx.unlock();
-	join();
+    mtx.unlock();
+    join();
 }
 
 int TimerManager::run()
 {
-	int nextMin = 0;
-	
-	ptime now = microsec_clock::universal_time();
-	ptime nextSecond = now + seconds(1);
-	
-	while (!mtx.timed_lock(nextSecond))
-	{
-		uint64_t t = getTick();
-		now = microsec_clock::universal_time();
-		nextSecond += seconds(1);
-		if (nextSecond < now)
-		{
-			nextSecond = now;
-		}
-		
-		fire(TimerManagerListener::Second(), t);
-		if (nextMin++ >= 60)
-		{
-			fire(TimerManagerListener::Minute(), t);
-			nextMin = 0;
-		}
-	}
-	
-	mtx.unlock();
-	
-	dcdebug("TimerManager done\n");
-	return 0;
+    int nextMin = 0;
+    
+    ptime now = microsec_clock::universal_time();
+    ptime nextSecond = now + seconds(1);
+    
+    while (!mtx.timed_lock(nextSecond))
+    {
+        uint64_t t = getTick();
+        now = microsec_clock::universal_time();
+        nextSecond += seconds(1);
+        if (nextSecond < now)
+        {
+            nextSecond = now;
+        }
+        
+        fire(TimerManagerListener::Second(), t);
+        if (nextMin++ >= 60)
+        {
+            fire(TimerManagerListener::Minute(), t);
+            nextMin = 0;
+        }
+    }
+    
+    mtx.unlock();
+    
+    dcdebug("TimerManager done\n");
+    return 0;
 }
 
 uint64_t TimerManager::getTick()
 {
-	static ptime start = microsec_clock::universal_time();
-	return (microsec_clock::universal_time() - start).total_milliseconds();
+    static ptime start = microsec_clock::universal_time();
+    return (microsec_clock::universal_time() - start).total_milliseconds();
 }
 
 } // namespace dcpp

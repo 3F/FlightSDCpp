@@ -33,46 +33,46 @@ namespace dcpp
 {
 
 class MappingManager :
-	public Singleton<MappingManager>,
-	private Thread,
-	private TimerManagerListener
+    public Singleton<MappingManager>,
+    private Thread,
+    private TimerManagerListener
 {
-	public:
-		/** add an implementation derived from the base Mapper class, passed as template parameter.
-		the first added mapper will be tried first, unless the "MAPPER" setting is not empty. */
-		template<typename T> void addMapper()
-		{
-			mappers.push_back(make_pair(T::name, [] { return new T(); }));
-		}
-		StringList getMappers() const;
-		
-		bool open();
-		void close();
-		bool getOpened() const;
-		
-	private:
-		friend class Singleton<MappingManager>;
-		
-		vector<pair<string, function<Mapper * ()>>> mappers;
-		
-		boost::atomic_flag busy;
-		unique_ptr<Mapper> working; /// currently working implementation.
-		uint64_t renewal; /// when the next renewal should happen, if requested by the mapper.
-		int m_listeners_count;
-		
-		MappingManager();
-		virtual ~MappingManager()
-		{
-			join();
-		}
-		
-		int run();
-		
-		void close(Mapper& mapper);
-		void log(const string& message);
-		string deviceString(Mapper& mapper) const;
-		
-		void on(TimerManagerListener::Minute, uint64_t tick) noexcept;
+    public:
+        /** add an implementation derived from the base Mapper class, passed as template parameter.
+        the first added mapper will be tried first, unless the "MAPPER" setting is not empty. */
+        template<typename T> void addMapper()
+        {
+            mappers.push_back(make_pair(T::name, [] { return new T(); }));
+        }
+        StringList getMappers() const;
+        
+        bool open();
+        void close();
+        bool getOpened() const;
+        
+    private:
+        friend class Singleton<MappingManager>;
+        
+        vector<pair<string, function<Mapper * ()>>> mappers;
+        
+        boost::atomic_flag busy;
+        unique_ptr<Mapper> working; /// currently working implementation.
+        uint64_t renewal; /// when the next renewal should happen, if requested by the mapper.
+        int m_listeners_count;
+        
+        MappingManager();
+        virtual ~MappingManager()
+        {
+            join();
+        }
+        
+        int run();
+        
+        void close(Mapper& mapper);
+        void log(const string& message);
+        string deviceString(Mapper& mapper) const;
+        
+        void on(TimerManagerListener::Minute, uint64_t tick) noexcept;
 };
 
 } // namespace dcpp

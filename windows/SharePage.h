@@ -30,56 +30,56 @@
 
 class SharePage : public CPropertyPage<IDD_SHAREPAGE>, public PropPage
 {
-	public:
-		SharePage(SettingsManager *s) : PropPage(s)
-		{
-			SetTitle(CTSTRING(SETTINGS_UPLOADS));
-			m_psp.dwFlags |= PSP_RTLREADING;
-		}
-		~SharePage()
-		{
-			ctrlDirectories.Detach();
-			ctrlTotal.Detach();
-		}
-		
-		BEGIN_MSG_MAP_EX(SharePage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		MESSAGE_HANDLER(WM_DROPFILES, onDropFiles)
-		NOTIFY_HANDLER(IDC_DIRECTORIES, LVN_ITEMCHANGED, onItemchangedDirectories)
-		NOTIFY_HANDLER(IDC_DIRECTORIES, LVN_KEYDOWN, onKeyDown)
-		NOTIFY_HANDLER(IDC_DIRECTORIES, NM_DBLCLK, onDoubleClick)
-		COMMAND_ID_HANDLER(IDC_ADD, onClickedAdd)
-		COMMAND_ID_HANDLER(IDC_REMOVE, onClickedRemove)
-		COMMAND_ID_HANDLER(IDC_RENAME, onClickedRename)
-		COMMAND_ID_HANDLER(IDC_SHAREHIDDEN, onClickedShareHidden)
-		REFLECT_NOTIFICATIONS()
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		LRESULT onDropFiles(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		LRESULT onItemchangedDirectories(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/);
-		LRESULT onKeyDown(int /*idCtrl*/, LPNMHDR pnmh, BOOL& bHandled);
-		LRESULT onDoubleClick(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/);
-		LRESULT onClickedAdd(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onClickedRemove(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onClickedRename(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		LRESULT onClickedShareHidden(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-		static Item items[];
-		static TextItem texts[];
-		ExListViewCtrl ctrlDirectories;
-		CStatic ctrlTotal;
-		
-		void addDirectory(const tstring& aPath);
-		FolderTree ft;
+    public:
+        SharePage(SettingsManager *s) : PropPage(s)
+        {
+            SetTitle(CTSTRING(SETTINGS_UPLOADS));
+            m_psp.dwFlags |= PSP_RTLREADING;
+        }
+        ~SharePage()
+        {
+            ctrlDirectories.Detach();
+            ctrlTotal.Detach();
+        }
+        
+        BEGIN_MSG_MAP_EX(SharePage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        MESSAGE_HANDLER(WM_DROPFILES, onDropFiles)
+        NOTIFY_HANDLER(IDC_DIRECTORIES, LVN_ITEMCHANGED, onItemchangedDirectories)
+        NOTIFY_HANDLER(IDC_DIRECTORIES, LVN_KEYDOWN, onKeyDown)
+        NOTIFY_HANDLER(IDC_DIRECTORIES, NM_DBLCLK, onDoubleClick)
+        COMMAND_ID_HANDLER(IDC_ADD, onClickedAdd)
+        COMMAND_ID_HANDLER(IDC_REMOVE, onClickedRemove)
+        COMMAND_ID_HANDLER(IDC_RENAME, onClickedRename)
+        COMMAND_ID_HANDLER(IDC_SHAREHIDDEN, onClickedShareHidden)
+        REFLECT_NOTIFICATIONS()
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT onDropFiles(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        LRESULT onItemchangedDirectories(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/);
+        LRESULT onKeyDown(int /*idCtrl*/, LPNMHDR pnmh, BOOL& bHandled);
+        LRESULT onDoubleClick(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/);
+        LRESULT onClickedAdd(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onClickedRemove(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onClickedRename(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        LRESULT onClickedShareHidden(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+        static Item items[];
+        static TextItem texts[];
+        ExListViewCtrl ctrlDirectories;
+        CStatic ctrlTotal;
+        
+        void addDirectory(const tstring& aPath);
+        FolderTree ft;
 };
 
 #endif // !defined(SHARE_PAGE_H)

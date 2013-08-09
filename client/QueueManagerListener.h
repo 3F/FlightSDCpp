@@ -27,48 +27,48 @@ namespace dcpp
 
 class QueueManagerListener
 {
-	public:
-		virtual ~QueueManagerListener() { }
-		template<int I> struct X
-		{
-			enum { TYPE = I };
-		};
-		
-		typedef X<0> Added;
-		typedef X<1> Finished;
-		typedef X<2> Removed;
-		typedef X<3> Moved;
-		typedef X<4> SourcesUpdated;
-		typedef X<5> StatusUpdated;
-		typedef X<6> PartialList;
-		
-		typedef X<8> RecheckStarted;
-		typedef X<9> RecheckNoFile;
-		typedef X<10> RecheckFileTooSmall;
-		typedef X<11> RecheckDownloadsRunning;
-		typedef X<12> RecheckNoTree;
-		typedef X<13> RecheckAlreadyFinished;
-		typedef X<14> RecheckDone;
-		
-		typedef X<15> FileMoved;
-		
-		virtual void on(Added, QueueItem*) noexcept { }
-		virtual void on(Finished, const QueueItem*, const string&, const Download*) noexcept { }
-		virtual void on(Removed, const QueueItem*) noexcept { }
-		virtual void on(Moved, const QueueItem*, const string&) noexcept { }
-		virtual void on(SourcesUpdated, const QueueItem*) noexcept { }
-		virtual void on(StatusUpdated, const QueueItem*) noexcept { }
-		virtual void on(PartialList, const HintedUser&, const string&) noexcept { }
-		
-		virtual void on(RecheckStarted, const string&) noexcept { }
-		virtual void on(RecheckNoFile, const string&) noexcept { }
-		virtual void on(RecheckFileTooSmall, const string&) noexcept { }
-		virtual void on(RecheckDownloadsRunning, const string&) noexcept { }
-		virtual void on(RecheckNoTree, const string&) noexcept { }
-		virtual void on(RecheckAlreadyFinished, const string&) noexcept { }
-		virtual void on(RecheckDone, const string&) noexcept { }
-		
-		virtual void on(FileMoved, const string&) noexcept { }
+    public:
+        virtual ~QueueManagerListener() { }
+        template<int I> struct X
+        {
+            enum { TYPE = I };
+        };
+        
+        typedef X<0> Added;
+        typedef X<1> Finished;
+        typedef X<2> Removed;
+        typedef X<3> Moved;
+        typedef X<4> SourcesUpdated;
+        typedef X<5> StatusUpdated;
+        typedef X<6> PartialList;
+        
+        typedef X<8> RecheckStarted;
+        typedef X<9> RecheckNoFile;
+        typedef X<10> RecheckFileTooSmall;
+        typedef X<11> RecheckDownloadsRunning;
+        typedef X<12> RecheckNoTree;
+        typedef X<13> RecheckAlreadyFinished;
+        typedef X<14> RecheckDone;
+        
+        typedef X<15> FileMoved;
+        
+        virtual void on(Added, QueueItem*) noexcept { }
+        virtual void on(Finished, const QueueItem*, const string&, const Download*) noexcept { }
+        virtual void on(Removed, const QueueItem*) noexcept { }
+        virtual void on(Moved, const QueueItem*, const string&) noexcept { }
+        virtual void on(SourcesUpdated, const QueueItem*) noexcept { }
+        virtual void on(StatusUpdated, const QueueItem*) noexcept { }
+        virtual void on(PartialList, const HintedUser&, const string&) noexcept { }
+        
+        virtual void on(RecheckStarted, const string&) noexcept { }
+        virtual void on(RecheckNoFile, const string&) noexcept { }
+        virtual void on(RecheckFileTooSmall, const string&) noexcept { }
+        virtual void on(RecheckDownloadsRunning, const string&) noexcept { }
+        virtual void on(RecheckNoTree, const string&) noexcept { }
+        virtual void on(RecheckAlreadyFinished, const string&) noexcept { }
+        virtual void on(RecheckDone, const string&) noexcept { }
+        
+        virtual void on(FileMoved, const string&) noexcept { }
 };
 
 } // namespace dcpp

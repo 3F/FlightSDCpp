@@ -26,40 +26,40 @@
 
 class WindowsPage : public CPropertyPage<IDD_WINDOWSPAGE>, public PropPage
 {
-	public:
-		WindowsPage(SettingsManager *s) : PropPage(s)
-		{
-			title = _tcsdup((TSTRING(SETTINGS_APPEARANCE) + _T('\\') + TSTRING(SETTINGS_WINDOWS)).c_str());
-			SetTitle(title);
-			m_psp.dwFlags |= PSP_RTLREADING;
-		}
-		
-		~WindowsPage()
-		{
-			free(title);
-		}
-		
-		BEGIN_MSG_MAP(WindowsPage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-	
-		static TextItem textItem[];
-		static Item items[];
-		static ListItem listItems[];
-		static ListItem optionItems[];
-		
-		TCHAR* title;
+    public:
+        WindowsPage(SettingsManager *s) : PropPage(s)
+        {
+            title = _tcsdup((TSTRING(SETTINGS_APPEARANCE) + _T('\\') + TSTRING(SETTINGS_WINDOWS)).c_str());
+            SetTitle(title);
+            m_psp.dwFlags |= PSP_RTLREADING;
+        }
+        
+        ~WindowsPage()
+        {
+            free(title);
+        }
+        
+        BEGIN_MSG_MAP(WindowsPage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+    
+        static TextItem textItem[];
+        static Item items[];
+        static ListItem listItems[];
+        static ListItem optionItems[];
+        
+        TCHAR* title;
 };
 
 #endif // !defined(WINDOWS_PAGE_H)

@@ -55,114 +55,114 @@ typedef boost::lock_guard<boost::detail::spinlock> FastLock;
 
 class Thread
 #ifdef _DEBUG
-	: private boost::noncopyable
+    : private boost::noncopyable
 #endif
 {
-	public:
+    public:
 #ifdef _WIN32
-		enum Priority
-		{
-			IDLE = THREAD_PRIORITY_IDLE,
-			LOW = THREAD_PRIORITY_BELOW_NORMAL,
-			NORMAL = THREAD_PRIORITY_NORMAL,
-			HIGH = THREAD_PRIORITY_ABOVE_NORMAL
-		};
-		
-		explicit Thread() : threadHandle(INVALID_HANDLE_VALUE) { }
-		virtual ~Thread()
-		{
-			if (threadHandle != INVALID_HANDLE_VALUE)
-				CloseHandle(threadHandle);
-		}
-		
-		void start();
-		void join()
-		{
-			if (threadHandle != INVALID_HANDLE_VALUE)
-			{
-				WaitForSingleObject(threadHandle, INFINITE);
-				CloseHandle(threadHandle);
-				threadHandle = INVALID_HANDLE_VALUE;
-			}
-		}
-		
-		void setThreadPriority(Priority p)
-		{
-			::SetThreadPriority(threadHandle, p);
-		}
-		
-		static void sleep(uint64_t millis)
-		{
-			::Sleep(static_cast<DWORD>(millis));
-		}
-		static void yield()
-		{
-			::Sleep(0);
-		}
-		
+        enum Priority
+        {
+            IDLE = THREAD_PRIORITY_IDLE,
+            LOW = THREAD_PRIORITY_BELOW_NORMAL,
+            NORMAL = THREAD_PRIORITY_NORMAL,
+            HIGH = THREAD_PRIORITY_ABOVE_NORMAL
+        };
+        
+        explicit Thread() : threadHandle(INVALID_HANDLE_VALUE) { }
+        virtual ~Thread()
+        {
+            if (threadHandle != INVALID_HANDLE_VALUE)
+                CloseHandle(threadHandle);
+        }
+        
+        void start();
+        void join()
+        {
+            if (threadHandle != INVALID_HANDLE_VALUE)
+            {
+                WaitForSingleObject(threadHandle, INFINITE);
+                CloseHandle(threadHandle);
+                threadHandle = INVALID_HANDLE_VALUE;
+            }
+        }
+        
+        void setThreadPriority(Priority p)
+        {
+            ::SetThreadPriority(threadHandle, p);
+        }
+        
+        static void sleep(uint64_t millis)
+        {
+            ::Sleep(static_cast<DWORD>(millis));
+        }
+        static void yield()
+        {
+            ::Sleep(0);
+        }
+        
 #else
-		
-		enum Priority
-		{
-			IDLE = 1,
-			LOW = 1,
-			NORMAL = 0,
-			HIGH = -1
-		};
-		Thread() : threadHandle(0) { }
-		virtual ~Thread()
-		{
-			if (threadHandle != 0)
-			{
-				pthread_detach(threadHandle);
-			}
-		}
-		void start();
-		void join()
-		{
-			if (threadHandle)
-			{
-				pthread_join(threadHandle, 0);
-				threadHandle = 0;
-			}
-		}
-		
-		void setThreadPriority(Priority p)
-		{
-			setpriority(PRIO_PROCESS, 0, p);
-		}
-		static void sleep(uint32_t millis)
-		{
-			::usleep(millis * 1000);
-		}
-		static void yield()
-		{
-			::sched_yield();
-		}
+        
+        enum Priority
+        {
+            IDLE = 1,
+            LOW = 1,
+            NORMAL = 0,
+            HIGH = -1
+        };
+        Thread() : threadHandle(0) { }
+        virtual ~Thread()
+        {
+            if (threadHandle != 0)
+            {
+                pthread_detach(threadHandle);
+            }
+        }
+        void start();
+        void join()
+        {
+            if (threadHandle)
+            {
+                pthread_join(threadHandle, 0);
+                threadHandle = 0;
+            }
+        }
+        
+        void setThreadPriority(Priority p)
+        {
+            setpriority(PRIO_PROCESS, 0, p);
+        }
+        static void sleep(uint32_t millis)
+        {
+            ::usleep(millis * 1000);
+        }
+        static void yield()
+        {
+            ::sched_yield();
+        }
 #endif
-		
-	protected:
-		virtual int run() = 0;
-		
+        
+    protected:
+        virtual int run() = 0;
+        
 #ifdef _WIN32
-		HANDLE threadHandle;
-		
-		static unsigned int  WINAPI starter(void* p)
-		{
-			Thread* t = (Thread*)p;
-			t->run();
-			return 0;
-			// 2012-05-13_06-33-00_7MVDWDWCOHT7QGSTYJ6VV2CRKS6ZW4Z26ZLBTDQ_86F3C4CB_crash-strong-stack-r9957.dmp
-			// 2012-05-13_06-33-00_6L4RNPK74RC3S3K2K4AXX6AXEVFHHLF5MTZA2KQ_B1A20C72_crash-strong-stack-r9957.dmp
-		}
+        HANDLE threadHandle;
+        
+        static unsigned int  WINAPI starter(void* p)
+        {
+            Thread* t = (Thread*)p;
+            t->run();
+            return 0;
+            // 2012-05-13_06-33-00_7MVDWDWCOHT7QGSTYJ6VV2CRKS6ZW4Z26ZLBTDQ_86F3C4CB_crash-strong-stack-r9957.dmp
+            // 2012-05-13_06-33-00_6L4RNPK74RC3S3K2K4AXX6AXEVFHHLF5MTZA2KQ_B1A20C72_crash-strong-stack-r9957.dmp
+        }
 #else
-		pthread_t threadHandle;
-		static void* starter(void* p)
-		{
-			Thread* t = (Thread*)p;
-			t->run();
-			return NULL;
-		}
+        pthread_t threadHandle;
+        static void* starter(void* p)
+        {
+            Thread* t = (Thread*)p;
+            t->run();
+            return NULL;
+        }
 #endif
 };
 

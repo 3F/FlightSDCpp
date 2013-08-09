@@ -31,41 +31,41 @@
 
 class PropPage
 {
-	public:
-		PropPage(SettingsManager *src) : settings(src) { }
-		virtual ~PropPage() { }
-		
-		virtual PROPSHEETPAGE *getPSP() = 0;
-		virtual void write() = 0;
-		
-		enum Type { T_STR, T_INT, T_BOOL, T_CUSTOM, T_INT64, T_END };
-		
-		struct Item
-		{
-			WORD itemID;
-			int setting;
-			Type type;
-		};
-		struct ListItem
-		{
-			int setting;
-			ResourceManager::Strings desc;
-		};
-		struct TextItem
-		{
-			WORD itemID;
-			ResourceManager::Strings translatedString;
-		};
-		
-	protected:
-	
+    public:
+        PropPage(SettingsManager *src) : settings(src) { }
+        virtual ~PropPage() { }
+        
+        virtual PROPSHEETPAGE *getPSP() = 0;
+        virtual void write() = 0;
+        
+        enum Type { T_STR, T_INT, T_BOOL, T_CUSTOM, T_INT64, T_END };
+        
+        struct Item
+        {
+            WORD itemID;
+            int setting;
+            Type type;
+        };
+        struct ListItem
+        {
+            int setting;
+            ResourceManager::Strings desc;
+        };
+        struct TextItem
+        {
+            WORD itemID;
+            ResourceManager::Strings translatedString;
+        };
+        
+    protected:
+    
 #if DIM_EDIT_EXPERIMENT
-		std::map<WORD, CDimEdit *> ctrlMap;
+        std::map<WORD, CDimEdit *> ctrlMap;
 #endif
-		SettingsManager *settings;
-		void read(HWND page, Item const* items, ListItem* listItems = NULL, HWND list = NULL);
-		void write(HWND page, Item const* items, ListItem* listItems = NULL, HWND list = NULL);
-		void translate(HWND page, TextItem* textItems);
+        SettingsManager *settings;
+        void read(HWND page, Item const* items, ListItem* listItems = NULL, HWND list = NULL);
+        void write(HWND page, Item const* items, ListItem* listItems = NULL, HWND list = NULL);
+        void translate(HWND page, TextItem* textItems);
 };
 
 #endif // !defined(PROP_PAGE_H)

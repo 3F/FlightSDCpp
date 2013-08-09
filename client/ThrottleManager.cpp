@@ -39,17 +39,17 @@ namespace dcpp
 // constructor
 ThrottleManager::ThrottleManager(void) : downTokens(0), upTokens(0), downLimit(0), upLimit(0)
 {
-	TimerManager::getInstance()->addListener(this);
+    TimerManager::getInstance()->addListener(this);
 }
 
 // destructor
 ThrottleManager::~ThrottleManager(void)
 {
-	TimerManager::getInstance()->removeListener(this);
-	
-	// release conditional variables on exit
-	downCond.notify_all();
-	upCond.notify_all();
+    TimerManager::getInstance()->removeListener(this);
+    
+    // release conditional variables on exit
+    downCond.notify_all();
+    upCond.notify_all();
 }
 
 /*
@@ -57,35 +57,35 @@ ThrottleManager::~ThrottleManager(void)
  */
 int ThrottleManager::read(Socket* sock, void* buffer, size_t len)
 {
-	size_t downs = DownloadManager::getInstance()->getDownloadCount();
-	if (!BOOLSETTING(THROTTLE_ENABLE) || downLimit == 0 || downs == 0)
-		return sock->read(buffer, len);
-		
-	boost::unique_lock<boost::mutex> lock(downMutex);
-	
-	
-	if (downTokens > 0)
-	{
-		size_t slice = getDownloadLimit() / downs;
-		size_t readSize = min(slice, min(len, downTokens));
-		
-		// read from socket
-		readSize = sock->read(buffer, readSize);
-		
-		if (readSize > 0)
-			downTokens -= readSize;
-			
-		// next code can't be in critical section, so we must unlock here
-		lock.unlock();
-		
-		// give a chance to other transfers to get a token
-		boost::thread::yield();
-		return readSize;
-	}
-	
-	// no tokens, wait for them
-	downCond.timed_wait(lock, boost::posix_time::millisec(CONDWAIT_TIMEOUT));
-	return -1;  // from BufferedSocket: -1 = retry, 0 = connection close
+    size_t downs = DownloadManager::getInstance()->getDownloadCount();
+    if (!BOOLSETTING(THROTTLE_ENABLE) || downLimit == 0 || downs == 0)
+        return sock->read(buffer, len);
+        
+    boost::unique_lock<boost::mutex> lock(downMutex);
+    
+    
+    if (downTokens > 0)
+    {
+        size_t slice = getDownloadLimit() / downs;
+        size_t readSize = min(slice, min(len, downTokens));
+        
+        // read from socket
+        readSize = sock->read(buffer, readSize);
+        
+        if (readSize > 0)
+            downTokens -= readSize;
+            
+        // next code can't be in critical section, so we must unlock here
+        lock.unlock();
+        
+        // give a chance to other transfers to get a token
+        boost::thread::yield();
+        return readSize;
+    }
+    
+    // no tokens, wait for them
+    downCond.timed_wait(lock, boost::posix_time::millisec(CONDWAIT_TIMEOUT));
+    return -1;  // from BufferedSocket: -1 = retry, 0 = connection close
 }
 
 /*
@@ -94,32 +94,32 @@ int ThrottleManager::read(Socket* sock, void* buffer, size_t len)
  */
 int ThrottleManager::write(Socket* sock, void* buffer, size_t& len)
 {
-	size_t ups = UploadManager::getInstance()->getUploadCount();
-	if (!BOOLSETTING(THROTTLE_ENABLE) || upLimit == 0 || ups == 0)
-		return sock->write(buffer, len);
-		
-	boost::unique_lock<boost::mutex> lock(upMutex);
-	
-	if (upTokens > 0)
-	{
-		size_t slice = getUploadLimit() / ups;
-		len = min(slice, min(len, static_cast<size_t>(upTokens)));
-		upTokens -= len;
-		
-		// next code can't be in critical section, so we must unlock here
-		lock.unlock();
-		
-		// write to socket
-		int sent = sock->write(buffer, len);
-		
-		// give a chance to other transfers to get a token
-		boost::thread::yield();
-		return sent;
-	}
-	
-	// no tokens, wait for them
-	upCond.timed_wait(lock, boost::posix_time::millisec(CONDWAIT_TIMEOUT));
-	return 0;   // from BufferedSocket: -1 = failed, 0 = retry
+    size_t ups = UploadManager::getInstance()->getUploadCount();
+    if (!BOOLSETTING(THROTTLE_ENABLE) || upLimit == 0 || ups == 0)
+        return sock->write(buffer, len);
+        
+    boost::unique_lock<boost::mutex> lock(upMutex);
+    
+    if (upTokens > 0)
+    {
+        size_t slice = getUploadLimit() / ups;
+        len = min(slice, min(len, static_cast<size_t>(upTokens)));
+        upTokens -= len;
+        
+        // next code can't be in critical section, so we must unlock here
+        lock.unlock();
+        
+        // write to socket
+        int sent = sock->write(buffer, len);
+        
+        // give a chance to other transfers to get a token
+        boost::thread::yield();
+        return sent;
+    }
+    
+    // no tokens, wait for them
+    upCond.timed_wait(lock, boost::posix_time::millisec(CONDWAIT_TIMEOUT));
+    return 0;   // from BufferedSocket: -1 = failed, 0 = retry
 }
 
 /*
@@ -127,7 +127,7 @@ int ThrottleManager::write(Socket* sock, void* buffer, size_t& len)
  */
 size_t ThrottleManager::getDownloadLimit() const
 {
-	return downLimit;
+    return downLimit;
 }
 
 /*
@@ -135,74 +135,74 @@ size_t ThrottleManager::getDownloadLimit() const
  */
 size_t ThrottleManager::getUploadLimit() const
 {
-	return upLimit;
+    return upLimit;
 }
 
 // TimerManagerListener
 void ThrottleManager::on(TimerManagerListener::Second, uint64_t /*aTick*/) noexcept
 {
-	if (!BOOLSETTING(THROTTLE_ENABLE))
-	{
-		downLimit = 0;
-		upLimit = 0;
-		return;
-	}
-	
-	// limiter restrictions: up_limit >= 5 * slots + 4, up_limit >= 7 * down_limit
-	if (SETTING(MAX_UPLOAD_SPEED_LIMIT) < MIN_UPLOAD_SPEED_LIMIT)
-	{
-		SettingsManager::getInstance()->set(SettingsManager::MAX_UPLOAD_SPEED_LIMIT, MIN_UPLOAD_SPEED_LIMIT);
-	}
-	
-	if ((SETTING(MAX_DOWNLOAD_SPEED_LIMIT) > MAX_LIMIT_RATIO * SETTING(MAX_UPLOAD_SPEED_LIMIT)) || (SETTING(MAX_DOWNLOAD_SPEED_LIMIT) == 0))
-	{
-		SettingsManager::getInstance()->set(SettingsManager::MAX_DOWNLOAD_SPEED_LIMIT, MAX_LIMIT_RATIO * SETTING(MAX_UPLOAD_SPEED_LIMIT));
-	}
-	
-	if (SETTING(MAX_UPLOAD_SPEED_LIMIT_TIME) < MIN_UPLOAD_SPEED_LIMIT)
-	{
-		SettingsManager::getInstance()->set(SettingsManager::MAX_UPLOAD_SPEED_LIMIT_TIME, MIN_UPLOAD_SPEED_LIMIT);
-	}
-	
-	if ((SETTING(MAX_DOWNLOAD_SPEED_LIMIT_TIME) > MAX_LIMIT_RATIO * SETTING(MAX_UPLOAD_SPEED_LIMIT_TIME)) || (SETTING(MAX_DOWNLOAD_SPEED_LIMIT_TIME) == 0))
-	{
-		SettingsManager::getInstance()->set(SettingsManager::MAX_DOWNLOAD_SPEED_LIMIT_TIME, MAX_LIMIT_RATIO * SETTING(MAX_UPLOAD_SPEED_LIMIT_TIME));
-	}
-	
-	downLimit   = SETTING(MAX_DOWNLOAD_SPEED_LIMIT) * 1024;
-	upLimit     = SETTING(MAX_UPLOAD_SPEED_LIMIT) * 1024;
-	
-	// alternative limiter
-	if (BOOLSETTING(TIME_DEPENDENT_THROTTLE))
-	{
-		time_t currentTime;
-		time(&currentTime);
-		int currentHour = localtime(&currentTime)->tm_hour;
-		
-		if ((SETTING(BANDWIDTH_LIMIT_START) < SETTING(BANDWIDTH_LIMIT_END) &&
-		currentHour >= SETTING(BANDWIDTH_LIMIT_START) && currentHour < SETTING(BANDWIDTH_LIMIT_END)) ||
-		(SETTING(BANDWIDTH_LIMIT_START) > SETTING(BANDWIDTH_LIMIT_END) &&
-		(currentHour >= SETTING(BANDWIDTH_LIMIT_START) || currentHour < SETTING(BANDWIDTH_LIMIT_END))))
-		{
-			downLimit   = SETTING(MAX_DOWNLOAD_SPEED_LIMIT_TIME) * 1024;
-			upLimit     = SETTING(MAX_UPLOAD_SPEED_LIMIT_TIME) * 1024;
-		}
-	}
-	
-	// readd tokens
-	if (downLimit > 0)
-	{
-		boost::lock_guard<boost::mutex> lock(downMutex);
-		downTokens = downLimit;
-		downCond.notify_all();
-	}
-	
-	if (upLimit > 0)
-	{
-		boost::lock_guard<boost::mutex> lock(upMutex);
-		upTokens = upLimit;
-		upCond.notify_all();
-	}
+    if (!BOOLSETTING(THROTTLE_ENABLE))
+    {
+        downLimit = 0;
+        upLimit = 0;
+        return;
+    }
+    
+    // limiter restrictions: up_limit >= 5 * slots + 4, up_limit >= 7 * down_limit
+    if (SETTING(MAX_UPLOAD_SPEED_LIMIT) < MIN_UPLOAD_SPEED_LIMIT)
+    {
+        SettingsManager::getInstance()->set(SettingsManager::MAX_UPLOAD_SPEED_LIMIT, MIN_UPLOAD_SPEED_LIMIT);
+    }
+    
+    if ((SETTING(MAX_DOWNLOAD_SPEED_LIMIT) > MAX_LIMIT_RATIO * SETTING(MAX_UPLOAD_SPEED_LIMIT)) || (SETTING(MAX_DOWNLOAD_SPEED_LIMIT) == 0))
+    {
+        SettingsManager::getInstance()->set(SettingsManager::MAX_DOWNLOAD_SPEED_LIMIT, MAX_LIMIT_RATIO * SETTING(MAX_UPLOAD_SPEED_LIMIT));
+    }
+    
+    if (SETTING(MAX_UPLOAD_SPEED_LIMIT_TIME) < MIN_UPLOAD_SPEED_LIMIT)
+    {
+        SettingsManager::getInstance()->set(SettingsManager::MAX_UPLOAD_SPEED_LIMIT_TIME, MIN_UPLOAD_SPEED_LIMIT);
+    }
+    
+    if ((SETTING(MAX_DOWNLOAD_SPEED_LIMIT_TIME) > MAX_LIMIT_RATIO * SETTING(MAX_UPLOAD_SPEED_LIMIT_TIME)) || (SETTING(MAX_DOWNLOAD_SPEED_LIMIT_TIME) == 0))
+    {
+        SettingsManager::getInstance()->set(SettingsManager::MAX_DOWNLOAD_SPEED_LIMIT_TIME, MAX_LIMIT_RATIO * SETTING(MAX_UPLOAD_SPEED_LIMIT_TIME));
+    }
+    
+    downLimit   = SETTING(MAX_DOWNLOAD_SPEED_LIMIT) * 1024;
+    upLimit     = SETTING(MAX_UPLOAD_SPEED_LIMIT) * 1024;
+    
+    // alternative limiter
+    if (BOOLSETTING(TIME_DEPENDENT_THROTTLE))
+    {
+        time_t currentTime;
+        time(&currentTime);
+        int currentHour = localtime(&currentTime)->tm_hour;
+        
+        if ((SETTING(BANDWIDTH_LIMIT_START) < SETTING(BANDWIDTH_LIMIT_END) &&
+        currentHour >= SETTING(BANDWIDTH_LIMIT_START) && currentHour < SETTING(BANDWIDTH_LIMIT_END)) ||
+        (SETTING(BANDWIDTH_LIMIT_START) > SETTING(BANDWIDTH_LIMIT_END) &&
+        (currentHour >= SETTING(BANDWIDTH_LIMIT_START) || currentHour < SETTING(BANDWIDTH_LIMIT_END))))
+        {
+            downLimit   = SETTING(MAX_DOWNLOAD_SPEED_LIMIT_TIME) * 1024;
+            upLimit     = SETTING(MAX_UPLOAD_SPEED_LIMIT_TIME) * 1024;
+        }
+    }
+    
+    // readd tokens
+    if (downLimit > 0)
+    {
+        boost::lock_guard<boost::mutex> lock(downMutex);
+        downTokens = downLimit;
+        downCond.notify_all();
+    }
+    
+    if (upLimit > 0)
+    {
+        boost::lock_guard<boost::mutex> lock(upMutex);
+        upTokens = upLimit;
+        upCond.notify_all();
+    }
 }
 
 

@@ -27,38 +27,38 @@ struct IStaticPortMappingCollection;
 /// @todo this class is far from complete (should register callbacks, etc)
 class Mapper_WinUPnP : public Mapper
 {
-	public:
-		Mapper_WinUPnP() : Mapper(), pUN(0), lastPort(0) { }
-		
-		static const string name;
-		
-	private:
-		bool init();
-		void uninit();
-		
-		bool add(const unsigned short port, const Protocol protocol, const string& description);
-		bool remove(const unsigned short port, const Protocol protocol);
-		
-		uint32_t renewal() const
-		{
-			return 0;
-		}
-		
-		string getDeviceName();
-		string getExternalIP();
-		
-		const string& getName() const
-		{
-			return name;
-		}
-		
-		IUPnPNAT* pUN;
-		// this one can become invalid so we can't cache it
-		IStaticPortMappingCollection* getStaticPortMappingCollection();
-		
-		// need to save these to get the external IP...
-		unsigned short lastPort;
-		Protocol lastProtocol;
+    public:
+        Mapper_WinUPnP() : Mapper(), pUN(0), lastPort(0) { }
+        
+        static const string name;
+        
+    private:
+        bool init();
+        void uninit();
+        
+        bool add(const unsigned short port, const Protocol protocol, const string& description);
+        bool remove(const unsigned short port, const Protocol protocol);
+        
+        uint32_t renewal() const
+        {
+            return 0;
+        }
+        
+        string getDeviceName();
+        string getExternalIP();
+        
+        const string& getName() const
+        {
+            return name;
+        }
+        
+        IUPnPNAT* pUN;
+        // this one can become invalid so we can't cache it
+        IStaticPortMappingCollection* getStaticPortMappingCollection();
+        
+        // need to save these to get the external IP...
+        unsigned short lastPort;
+        Protocol lastProtocol;
 };
 
 #endif

@@ -27,37 +27,37 @@
 
 class QueuePage : public CPropertyPage<IDD_QUEUEPAGE>, public PropPage
 {
-	public:
-		QueuePage(SettingsManager *s) : PropPage(s)
-		{
-			title = _tcsdup((TSTRING(SETTINGS_DOWNLOADS) + _T('\\') + TSTRING(SETTINGS_QUEUE)).c_str());
-			SetTitle(title);
-			m_psp.dwFlags |= PSP_RTLREADING;
-		}
-		~QueuePage()
-		{
-			free(title);
-		}
-		
-		BEGIN_MSG_MAP(QueuePage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-	
-		static Item items[];
-		static TextItem texts[];
-		static ListItem optionItems[];
-		TCHAR* title;
+    public:
+        QueuePage(SettingsManager *s) : PropPage(s)
+        {
+            title = _tcsdup((TSTRING(SETTINGS_DOWNLOADS) + _T('\\') + TSTRING(SETTINGS_QUEUE)).c_str());
+            SetTitle(title);
+            m_psp.dwFlags |= PSP_RTLREADING;
+        }
+        ~QueuePage()
+        {
+            free(title);
+        }
+        
+        BEGIN_MSG_MAP(QueuePage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+    
+        static Item items[];
+        static TextItem texts[];
+        static ListItem optionItems[];
+        TCHAR* title;
 };
 
 #endif // !defined(QUEUE_PAGE_H)

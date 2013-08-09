@@ -28,30 +28,30 @@
 
 class UploadPage : public CPropertyPage<IDD_UPLOADPAGE>, public PropPage
 {
-	public:
-		UploadPage(SettingsManager *s) : PropPage(s)
-		{
-			SetTitle(CTSTRING(SETTINGS_UPLOADS_SLOTS));
-			m_psp.dwFlags |= PSP_RTLREADING;
-		};
-		~UploadPage() { };
-		
-		BEGIN_MSG_MAP(UploadPage)
-		MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
-		END_MSG_MAP()
-		
-		LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-		
-		// Common PropPage interface
-		PROPSHEETPAGE *getPSP()
-		{
-			return (PROPSHEETPAGE *) * this;
-		}
-		void write();
-		
-	protected:
-		static Item items[];
-		static TextItem texts[];
+    public:
+        UploadPage(SettingsManager *s) : PropPage(s)
+        {
+            SetTitle(CTSTRING(SETTINGS_UPLOADS_SLOTS));
+            m_psp.dwFlags |= PSP_RTLREADING;
+        };
+        ~UploadPage() { };
+        
+        BEGIN_MSG_MAP(UploadPage)
+        MESSAGE_HANDLER(WM_INITDIALOG, onInitDialog)
+        END_MSG_MAP()
+        
+        LRESULT onInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+        
+        // Common PropPage interface
+        PROPSHEETPAGE *getPSP()
+        {
+            return (PROPSHEETPAGE *) * this;
+        }
+        void write();
+        
+    protected:
+        static Item items[];
+        static TextItem texts[];
 };
 
 #endif //UPLOAD_PAGE_H

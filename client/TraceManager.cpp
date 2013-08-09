@@ -31,75 +31,75 @@ TraceManager* Singleton<TraceManager>::instance = nullptr;
 
 void  TraceManager::print(const string& msg)
 {
-	DWORD tid;
-	char buf[21];
-	
-	time_t now = time(NULL);
+    DWORD tid;
+    char buf[21];
+    
+    time_t now = time(NULL);
 //+BugMaster: fix
-	if (!strftime(buf, 21, "%Y-%m-%d %H:%M:%S ", localtime(&now)))
-	{
-		strcpy(buf, "xxxx-xx-xx xx:xx:xx ");
-	}
+    if (!strftime(buf, 21, "%Y-%m-%d %H:%M:%S ", localtime(&now)))
+    {
+        strcpy(buf, "xxxx-xx-xx xx:xx:xx ");
+    }
 //-BugMaster: fix
 
-	tid = GetCurrentThreadId();
-	
-	Lock l(cs);
-	
-	try
-	{
-		f->write(buf + string(indents[tid], ' ') + msg + "\r\n");
-	}
-	catch (const FileException&)
-	{
-		// ...
-	}
-	
+    tid = GetCurrentThreadId();
+    
+    Lock l(cs);
+    
+    try
+    {
+        f->write(buf + string(indents[tid], ' ') + msg + "\r\n");
+    }
+    catch (const FileException&)
+    {
+        // ...
+    }
+    
 }
 
 void CDECL TraceManager::trace_print(const char* format, ...) noexcept
 {
-	va_list args;
-	va_start(args, format);
-	char buf[512];
-	buf[0] = 0;
-	
-	_vsnprintf(buf, _countof(buf), format, args);
-	
-	print(string(buf));
-	va_end(args);
-	
+    va_list args;
+    va_start(args, format);
+    char buf[512];
+    buf[0] = 0;
+    
+    _vsnprintf(buf, _countof(buf), format, args);
+    
+    print(string(buf));
+    va_end(args);
+    
 }
 
 void CDECL TraceManager::trace_start(const char* format, ...) noexcept
 {
-	va_list args;
-	va_start(args, format);
-	
-	char buf[512];
-	
-	_vsnprintf(buf, _countof(buf), format, args);
-	
-	print((string)"START " + buf);
-	
-	indents[GetCurrentThreadId()] += 4;
-	va_end(args);
+    va_list args;
+    va_start(args, format);
+    
+    char buf[512];
+    
+    _vsnprintf(buf, _countof(buf), format, args);
+    
+    print((string)"START " + buf);
+    
+    indents[GetCurrentThreadId()] += 4;
+    va_end(args);
 }
 
 void CDECL TraceManager::trace_end(const char* format, ...) noexcept
 {
-	va_list args;
-	va_start(args, format);
-	
-	char buf[512];
-	
-	_vsnprintf(buf, _countof(buf), format, args);
-	
-	indents[GetCurrentThreadId()] -= 4;
-	
-	print((string)"END " + buf);
-	
-	va_end(args);
+    va_list args;
+    va_start(args, format);
+    
+    char buf[512];
+    
+    _vsnprintf(buf, _countof(buf), format, args);
+    
+    indents[GetCurrentThreadId()] -= 4;
+    
+    print((string)"END " + buf);
+    
+    va_end(args);
 }
 
 #endif

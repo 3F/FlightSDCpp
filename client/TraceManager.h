@@ -31,31 +31,31 @@ namespace dcpp
 
 class TraceManager : public Singleton<TraceManager>
 {
-	public:
-		void CDECL trace_print(const char* format, ...) noexcept;
-		void CDECL trace_start(const char* format, ...) noexcept;
-		void CDECL trace_end(const char* format, ...) noexcept;
-		
-	private:
-	
-		void  print(const string& msg);
-		
-		friend class Singleton<TraceManager>;
-		CriticalSection cs;
-		
-		File* f;
-		unordered_map<DWORD, int> indents;
-		
-		TraceManager()
-		{
-			f = new File("trace.log", File::WRITE, File::OPEN | File::CREATE);
-			f->setEndPos(0);
-		}
-		~TraceManager()
-		{
-			delete f;
-		}
-		
+    public:
+        void CDECL trace_print(const char* format, ...) noexcept;
+        void CDECL trace_start(const char* format, ...) noexcept;
+        void CDECL trace_end(const char* format, ...) noexcept;
+        
+    private:
+    
+        void  print(const string& msg);
+        
+        friend class Singleton<TraceManager>;
+        CriticalSection cs;
+        
+        File* f;
+        unordered_map<DWORD, int> indents;
+        
+        TraceManager()
+        {
+            f = new File("trace.log", File::WRITE, File::OPEN | File::CREATE);
+            f->setEndPos(0);
+        }
+        ~TraceManager()
+        {
+            delete f;
+        }
+        
 };
 
 #define TracePrint TraceManager::getInstance()->trace_print

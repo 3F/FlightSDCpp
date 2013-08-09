@@ -37,70 +37,70 @@ namespace dcpp
  * in the user interface.
  */
 class DownloadManager : public Speaker<DownloadManagerListener>,
-	private UserConnectionListener, private TimerManagerListener,
-	public Singleton<DownloadManager>
+    private UserConnectionListener, private TimerManagerListener,
+    public Singleton<DownloadManager>
 {
-	public:
-	
-		/** @internal */
-		void addConnection(UserConnectionPtr conn);
-		void checkIdle(const UserPtr& user);
-		
-		/** @internal */
-		void abortDownload(const string& aTarget);
-		
-		/** @return Running average download speed in Bytes/s */
-		int64_t getRunningAverage();
-		
-		/** @return Number of downloads. */
-		size_t getDownloadCount()
-		{
-			Lock l(cs);
-			return downloads.size();
-		}
-		
-		bool startDownload(QueueItem::Priority prio);
-		
-	private:
-	
-		CriticalSection cs;
-		DownloadList downloads;
-		UserConnectionList idlers;
-		
-		void removeConnection(UserConnectionPtr aConn);
-		void removeDownload(Download* aDown);
-		void fileNotAvailable(UserConnection* aSource);
-		void noSlots(UserConnection* aSource, string param = Util::emptyString);
-		
-		int64_t getResumePos(const string& file, const TigerTree& tt, int64_t startPos);
-		
-		void failDownload(UserConnection* aSource, const string& reason);
-		
-		friend class Singleton<DownloadManager>;
-		
-		DownloadManager();
-		~DownloadManager();
-		
-		void checkDownloads(UserConnection* aConn);
-		void startData(UserConnection* aSource, int64_t start, int64_t newSize, bool z);
-		void endData(UserConnection* aSource);
-		
-		void onFailed(UserConnection* aSource, const string& aError);
-		
-		// UserConnectionListener
-		void on(Data, UserConnection*, const uint8_t*, size_t) noexcept;
-		void on(Failed, UserConnection* aSource, const string& aError) noexcept { onFailed(aSource, aError); }
-		void on(ProtocolError, UserConnection* aSource, const string& aError) noexcept { onFailed(aSource, aError); }
-		void on(MaxedOut, UserConnection*, string param = Util::emptyString) noexcept;
-		void on(FileNotAvailable, UserConnection*) noexcept;
-		void on(ListLength, UserConnection* aSource, const string& aListLength);
-		void on(Updated, UserConnection*) noexcept;
-		
-		void on(AdcCommand::SND, UserConnection*, const AdcCommand&) noexcept;
-		void on(AdcCommand::STA, UserConnection*, const AdcCommand&) noexcept;
-		
-		// TimerManagerListener
-		void on(TimerManagerListener::Second, uint64_t aTick) noexcept;
+    public:
+    
+        /** @internal */
+        void addConnection(UserConnectionPtr conn);
+        void checkIdle(const UserPtr& user);
+        
+        /** @internal */
+        void abortDownload(const string& aTarget);
+        
+        /** @return Running average download speed in Bytes/s */
+        int64_t getRunningAverage();
+        
+        /** @return Number of downloads. */
+        size_t getDownloadCount()
+        {
+            Lock l(cs);
+            return downloads.size();
+        }
+        
+        bool startDownload(QueueItem::Priority prio);
+        
+    private:
+    
+        CriticalSection cs;
+        DownloadList downloads;
+        UserConnectionList idlers;
+        
+        void removeConnection(UserConnectionPtr aConn);
+        void removeDownload(Download* aDown);
+        void fileNotAvailable(UserConnection* aSource);
+        void noSlots(UserConnection* aSource, string param = Util::emptyString);
+        
+        int64_t getResumePos(const string& file, const TigerTree& tt, int64_t startPos);
+        
+        void failDownload(UserConnection* aSource, const string& reason);
+        
+        friend class Singleton<DownloadManager>;
+        
+        DownloadManager();
+        ~DownloadManager();
+        
+        void checkDownloads(UserConnection* aConn);
+        void startData(UserConnection* aSource, int64_t start, int64_t newSize, bool z);
+        void endData(UserConnection* aSource);
+        
+        void onFailed(UserConnection* aSource, const string& aError);
+        
+        // UserConnectionListener
+        void on(Data, UserConnection*, const uint8_t*, size_t) noexcept;
+        void on(Failed, UserConnection* aSource, const string& aError) noexcept { onFailed(aSource, aError); }
+        void on(ProtocolError, UserConnection* aSource, const string& aError) noexcept { onFailed(aSource, aError); }
+        void on(MaxedOut, UserConnection*, string param = Util::emptyString) noexcept;
+        void on(FileNotAvailable, UserConnection*) noexcept;
+        void on(ListLength, UserConnection* aSource, const string& aListLength);
+        void on(Updated, UserConnection*) noexcept;
+        
+        void on(AdcCommand::SND, UserConnection*, const AdcCommand&) noexcept;
+        void on(AdcCommand::STA, UserConnection*, const AdcCommand&) noexcept;
+        
+        // TimerManagerListener
+        void on(TimerManagerListener::Second, uint64_t aTick) noexcept;
 };
 
 } // namespace dcpp
