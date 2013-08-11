@@ -39,7 +39,6 @@
 
 namespace dcpp
 {
-bool ClientManager::_isSigKill = false;
 
 Client* ClientManager::getClient(const string& aHubURL)
 {
@@ -81,8 +80,36 @@ void ClientManager::putClient(Client* aClient)
         clients.erase(aClient->getHubUrl());
     }
     aClient->shutdown();
-    aClient->clearUsers(isSigKill());
+    if(!isSigKill()){
+        aClient->clearUsers(false);
+    }
     delete aClient;
+}
+
+void ClientManager::_killing()
+{
+    const Client::List& clients = getClients();
+    
+    Lock l(cs);
+    for(Client::List::const_iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        it->second->disconnect(true);
+        it->second->clearUsers(true);
+    }
+
+    //reducing of operations with users
+    {
+        OnlineMap flush;
+        flush.swap(onlineUsers);
+        flush.clear();
+    }
+
+    {
+        UserMap flush;
+        flush.swap(users);
+        flush.clear();
+    }
+    nicks.clear();
 }
 
 StringList ClientManager::getHubs(const CID& cid, const string& hintUrl) const
@@ -409,6 +436,10 @@ void ClientManager::putOnline(OnlineUser* ou) noexcept
 
 void ClientManager::putOffline(OnlineUser* ou, bool disconnect) noexcept
 {
+    if(isSigKill()){
+        return;
+    }
+
     bool lastUser = false;
     {
         Lock l(cs);

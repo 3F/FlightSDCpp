@@ -2077,14 +2077,14 @@ void QueueManager::saveQueue(bool force) noexcept
                     
                     const CID& cid = j->getUser().user->getCID();
                     const string& hint = j->getUser().hint;
+                    const string& nick = j->getUser().user->getFirstNick();
                     
                     f.write(LIT("\t\t<Source CID=\""));
                     f.write(cid.toBase32());
                     f.write(LIT("\" Nick=\""));
-                    const auto& l_nicks = ClientManager::getInstance()->getNicks(cid, hint);
-                    if (!l_nicks.empty())
+                    if (!nick.empty())
                     {
-                        f.write(SimpleXML::escape(l_nicks.empty() ? "" : l_nicks[0], tmp, true));
+                        f.write(SimpleXML::escape(nick, tmp, true));
                     }
                     if (!hint.empty())
                     {

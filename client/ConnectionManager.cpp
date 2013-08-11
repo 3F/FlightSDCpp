@@ -1029,7 +1029,9 @@ void ConnectionManager::disconnect(const UserPtr& aUser, int isDownload)
 
 void ConnectionManager::shutdown()
 {
-    dcassert(shuttingDown == false);
+    if(shuttingDown){
+        return; // maybe a called twice "DCPlusPlus::shutdown()": ConnectionManager::shutdown() -> {BufferedSocket::waitShutdown()} -> ~destroying object of ConnectionManager - can there be a unified management -_-
+    }
     shuttingDown = true;
     TimerManager::getInstance()->removeListener(this);
     disconnect();

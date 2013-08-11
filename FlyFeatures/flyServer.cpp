@@ -229,6 +229,10 @@ void CFlyServerConfig::loadConfig()
 	if(m_time_load_config == 0 || (l_cur_tick - m_time_load_config) > m_time_reload_config ) 
   {
 	 m_time_load_config = l_cur_tick + 1;
+
+     initOfflineConfig();
+     return;
+
 	CFlyLog l_dht_server_log("[fly-server config loader]");
 	std::string l_data;
 #ifdef _DEBUG

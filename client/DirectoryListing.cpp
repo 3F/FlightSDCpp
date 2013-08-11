@@ -178,7 +178,7 @@ void ListLoader::startTag(const string& name, StringPairList& attribs, bool simp
     {
         throw AbortException("ShareManager::isShutdown()");
     }
-    if (ClientManager::isSigKill())
+    if (ClientManager::getInstance()->isSigKill())
     {
         throw AbortException("ClientManager::isShutdown()");
     }

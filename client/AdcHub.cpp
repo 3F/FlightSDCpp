@@ -130,22 +130,20 @@ void AdcHub::putUser(const uint32_t aSID, bool disconnect)
 
 void AdcHub::clearUsers(bool quiet)
 {
-    SIDMap tmp;
-    {
-        Lock l(cs);
-        users.swap(tmp);
-        availableBytes = 0;
-    }
+    SIDMap flush;
+    Lock l(cs);
+
+    users.swap(flush);
+    availableBytes = 0;
 
     if(quiet){
-        Lock l(cs);
-        for(SIDIter i = tmp.begin(); i != tmp.end(); ++i){
+        for(SIDIter i = flush.begin(); i != flush.end(); ++i){
             i->second->dec();
         }
         return;
     }
 
-    for (SIDIter i = tmp.begin(); i != tmp.end(); ++i)
+    for (SIDIter i = flush.begin(); i != flush.end(); ++i)
     {
         if (i->first != AdcCommand::HUB_SID)
             ClientManager::getInstance()->putOffline(i->second);

@@ -158,22 +158,20 @@ void NmdcHub::putUser(const string& aNick)
 
 void NmdcHub::clearUsers(bool quiet)
 {
-    NickMap u2;
-    {
-        Lock l(cs);
-        u2.swap(users);
-        availableBytes = 0;
-    }
+    NickMap flush;
+    Lock l(cs);
+
+    flush.swap(users);
+    availableBytes = 0;
 
     if(quiet){
-        Lock l(cs);
-        for(NickIter i = u2.begin(); i != u2.end(); ++i){
+        for(NickIter i = flush.begin(); i != flush.end(); ++i){
             i->second->dec();
         }
         return;
     }
     
-    for (NickIter i = u2.begin(); i != u2.end(); ++i)
+    for (NickIter i = flush.begin(); i != flush.end(); ++i)
     {
         ClientManager::getInstance()->putOffline(i->second);
         i->second->dec();

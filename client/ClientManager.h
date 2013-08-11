@@ -174,12 +174,16 @@ class ClientManager : public Speaker<ClientManagerListener>,
         
         OnlineUserPtr findDHTNode(const CID& cid) const;
         
-        static void setSigKill(bool status)
+        void setSigKill()
         {
-            _isSigKill = status;
+            if(_isSigKill){
+                return;
+            }
+            _isSigKill = true;
+            _killing();
         }
 
-        static bool isSigKill()
+        bool isSigKill() const
         {
             return _isSigKill;
         }
@@ -208,7 +212,7 @@ class ClientManager : public Speaker<ClientManagerListener>,
         
         friend class Singleton<ClientManager>;
         
-        ClientManager()
+        ClientManager() : _isSigKill(false)
         {
             TimerManager::getInstance()->addListener(this);
         }
@@ -246,7 +250,9 @@ class ClientManager : public Speaker<ClientManagerListener>,
         void on(TimerManagerListener::Minute, uint64_t aTick) noexcept;
         
         /** status of destroying app */
-        static bool _isSigKill;
+        bool _isSigKill;
+        /** rapid release resources */
+        void _killing();
 };
 
 } // namespace dcpp

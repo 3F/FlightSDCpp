@@ -1220,7 +1220,7 @@ LRESULT MainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, 
         {
             m_closing = true;
             ShareManager::getInstance()->shutdown(); // http://code.google.com/p/flylinkdc/issues/detail?id=1107
-            ClientManager::setSigKill(true);
+            ClientManager::getInstance()->setSigKill();
             updateTray(false);
             
             WINDOWPLACEMENT wp = {0};
@@ -1246,12 +1246,11 @@ LRESULT MainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, 
             // save bars settings
             WinUtil::saveReBarSettings(m_hWndToolBar);
             
-            ShowWindow(SW_HIDE);
+            //ShowWindow(SW_HIDE);
             transferView.prepareClose();
             
             WebServerManager::getInstance()->removeListener(this);
             SearchManager::getInstance()->disconnect();
-            ConnectionManager::getInstance()->disconnect();
             listQueue.shutdown();
             
             DWORD id;

@@ -133,7 +133,8 @@ void shutdown()
 {
     TimerManager::getInstance()->shutdown();
     HashManager::getInstance()->shutdown();
-    //ConnectionManager::getInstance()->shutdown(); //called twice
+    DHT::deleteInstance();
+    ConnectionManager::getInstance()->shutdown();
     MappingManager::getInstance()->close();
     BufferedSocket::waitShutdown();
     
@@ -141,7 +142,6 @@ void shutdown()
     SettingsManager::getInstance()->save();
     MappingManager::deleteInstance();
     ConnectivityManager::deleteInstance();
-    DHT::deleteInstance();
     DebugManager::deleteInstance();
     WebServerManager::deleteInstance();
     DetectionManager::deleteInstance();
