@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SolutionEvents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <preBuild>
+    <command>revision.vbs</command>
+    <caption>call revision.vbs</caption>
+    <enabled>true</enabled>
+  </preBuild>
+  <postBuild>
+    <command />
+    <caption />
+    <enabled>false</enabled>
+  </postBuild>
+  <cancelBuild>
+    <command />
+    <caption />
+    <enabled>false</enabled>
+  </cancelBuild>
+</SolutionEvents>
