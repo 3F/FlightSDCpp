@@ -134,6 +134,8 @@ enum Strings   // @DontAdd
     DOWNLOAD_QUEUE, // "Download queue"
     DOWNLOAD_STARTING, // "Download starting..."
     DOWNLOAD_TO, // "Download to..."
+    DOWNLOAD_INTO_QUEUE, // "Into queue"
+    DOWNLOAD_INTO_QUEUE_TO, // "Into queue with path.."
     DOWNLOAD_WHOLE_DIR, // "Download whole directory"
     DOWNLOAD_WHOLE_DIR_TO, // "Download whole directory to..."
     DOWNLOAD_WITH_PRIORITY, // "Download with priority..."

@@ -316,6 +316,47 @@ class DirectoryListingFrame : public MDITabChildWindowImpl<DirectoryListingFrame
         void up();
         void back();
         void forward();
+
+        struct ContextMenuOptions
+        {
+            /** queue or download operation */
+            bool isQueueInsteadOfDownload;
+            ContextMenuOptions() : isQueueInsteadOfDownload(false){};
+        };
+
+         /**
+         * OMenu wrapper.
+         * Context menu with hooks
+         */
+        struct ContextMenu
+        {
+            OMenu instance;
+            static ContextMenuOptions options;
+ 
+            /** keyboard hook for context menu  */
+            HHOOK hookKey;
+            LRESULT hookKeyProc(int code, WPARAM wParam, LPARAM lParam);
+ 
+            ContextMenu()
+            {
+                _this   = this;
+                options = ContextMenuOptions();
+                instance.CreatePopupMenu();
+                hookKey = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC)_hookKeyProc, NULL, ::GetCurrentThreadId());
+            };
+ 
+            ~ContextMenu()
+            {
+                UnhookWindowsHookEx(hookKey);
+            };
+ 
+        protected:
+            static ContextMenu* _this; 
+            static LRESULT CALLBACK _hookKeyProc(int code, WPARAM wParam, LPARAM lParam)
+            {
+                return _this->hookKeyProc(code, wParam, lParam);
+            };
+        };
         
         class ItemInfo
         {

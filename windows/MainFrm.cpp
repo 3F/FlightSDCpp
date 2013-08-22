@@ -1246,7 +1246,7 @@ LRESULT MainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, 
             // save bars settings
             WinUtil::saveReBarSettings(m_hWndToolBar);
             
-            //ShowWindow(SW_HIDE);
+            ShowWindow(SW_HIDE);
             transferView.prepareClose();
             
             WebServerManager::getInstance()->removeListener(this);
