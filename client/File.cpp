@@ -349,6 +349,56 @@ bool File::isAbsolute(const string& path) noexcept
     return path.size() > 2 && (path[1] == ':' || path[0] == '/' || path[0] == '\\' || (path[0] == '\\' && path[1] == '\\'));
 }
 
+void File::touch(const string& target) /* throws Exception */
+{
+    const tstring path      = Text::toT(target);
+    tstring::size_type pos  = path.find_first_of(_T("\\/"));
+
+    if(pos == tstring::npos){
+        return;
+    }
+    ++pos;
+
+    list<tstring> created;
+    while((pos = path.find_first_of(_T("\\/"), pos)) != tstring::npos)
+    {
+        tstring current = path.substr(0, ++pos);
+        ::CreateDirectory(current.c_str(), NULL); //errors: ERROR_ALREADY_EXISTS / ERROR_PATH_NOT_FOUND
+
+        if(GetLastError() == ERROR_SUCCESS){
+            created.push_back(current);
+        }
+    }
+
+    //TODO: transaction: -> [ dir -> file -> [x]file -> [x]dir ] ->
+    //      see Transacted function of Directory Management API
+
+    try
+    {
+        if(GetLastError() == ERROR_PATH_NOT_FOUND){
+            throw FileException("path failed: " + target);
+        }
+
+        File f(target, File::WRITE, File::CREATE /*| File::TRUNCATE*/);
+        f.close();
+        File::deleteFile(target);
+    }
+    catch(...)
+    {
+        //TODO:
+        while(!created.empty()){
+            ::RemoveDirectory(created.back().c_str());
+            created.pop_back();
+        }
+        throw;
+    }
+
+    while(!created.empty()){
+        ::RemoveDirectory(created.back().c_str());
+        created.pop_back();
+    }
+}
+
 #else // !_WIN32
 
 File::File(const string& aFileName, int access, int mode)
@@ -589,6 +639,15 @@ void File::ensureDirectory(const string& aFile) noexcept
 bool File::isAbsolute(const string& path) noexcept
 {
     return path.size() > 1 && path[0] == '/';
+}
+
+void File::touch(const string& target) /* throws Exception */
+{
+    //TODO: directory remove - see _WIN32 section
+    File::ensureDirectory(target);
+    File f(target, File::WRITE, File::CREATE /*| File::TRUNCATE*/);
+    f.close();
+    File::deleteFile(target);
 }
 
 #endif // !_WIN32
