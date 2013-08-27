@@ -933,6 +933,10 @@ void QueueManager::setDirty()
 string QueueManager::checkTarget(const string& aTarget, bool checkExistence) throw(QueueException, FileException)
 {
 #ifdef _WIN32
+    if (aTarget.length() > FULL_MAX_PATH)
+    {
+        throw QueueException(STRING(TARGET_FILENAME_TOO_LONG));
+    }
     // Check that target starts with a drive or is an UNC path
     if ((aTarget[1] != ':' || aTarget[2] != '\\') &&
             (aTarget[0] != '\\' && aTarget[1] != '\\'))
@@ -940,6 +944,10 @@ string QueueManager::checkTarget(const string& aTarget, bool checkExistence) thr
         throw QueueException(STRING(INVALID_TARGET_FILE));
     }
 #else
+    if (aTarget.length() > PATH_MAX)
+    {
+        throw QueueException(STRING(TARGET_FILENAME_TOO_LONG));
+    }
     // Check that target contains at least one directory...we don't want headless files...
     if (aTarget[0] != '/')
     {
@@ -948,26 +956,11 @@ string QueueManager::checkTarget(const string& aTarget, bool checkExistence) thr
 #endif
     
     string target = Util::validateFileName(aTarget);
-
-    if(File::getSize(target) != -1)
+    
+    // Check that the file doesn't already exist...
+    if (checkExistence && File::getSize(target) != -1)
     {
-        // Check that the file doesn't already exist...
-        if(checkExistence){
-            throw FileException(STRING(TARGET_FILE_EXISTS));
-        }
-    }
-    else
-    {
-        //check all file system errors
-        try
-        {
-            File::touch(target);
-        }
-        catch(...)
-        {
-            //TODO: customization
-            throw QueueException(STRING(TARGET_FILENAME_TOO_LONG));
-        }        
+        throw FileException(STRING(TARGET_FILE_EXISTS));
     }
     return target;
 }

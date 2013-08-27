@@ -161,12 +161,6 @@ class File : public IOStream
         }
         static StringList findFiles(const string& path, const string& pattern, bool p_append_path = true);
         static uint32_t currentTime();
-
-        /**
-         * check file system errors
-         * try touching for used FS
-         */
-        static void touch(const string& target) /* throws Exception */;
         
     protected:
 #ifdef _WIN32

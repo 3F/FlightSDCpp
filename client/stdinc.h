@@ -26,6 +26,10 @@
 # define BOOST_DISABLE_ASSERTS 1
 #endif
 
+//[+]IRainman FlylinkDC working with long paths
+// http://msdn.microsoft.com/en-us/library/ee681827(VS.85).aspx#limits
+#define FULL_MAX_PATH 32760 + 255 + 255 + 8 // Maximum path name length + Maximum file size + Mashine name overhed in UNC path + UNC header
+
 #define PPA_INCLUDE_VERSION_CHECK
 
 #ifdef USE_RIP_MINIDUMP
