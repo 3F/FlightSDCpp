@@ -752,8 +752,8 @@ Socket::addrinfo_p Socket::resolveAddr(const string& aDns, uint16_t port, int fl
     if (ret != 0)
         throw SocketException(ret);
         
-    dcdebug("Resolved %s:%d to %s, next is %p\n", aDns.c_str(), port,
-            resolveName((addr&)*result->ai_addr, NULL).c_str(), result->ai_next);
+    //dcdebug("Resolved %s:%d to %s, next is %p\n", aDns.c_str(), port,
+    //        resolveName((addr&)*result->ai_addr, NULL).c_str(), result->ai_next);
             
     return addrinfo_p(result, &freeaddrinfo);
 }

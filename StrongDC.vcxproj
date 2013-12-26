@@ -487,6 +487,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windows\DumpSenderDlg.h" />
+    <ClInclude Include="windows\grid\CGrid.h" />
+    <ClInclude Include="windows\grid\CGridItem.h" />
     <ClInclude Include="windows\RangesPage.h" />
     <ClInclude Include="windows\AboutDlg.h" />
     <ClInclude Include="windows\ADLSearchFrame.h" />

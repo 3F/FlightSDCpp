@@ -20,6 +20,9 @@
       <UniqueIdentifier>{5c7bcc03-a9a8-4e13-9a1d-518062c5668c}</UniqueIdentifier>
       <Extensions>txt</Extensions>
     </Filter>
+    <Filter Include="Header Files\grid">
+      <UniqueIdentifier>{477b88cd-d5da-412c-a384-d817847b276b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\ADLSearch.ico">
@@ -676,6 +679,12 @@
     </ClInclude>
     <ClInclude Include="windows\DumpSenderDlg.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="windows\grid\CGrid.h">
+      <Filter>Header Files\grid</Filter>
+    </ClInclude>
+    <ClInclude Include="windows\grid\CGridItem.h">
+      <Filter>Header Files\grid</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -129,30 +129,20 @@ LRESULT SearchFrame::onCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
                     WS_HSCROLL | WS_VSCROLL | LVS_REPORT | LVS_NOCOLUMNHEADER, WS_EX_CLIENTEDGE, IDC_HUB);
     ctrlHubs.SetExtendedListViewStyle(LVS_EX_LABELTIP | LVS_EX_CHECKBOXES | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
     hubsContainer.SubclassWindow(ctrlHubs.m_hWnd);
-    
-    ctrlFilter.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |
-                      ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
-                      
-    ctrlFilterContainer.SubclassWindow(ctrlFilter.m_hWnd);
-    ctrlFilter.SetFont(WinUtil::font);
-    
-    ctrlFilterSel.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_HSCROLL |
-                         WS_VSCROLL | CBS_DROPDOWNLIST, WS_EX_CLIENTEDGE);
-                         
-    ctrlFilterSelContainer.SubclassWindow(ctrlFilterSel.m_hWnd);
-    ctrlFilterSel.SetFont(WinUtil::font);
 
-    ctrlFilterExcl.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |
-                      ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
-                      
-    ctrlFilterContainerExcl.SubclassWindow(ctrlFilterExcl.m_hWnd);
-    ctrlFilterExcl.SetFont(WinUtil::font);
-    
-    ctrlFilterSelExcl.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_HSCROLL |
-                         WS_VSCROLL | CBS_DROPDOWNLIST, WS_EX_CLIENTEDGE);
-                         
-    ctrlFilterSelContainerExcl.SubclassWindow(ctrlFilterSelExcl.m_hWnd);
-    ctrlFilterSelExcl.SetFont(WinUtil::font);
+    ctrlGridFilters.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VSCROLL | LVS_REPORT | LVS_NOCOLUMNHEADER, WS_EX_CLIENTEDGE);
+    ctrlGridFilters.SetExtendedGridStyle(PGS_EX_SINGLECLICKEDIT /*| PGS_EX_NOGRID*/ | PGS_EX_NOSHEETNAVIGATION);
+
+    ctrlGridFilters.InsertColumn(FGC_INVERT, _T("Invert"), LVCFMT_CENTER, 14, 0);
+    ctrlGridFilters.InsertColumn(FGC_TYPE, _T("Type"), LVCFMT_LEFT, 62, 0);
+    ctrlGridFilters.InsertColumn(FGC_FILTER, _T("Filter"), LVCFMT_LEFT, 114, 0);
+    ctrlGridFilters.InsertColumn(FGC_ADD, _T("Add"), LVCFMT_LEFT, 14, 0);
+    ctrlGridFilters.InsertColumn(FGC_REMOVE, _T("Del"), LVCFMT_LEFT, 14, 0);
+
+    ctrlGridFilters.SetBkColor(GetSysColor(COLOR_3DFACE));
+    ctrlGridFilters.SetTextColor(GetSysColor(COLOR_BTNTEXT));
+
+    insertIntofilter(ctrlGridFilters);
     
     searchLabel.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
     searchLabel.SetFont(WinUtil::systemFont, FALSE);
@@ -302,28 +292,6 @@ LRESULT SearchFrame::onCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
         SetWindowText(CTSTRING(SEARCH));
         ::EnableWindow(GetDlgItem(IDC_SEARCH_PAUSE), FALSE);
     }
-
-    for (int j = 0; j < COLUMN_LAST; j++)
-    {
-        ctrlFilterSel.AddString(CTSTRING_I(columnNames[j]));
-        ctrlFilterSelExcl.AddString(CTSTRING_I(columnNames[j]));
-    }
-
-    // additionals filter option
-    for (int j = FILTER_ITEM_FIRST; j < FILTER_ITEM_LAST; j++)
-    {
-        LPCTSTR caption = _T("");
-        switch(j){
-            case FILTER_ITEM_PATHFILE:{
-                caption = CTSTRING(SEARCH_FILTER_ITEM_FILEPATH);
-                break;
-            }
-        }
-        ctrlFilterSel.AddString(caption);
-        ctrlFilterSelExcl.AddString(caption);
-    }
-    ctrlFilterSel.SetCurSel(FILTER_ITEM_PATHFILE);
-    ctrlFilterSelExcl.SetCurSel(FILTER_ITEM_PATHFILE);
     
     SettingsManager::getInstance()->addListener(this);
     TimerManager::getInstance()->addListener(this);
@@ -332,6 +300,50 @@ LRESULT SearchFrame::onCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
     
     bHandled = FALSE;
     return 1;
+}
+
+vector<LPCTSTR> SearchFrame::getFilterTypes()
+{
+    vector<LPCTSTR> types;
+
+    // default types
+    for(int j = 0; j < COLUMN_LAST; j++){
+        types.push_back(CTSTRING_I(columnNames[j]));
+    }
+
+    // addition
+    for(int j = FILTER_ITEM_FIRST; j < FILTER_ITEM_LAST; j++){
+        LPCTSTR caption = _T("");
+        switch(j){
+            case FILTER_ITEM_PATHFILE:{
+                caption = CTSTRING(SEARCH_FILTER_ITEM_FILEPATH);
+                break;
+            }
+            default:{
+                ATLASSERT(false);
+            }
+        }
+        types.push_back(caption);
+    }
+    return types;
+}
+
+void SearchFrame::insertIntofilter(CGrid& grid)
+{
+    TCGridItemCustom invertCfg;
+    invertCfg.caption     = _T("~");
+    invertCfg.flags       = DT_SINGLELINE | DT_VCENTER | DT_CENTER;
+    invertCfg.offset.top  = 4;
+
+    int idx = grid.InsertItem(grid.GetSelectedIndex() + 1, CGridItem::ButtonPush(false, invertCfg));
+
+    TCGridItemCustom typesCfg;
+    typesCfg.offset.right = 70;
+
+    grid.SetSubItem(idx, 1, CGridItem::ListBox(getFilterTypes(), typesCfg, FILTER_ITEM_PATHFILE));
+    grid.SetSubItem(idx, 2, CGridItem::EditBox(_T(""), this));
+    grid.SetSubItem(idx, 3, CGridItem::Button(_T("+")));
+    grid.SetSubItem(idx, 4, CGridItem::Button(_T("-")));
 }
 
 LRESULT SearchFrame::onMeasure(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -1039,6 +1051,7 @@ LRESULT SearchFrame::onClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
     }
 }
 
+//TODO: o_o
 void SearchFrame::UpdateLayout(BOOL bResizeBars)
 {
     RECT rect;
@@ -1068,7 +1081,11 @@ void SearchFrame::UpdateLayout(BOOL bResizeBars)
     
     if (showUI)
     {
-        int const width = 220, spacing = 50, labelH = 16, comboH = 140, lMargin = 2, rMargin = 4;
+        int const width = 240, spacing = 50, labelH = 16, comboH = 140, lMargin = 2, rMargin = 4;
+
+        const LONG gridFilterSMin     = 70;
+        const LONG gridFilterBAnchor  = 530;
+
         CRect rc = rect;
         
         rc.left += width;
@@ -1120,58 +1137,37 @@ void SearchFrame::UpdateLayout(BOOL bResizeBars)
         typeLabel.MoveWindow(rc.left + lMargin, rc.top - labelH, width - rMargin, labelH - 1);
         
         // "Search filter"
-        rc.left = lMargin;
-        rc.right = (width - rMargin) / 2 - 3;
+        LONG gridFilterH = rect.bottom - gridFilterBAnchor;
+
         rc.top += spacing;
-        rc.bottom = rc.top + 21;
-        
-        ctrlFilter.MoveWindow(rc);
-        
-        rc.left = (width - rMargin) / 2 + 3;
-        rc.right = width - rMargin;
-        rc.bottom = rc.top + comboH + 21;
-        ctrlFilterSel.MoveWindow(rc);
-        rc.bottom -= comboH;
-        
         srLabel.MoveWindow(lMargin * 2, rc.top - labelH, width - rMargin, labelH - 1);
 
-        // "Exclude-filter"
-        rc.left = lMargin;
-        rc.right = (width - rMargin) / 2 - 3;
-        rc.top += spacing;
-        rc.bottom = rc.top + 21;
-        
-        ctrlFilterExcl.MoveWindow(rc);
-        
-        rc.left = (width - rMargin) / 2 + 3;
-        rc.right = width - rMargin;
-        rc.bottom = rc.top + comboH + 21;
-        ctrlFilterSelExcl.MoveWindow(rc);
-        rc.bottom -= comboH;
+        rc.left     = -1;
+        rc.right    = width + 1;
+        rc.bottom   = rc.top + max(gridFilterSMin, gridFilterSMin + gridFilterH);
+        ctrlGridFilters.MoveWindow(rc);
 
-        srLabelExcl.MoveWindow(lMargin * 2, rc.top - labelH, width - rMargin, labelH - 1);
-        
+        rc.top += 10 + max(gridFilterSMin, gridFilterSMin + gridFilterH);
+                
         // "Search options"
         rc.left = lMargin + 4;
         rc.right = width - rMargin;
-        rc.top += spacing;
-        rc.bottom += spacing;
-        
+        rc.top += labelH;
         optionLabel.MoveWindow(rc.left + lMargin, rc.top - labelH, width - rMargin, labelH - 1);
-        ctrlSlots.MoveWindow(rc);
+
+        rc.top += labelH;
+        ctrlSlots.MoveWindow(rc.left + lMargin, rc.top - labelH, width - rMargin, labelH - 1);
         
-        rc.top += 21;
-        rc.bottom += 21;
-        ctrlCollapsed.MoveWindow(rc);
+        rc.top += labelH;
+        ctrlCollapsed.MoveWindow(rc.left + lMargin, rc.top - labelH, width - rMargin, labelH - 1);
         
-        rc.top += 21;
-        rc.bottom += 21;
-        m_ctrlStoreIP.MoveWindow(rc);
+        rc.top += labelH;
+        m_ctrlStoreIP.MoveWindow(rc.left + lMargin, rc.top - labelH, width - rMargin, labelH - 1);
         
         // "Hubs"
         rc.left = lMargin;
         rc.right = width - rMargin;
-        rc.top += spacing;
+        rc.top += labelH + 8;
         rc.bottom = rc.top + comboH;
         if (rc.bottom + labelH + 21 > rect.bottom)
         {
@@ -1427,9 +1423,8 @@ void SearchFrame::addSearchResult(SearchInfo* si)
         
         ctrlResults.insertGroupedItem(si, expandSR);
         
-        if(!filter.empty() || !_filterExcl.empty()){
-            boost::thread t(boost::bind(&SearchFrame::updateSearchList, this, si));
-        }
+        //TODO:
+        boost::thread t(boost::bind(&SearchFrame::updateSearchList, this, si));
             
         if (BOOLSETTING(BOLD_SEARCH))
         {
@@ -1923,15 +1918,6 @@ LRESULT SearchFrame::onCustomDraw(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled
     }
 }
 
-inline tstring SearchFrame::getTextFromCEdit(CEdit& edit)
-{
-    boost::scoped_array<TCHAR> buf;
-    buf.reset(new TCHAR[edit.GetWindowTextLength() + 1]);
-    edit.GetWindowText(buf.get(), edit.GetWindowTextLength() + 1);
-    return buf.get();
-}
-
-
 inline bool SearchFrame::doFilter(WPARAM wParam)
 {
     if(BOOLSETTING(FILTER_ENTER) && wParam != VK_RETURN){
@@ -1962,25 +1948,52 @@ inline void SearchFrame::filtering()
     }
 }
 
-LRESULT SearchFrame::onFilterChar(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
+
+LRESULT SearchFrame::onKeyHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-    bHandled = false;
-    if(!doFilter(wParam)){
-        return 0;
+    switch(uMsg){
+        case WM_KEYDOWN:{
+            bHandled = FALSE;
+            return 0;
+        }
+        case WM_KEYUP:{
+            bHandled = TRUE;
+            if(!doFilter(wParam)){
+                return 0;
+            }
+            filtering();
+            return 0;
+        }
+        case WM_CHAR:{
+            bHandled = FALSE;
+            return 0;
+        }
     }
-    filter = getTextFromCEdit(ctrlFilter);
-    filtering();
+    bHandled = FALSE;
     return 0;
 }
 
-LRESULT SearchFrame::onFilterExclChar(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
+LRESULT SearchFrame::onGridItemClick(int idCtrl, LPNMHDR pnmh, BOOL& /*bHandled*/)
 {
-    bHandled = false;
-    if(!doFilter(wParam)){
-        return 0;
+    switch(ctrlGridFilters.GetSelectedColumn()){
+        case FGC_ADD:{
+            insertIntofilter(ctrlGridFilters);
+            return 0;
+        }
+        case FGC_REMOVE:{
+            if(ctrlGridFilters.GetItemCount() < 2){
+                return 0;
+            }
+            ctrlGridFilters.DeleteItem(ctrlGridFilters.GetSelectedIndex());
+            return 1;
+        }
     }
-    _filterExcl = getTextFromCEdit(ctrlFilterExcl);
-    filtering();
+    return 0;
+}
+
+LRESULT SearchFrame::onGridItemChanged(int idCtrl, LPNMHDR pnmh, BOOL& /*bHandled*/)
+{
+    updateSearchList();
     return 0;
 }
 
@@ -2123,14 +2136,29 @@ inline bool SearchFrame::matchFilter(const tstring& filter, const tstring& str)
     return Wildcards::match(str, filter);
 }
 
-inline bool SearchFrame::matchFilter(SearchInfo* si)
+bool SearchFrame::matchFilter(SearchInfo* si)
 {
-    return matchFilter(filter, ctrlFilterSel.GetCurSel(), si);
-}
+    CComVariant value;
+    for(int i = 0, n = ctrlGridFilters.GetItemCount(); i < n; ++i){
+        ctrlGridFilters.GetProperty(i, FGC_INVERT)->GetValue(&value);
+        bool invert = value.boolVal;
 
-inline bool SearchFrame::matchFilterExcl(SearchInfo* si)
-{
-    return _filterExcl.empty() || !matchFilter(_filterExcl, ctrlFilterSelExcl.GetCurSel(), si);
+        ctrlGridFilters.GetProperty(i, FGC_TYPE)->GetValue(&value);
+        int type = value.intVal;
+
+        ctrlGridFilters.GetProperty(i, FGC_FILTER)->GetValue(&value);
+        tstring filter = value.bstrVal;
+
+        if(filter.empty()){
+            continue;
+        }
+        bool match = matchFilter(filter, type, si);
+
+        if((!match && !invert) || (match && invert)){
+            return false;
+        }
+    }
+    return true;
 }
 
 void SearchFrame::updateSearchList(SearchInfo* si)
@@ -2147,7 +2175,7 @@ void SearchFrame::updateSearchList(SearchInfo* si)
     
     if (si != NULL)
     {
-        if(!(matchFilter(si) && matchFilterExcl(si)))
+        if(!matchFilter(si))
         {
             ctrlResults.deleteItem(si);
         }
@@ -2164,7 +2192,7 @@ void SearchFrame::updateSearchList(SearchInfo* si)
                 continue;
             }
             si->collapsed = true;
-            if(matchFilter(si) && matchFilterExcl(si))
+            if(matchFilter(si))
             {
                 dcassert(ctrlResults.findItem(si) == -1);
                 int k = ctrlResults.insertItem(si, si->getImageIndex());
@@ -2194,28 +2222,6 @@ void SearchFrame::updateSearchList(SearchInfo* si)
     #ifdef _DEBUG
         dcdebug("updateSearchList: completed\r\n");
     #endif
-}
-
-LRESULT SearchFrame::onSelChange(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& bHandled)
-{
-    filter = getTextFromCEdit(ctrlFilter);
-    if(!filter.empty()){
-        updateSearchList();
-    }
-    
-    bHandled = false;
-    return 0;
-}
-
-LRESULT SearchFrame::onSelChangeExcl(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& bHandled)
-{
-    _filterExcl = getTextFromCEdit(ctrlFilterExcl);
-    if(!_filterExcl.empty()){
-        updateSearchList();
-    }
-    
-    bHandled = false;
-    return 0;
 }
 
 // This and related changes taken from apex-sppedmod by SMT
