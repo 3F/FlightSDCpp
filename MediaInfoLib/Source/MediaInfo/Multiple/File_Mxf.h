@@ -101,6 +101,7 @@ protected :
     void Filler02() {Filler();}
     void TerminatingFiller();
     void XmlDocumentText();
+    void SubDescriptors();
     void Sequence();
     void SourceClip();
     void TimecodeComponent();
@@ -112,6 +113,7 @@ protected :
     void Identification();
     void NetworkLocator();
     void TextLocator();
+    void StereoscopicPictureSubDescriptor();
     void MaterialPackage();
     void SourcePackage();
     void EventTrack();
@@ -563,6 +565,8 @@ protected :
         };
         type Type;
         bool HasBFrames;
+        bool HasMPEG2VideoDescriptor;
+        bool IsAes3Descriptor;
         int32u ByteRate;
 
         descriptor()
@@ -595,6 +599,8 @@ protected :
             FieldDominance=1; //Default is field 1 temporaly first
             Type=Type_Unknown;
             HasBFrames=false;
+            HasMPEG2VideoDescriptor=false;
+            IsAes3Descriptor=false;
             ByteRate=(int32u)-1;
         }
     };
@@ -764,6 +770,7 @@ protected :
     int64u SystemScheme1_TimeCodeArray_StartTimecode_ms;
     int64u SystemScheme1_FrameRateFromDescriptor;
     bool   Essences_FirstEssence_Parsed;
+    bool   StereoscopicPictureSubDescriptor_IsPresent;
     int32u IndexTable_NSL;
     int32u IndexTable_NPE;
     #if MEDIAINFO_ADVANCED

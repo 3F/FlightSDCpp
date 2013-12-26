@@ -93,6 +93,7 @@ string Hex2Char (unsigned char Char)
 }
 
 //---------------------------------------------------------------------------
+#ifndef WSTRING_MISSING
 wstring Hex2Char (wchar_t Char)
 {
     wstring Result;
@@ -100,6 +101,7 @@ wstring Hex2Char (wchar_t Char)
     Result+=(Char%16>=10?'a'-10:'0')+Char%16;
     return Result;
 }
+#endif //WSTRING_MISSING
 
 //***************************************************************************
 // URL manipulation
@@ -146,6 +148,7 @@ std::string URL_Encoded_Encode (const std::string& URL)
 }
 
 //---------------------------------------------------------------------------
+#ifndef WSTRING_MISSING
 std::wstring URL_Encoded_Encode (const std::wstring& URL)
 {
     wstring Result;
@@ -184,6 +187,7 @@ std::wstring URL_Encoded_Encode (const std::wstring& URL)
     }
     return Result;
 }
+#endif //WSTRING_MISSING
 
 //---------------------------------------------------------------------------
 std::string URL_Encoded_Decode (const std::string& URL)
@@ -209,6 +213,7 @@ std::string URL_Encoded_Decode (const std::string& URL)
 }
 
 //---------------------------------------------------------------------------
+#ifndef WSTRING_MISSING
 std::wstring URL_Encoded_Decode (const std::wstring& URL)
 {
     wstring Result;
@@ -230,6 +235,7 @@ std::wstring URL_Encoded_Decode (const std::wstring& URL)
     }
     return Result;
 }
+#endif //WSTRING_MISSING
 
 //***************************************************************************
 // Cleanup

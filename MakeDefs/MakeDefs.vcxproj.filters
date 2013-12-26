@@ -32,11 +32,14 @@
     <ClCompile Include="..\client\Text.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\boost\libs\system\src\error_code.cpp">
+      <Filter>Source Files\boost-system</Filter>
+    </ClCompile>
     <ClCompile Include="..\client\Util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\boost\libs\system\src\error_code.cpp">
-      <Filter>Source Files\boost-system</Filter>
+    <ClCompile Include="..\client\TimerManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\client\LogManager.cpp">
       <Filter>Source Files</Filter>

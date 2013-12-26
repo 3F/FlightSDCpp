@@ -21,6 +21,7 @@
 #ifndef DCPLUSPLUS_DCPP_TIMER_MANAGER_H
 #define DCPLUSPLUS_DCPP_TIMER_MANAGER_H
 
+
 #include "Speaker.h"
 #include "Singleton.h"
 #include <boost/thread/mutex.hpp>
@@ -31,7 +32,6 @@
 
 namespace dcpp
 {
-
 class TimerManagerListener
 {
     public:
@@ -72,6 +72,7 @@ class TimerManager : public Speaker<TimerManagerListener>, public Singleton<Time
 #define GET_TIME() TimerManager::getTime()
 
 } // namespace dcpp
+
 
 #endif // DCPLUSPLUS_DCPP_TIMER_MANAGER_H
 

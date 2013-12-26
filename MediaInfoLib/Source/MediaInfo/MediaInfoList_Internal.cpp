@@ -27,6 +27,7 @@ using namespace std;
 namespace MediaInfoLib
 {
 
+#ifdef FLYLINKDC_USE_MEDIAINFO_LIST
 //---------------------------------------------------------------------------
 extern MediaInfo_Config Config;
 //---------------------------------------------------------------------------
@@ -443,4 +444,5 @@ size_t MediaInfoList_Internal::Count_Get()
     return Info.size();
 }
 
+#endif // FLYLINKDC_USE_MEDIAINFO_LIST
 } //NameSpace

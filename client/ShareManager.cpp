@@ -420,7 +420,7 @@ void ShareManager::load(SimpleXML& aXml)
     }
     if (l_count_dir == 0)
     {
-        const string l_dir = Util::getRegistryValueString("DownloadDir", true);
+		const string l_dir = Util::getRegistryValueString(_T("DownloadDir"), true);
         if (!l_dir.empty())
         {
             shares.insert(std::make_pair(l_dir, "DC++Downloads"));

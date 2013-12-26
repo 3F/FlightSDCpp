@@ -191,6 +191,8 @@
     <None Include="res\Error.png">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="compiled\Settings\strongdc-sqlite-config.xml" />
+    <None Include="compiled\Settings\IPTrust.ini" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StrongDC.rc">

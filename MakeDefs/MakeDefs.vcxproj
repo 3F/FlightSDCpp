@@ -173,7 +173,6 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
@@ -285,6 +284,7 @@
     <ClCompile Include="..\boost\libs\system\src\error_code.cpp" />
     <ClCompile Include="..\client\File.cpp" />
     <ClCompile Include="..\client\LogManager.cpp" />
+    <ClCompile Include="..\client\TimerManager.cpp" />
     <ClCompile Include="..\client\Util.cpp" />
     <ClCompile Include="MakeDefs.cpp" />
     <ClCompile Include="..\client\SimpleXML.cpp" />

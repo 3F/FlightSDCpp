@@ -194,7 +194,7 @@ LIBSPEC int sendnewportmappingrequest(natpmp_t * p, int protocol,
 
 LIBSPEC int readnatpmpresponse(natpmp_t * p, natpmpresp_t * response)
 {
-	unsigned char buf[16];
+	unsigned char buf[16] = {0};
 	struct sockaddr_in addr;
 	socklen_t addrlen = sizeof(addr);
 	int n;
@@ -203,7 +203,9 @@ LIBSPEC int readnatpmpresponse(natpmp_t * p, natpmpresp_t * response)
 	n = recvfrom(p->s, buf, sizeof(buf), 0,
 	             (struct sockaddr *)&addr, &addrlen);
 	if(n<0)
-		switch(errno) {
+	{
+		switch(WSAGetLastError()) 
+		{
 		/*case EAGAIN:*/
 		case EWOULDBLOCK:
 			n = NATPMP_TRYAGAIN;
@@ -214,6 +216,7 @@ LIBSPEC int readnatpmpresponse(natpmp_t * p, natpmpresp_t * response)
 		default:
 			n = NATPMP_ERR_RECVFROM;
 		}
+	} 
 	/* check that addr is correct (= gateway) */
 	else if(addr.sin_addr.s_addr != p->gateway)
 		n = NATPMP_ERR_WRONGPACKETSOURCE;

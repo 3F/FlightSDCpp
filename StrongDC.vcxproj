@@ -112,7 +112,6 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;HAVE_NATUPNP_H;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -135,7 +134,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(SolutionDir)compiled\$(ProjectName)_debug.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <StackReserveSize>0</StackReserveSize>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PreBuildEvent>
@@ -182,7 +180,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(SolutionDir)compiled\$(ProjectName)64_debug.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <StackReserveSize>0</StackReserveSize>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -246,7 +243,6 @@
       <MapFileName>
       </MapFileName>
       <SubSystem>Windows</SubSystem>
-      <StackReserveSize>2097152</StackReserveSize>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <SetChecksum>true</SetChecksum>
@@ -319,7 +315,6 @@
       <MapFileName>
       </MapFileName>
       <SubSystem>Windows</SubSystem>
-      <StackReserveSize>4194304</StackReserveSize>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <SetChecksum>true</SetChecksum>
@@ -347,6 +342,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="compiled\Settings\CustomCompressExt.ini" />
+    <None Include="compiled\Settings\IPTrust.ini" />
+    <None Include="compiled\Settings\strongdc-sqlite-config.xml" />
     <None Include="res\ADLSearch.ico" />
     <None Include="res\arrows.bmp" />
     <None Include="res\bitmap1.bmp" />

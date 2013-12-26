@@ -52,7 +52,10 @@ class Reader__Base;
 /// @version 0.7
 //***************************************************************************
 
-class MediaInfo_Internal : public ZenLib::Thread
+class MediaInfo_Internal 
+#ifdef FLYLINKDC_ZENLIB_USE_THREAD
+	: public ZenLib::Thread
+#endif
 {
 public :
     //Constructor/Destructor
@@ -111,6 +114,9 @@ private :
     friend class File_MpegTs;//Theses classes need access to internal structure for optimization. There is recursivity with theses formats
     friend class File_MpegPs;//Theses classes need access to internal structure for optimization. There is recursivity with theses formats
     friend class File_Mxf;   //Theses classes need access to internal structure for optimization. There is recursivity with theses formats
+    friend class File_DcpAm; //Theses classes need access to internal structure for optimization. There is recursivity with theses formats
+    friend class File_DcpCpl;//Theses classes need access to internal structure for optimization. There is recursivity with theses formats
+    friend class File_DcpPkl;//Theses classes need access to internal structure for optimization. There is recursivity with theses formats
     friend class File__ReferenceFilesHelper; //Theses classes need access to internal structure for optimization. There is recursivity with theses formats
 
     //Parsing handles

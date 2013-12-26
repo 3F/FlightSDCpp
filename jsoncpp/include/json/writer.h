@@ -1,10 +1,23 @@
+// Copyright 2007-2010 Baptiste Lepilleur
+// Distributed under MIT license, or public domain if desired and
+// recognized in your jurisdiction.
+// See file LICENSE for detail or copy at http://jsoncpp.sourceforge.net/LICENSE
+
 #ifndef JSON_WRITER_H_INCLUDED
 # define JSON_WRITER_H_INCLUDED
 
+#if !defined(JSON_IS_AMALGAMATION)
 # include "value.h"
+#endif // if !defined(JSON_IS_AMALGAMATION)
 # include <vector>
 # include <string>
-# include <iostream>
+
+// Disable warning C4251: <data member>: <type> needs to have dll-interface to be used by...
+#if defined(JSONCPP_DISABLE_DLL_INTERFACE_WARNING)
+# pragma warning(push)
+# pragma warning(disable:4251)
+#endif // if defined(JSONCPP_DISABLE_DLL_INTERFACE_WARNING)
+
 
 namespace Json {
 
@@ -34,6 +47,13 @@ namespace Json {
 
       void enableYAMLCompatibility();
 
+      /** \brief Drop the "null" string from the writer's output for nullValues.
+       * Strictly speaking, this is not valid JSON. But when the output is being
+       * fed to a browser's Javascript, it makes for smaller output and the
+       * browser can handle the output just fine.
+       */
+      void dropNullPlaceholders();
+
    public: // overridden from Writer
       virtual std::string write( const Value &root );
 
@@ -42,6 +62,7 @@ namespace Json {
 
       std::string document_;
       bool yamlCompatiblityEnabled_;
+      bool dropNullPlaceholders_;
    };
 
    /** \brief Writes a Value in <a HREF="http://www.json.org">JSON</a> format in a human friendly way.
@@ -157,18 +178,26 @@ namespace Json {
       bool addChildValues_;
    };
 
+# if defined(JSON_HAS_INT64)
    std::string JSON_API valueToString( Int value );
    std::string JSON_API valueToString( UInt value );
+# endif // if defined(JSON_HAS_INT64)
+   std::string JSON_API valueToString( LargestInt value );
+   std::string JSON_API valueToString( LargestUInt value );
    std::string JSON_API valueToString( double value );
    std::string JSON_API valueToString( bool value );
    std::string JSON_API valueToQuotedString( const char *value );
 
    /// \brief Output using the StyledStreamWriter.
    /// \see Json::operator>>()
-   std::ostream& operator<<( std::ostream&, const Value &root );
+   JSON_API std::ostream& operator<<( std::ostream&, const Value &root );
 
 } // namespace Json
 
+
+#if defined(JSONCPP_DISABLE_DLL_INTERFACE_WARNING)
+# pragma warning(pop)
+#endif // if defined(JSONCPP_DISABLE_DLL_INTERFACE_WARNING)
 
 
 #endif // JSON_WRITER_H_INCLUDED

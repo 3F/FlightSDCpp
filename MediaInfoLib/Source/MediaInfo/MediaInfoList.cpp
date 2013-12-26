@@ -87,6 +87,7 @@ using namespace MediaInfoList_Debug;
 namespace MediaInfoLib
 {
 
+#ifdef FLYLINKDC_USE_MEDIAINFO_LIST
 //***************************************************************************
 // Gestion de la classe
 //***************************************************************************
@@ -242,5 +243,7 @@ size_t MediaInfoList::Count_Get()
 {
     return Internal->Count_Get();
 }
+
+#endif // FLYLINKDC_USE_MEDIAINFO_LIST
 
 } //NameSpace

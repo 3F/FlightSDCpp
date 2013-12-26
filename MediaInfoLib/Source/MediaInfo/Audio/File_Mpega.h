@@ -51,6 +51,7 @@ private :
     void Header_Parse();
     void Data_Parse();
     void Data_Parse_Fill();
+    void audio_data_Layer3();
 
     //Element
     bool Header_Xing();
@@ -97,6 +98,14 @@ private :
 
     //Helpers
     bool Element_Name_IsOK();
+
+    #if MEDIAINFO_DEMUX
+        #if MEDIAINFO_ADVANCED
+            int8u sampling_frequency_Frame0;
+            int8u mode_Frame0;
+            bool  File_Demux_Unpacketize_StreamLayoutChange_Skip;
+        #endif //MEDIAINFO_ADVANCED
+    #endif //MEDIAINFO_DEMUX
 };
 
 } //NameSpace

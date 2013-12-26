@@ -185,7 +185,7 @@ SettingsManager::SettingsManager()
         int64Settings[i] = 0;
     }
     
-    const string l_dir = Util::getRegistryValueString("DownloadDir", true);
+	const string l_dir = Util::getRegistryValueString(_T("DownloadDir"), true);
     if (!l_dir.empty())
         setDefault(DOWNLOAD_DIRECTORY, l_dir);
     else
