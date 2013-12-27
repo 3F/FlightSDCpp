@@ -1,4 +1,4 @@
-ret = MsgBox("Do you want to update revision.h ?", vbYesNo + vbQuestion, "Pre-Build Event :: Updating version")
+ret = MsgBox("Do you want to update revision.h ?", vbYesNo + vbDefaultButton2 + vbQuestion, "Pre-Build Event :: Updating version")
 
 If ret = vbYes Then
     Set shell = WScript.CreateObject("WScript.Shell")

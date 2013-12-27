@@ -847,7 +847,11 @@ LRESULT DirectoryListingFrame::ContextMenu::hookKeyProc(int code, WPARAM wParam,
         return CallNextHookEx(hookKey, code, wParam, lParam);
     }
 
-    if(code != HC_ACTION && wParam != VK_CONTROL){
+    if(wParam != VK_CONTROL){
+        return 0;
+    }
+
+    if(code != HC_ACTION){
         return 0;
     }
 

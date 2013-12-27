@@ -1,18 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SolutionEvents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <settings>
+    <compatibility>0.3</compatibility>
+  </settings>
   <preBuild>
-    <command>revision.vbs</command>
+    <command>vssbe_h.bat PRE $(Configuration)</command>
     <caption>call revision.vbs</caption>
     <enabled>true</enabled>
+    <processHide>true</processHide>
+    <modeScript>false</modeScript>
+    <processKeep>false</processKeep>
+    <interpreter />
+    <newline />
+    <wrapper />
+    <waitForExit>true</waitForExit>
+    <parseVariablesMSBuild>true</parseVariablesMSBuild>
   </preBuild>
   <postBuild>
     <command />
     <caption />
     <enabled>false</enabled>
+    <processHide>true</processHide>
+    <modeScript>true</modeScript>
+    <processKeep>false</processKeep>
+    <interpreter />
+    <newline />
+    <wrapper />
+    <waitForExit>true</waitForExit>
+    <parseVariablesMSBuild>true</parseVariablesMSBuild>
   </postBuild>
   <cancelBuild>
     <command />
     <caption />
     <enabled>false</enabled>
+    <processHide>true</processHide>
+    <modeScript>true</modeScript>
+    <processKeep>false</processKeep>
+    <interpreter />
+    <newline />
+    <wrapper />
+    <waitForExit>true</waitForExit>
+    <parseVariablesMSBuild>true</parseVariablesMSBuild>
   </cancelBuild>
 </SolutionEvents>

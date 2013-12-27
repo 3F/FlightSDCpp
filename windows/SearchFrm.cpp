@@ -1484,7 +1484,11 @@ LRESULT SearchFrame::ContextMenu::hookKeyProc(int code, WPARAM wParam, LPARAM lP
         return CallNextHookEx(hookKey, code, wParam, lParam);
     }
 
-    if(code != HC_ACTION && wParam != VK_CONTROL){
+    if(wParam != VK_CONTROL){
+        return 0;
+    }
+
+    if(code != HC_ACTION){
         return 0;
     }
 
