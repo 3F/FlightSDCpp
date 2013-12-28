@@ -128,7 +128,7 @@ class CFlylinkDBManager : public Singleton<CFlylinkDBManager>
         const TTHValue* findTTH(const string& aPath, const string& aFileName);
         bool addFile(const string& p_Path, const string& p_FileName, int64_t p_TimeStamp,
                      const TigerTree& p_tth, const CFlyMediaInfo& p_media, bool p_case_convet);
-        void Hit(const string& p_Path, const string& p_FileName);
+        void Hit(const TTHValue& p_tth);
         bool checkTTH(const string& fname, __int64 path_id, int64_t aSize, int64_t aTimeStamp, TTHValue& p_out_tth);
         void LoadPathCache();
         void SweepPath();

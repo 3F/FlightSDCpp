@@ -815,8 +815,8 @@ void CFlylinkDBManager::LoadDir(__int64 p_path_id, CFlyDirMap& p_dir_map)
     {
         if (!m_load_dir_sql.get())
             m_load_dir_sql = auto_ptr<sqlite3_command>(new sqlite3_command(m_flySQLiteDB,
-                                                                           "select size,stamp,tth,name,hit,stamp_share,bitrate,ftype,media_x,media_y,media_video,media_audio from fly_file ff,fly_hash fh where\n"
-                                                                           "ff.dic_path=? and ff.tth_id=fh.id"));
+                                                                           "select ff.size,ff.stamp,tth,ff.name,SUM(shit.hit),ff.stamp_share,ff.bitrate,ff.ftype,ff.media_x,ff.media_y,ff.media_video,ff.media_audio from fly_file ff,fly_hash fh "
+                                                                           "INNER JOIN fly_file AS shit ON shit.tth_id = ff.tth_id WHERE ff.dic_path=? AND ff.tth_id = fh.id GROUP BY ff.tth_id"));
         m_load_dir_sql.get()->bind(1, p_path_id);
         sqlite3_reader l_q = m_load_dir_sql.get()->executereader();
         bool l_calc_ftype = false;
@@ -831,6 +831,7 @@ void CFlylinkDBManager::LoadDir(__int64 p_path_id, CFlyDirMap& p_dir_map)
             l_info.m_StampShare  = l_q.getint64(5);
             if (!l_info.m_StampShare)
                 l_info.m_StampShare = l_info.m_TimeStamp;
+            l_info.m_StampShare = 0; //TODO: option
             l_info.m_hit = uint32_t(l_q.getint(4));
             l_info.m_media.m_bitrate = short(l_q.getint(6));
             l_info.m_media.m_mediaX  = short(l_q.getint(8));
@@ -1080,21 +1081,17 @@ __int64 CFlylinkDBManager::get_tth_id(const TTHValue& p_tth, bool p_create /*= t
     }
 }
 //========================================================================================================
-void CFlylinkDBManager::Hit(const string& p_Path, const string& p_FileName)
+void CFlylinkDBManager::Hit(const TTHValue& p_tth)
 {
     Lock l(m_cs);
     try
     {
-        const __int64 l_path_id = get_path_id(p_Path, false);
-        if (!l_path_id)
-            return;
         if (!m_upload_file.get())
             m_upload_file = auto_ptr<sqlite3_command>(new sqlite3_command(m_flySQLiteDB,
-                                                                          "update fly_file set hit=hit+1 where name=? and dic_path=?"));
+                                                                          "UPDATE fly_file SET hit = hit + 1 WHERE tth_id = (SELECT id FROM fly_hash WHERE tth = ?)"));
         sqlite3_transaction l_trans(m_flySQLiteDB);
         sqlite3_command* l_sql = m_upload_file.get();
-        l_sql->bind(1, p_FileName, SQLITE_STATIC);
-        l_sql->bind(2, l_path_id);
+        l_sql->bind(1, p_tth.data, 24, SQLITE_STATIC);
         l_sql->executenonquery();
         l_trans.commit();
     }

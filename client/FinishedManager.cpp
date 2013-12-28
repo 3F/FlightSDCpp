@@ -124,9 +124,7 @@ void FinishedManager::on(UploadManagerListener::Complete, const Upload* u) noexc
                      
             LogManager::getInstance()->message(&buf[0]);
         }
-        const string l_name = Text::toLower(Util::getFileName(u->getPath()));
-        const string l_path = Text::toLower(Util::getFilePath(u->getPath()));
-        CFlylinkDBManager::getInstance()->Hit(l_path, l_name);
+        CFlylinkDBManager::getInstance()->Hit(u->getTTH());
     }
 }
 
