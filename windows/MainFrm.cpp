@@ -86,6 +86,7 @@ MainFrame::MainFrame() : trayMessage(0), maximized(false), lastUpload(-1), lastU
 {
     memzero(statusSizes, sizeof(statusSizes));
     anyMF = this;
+    CFlylinkDBManager::getInstance()->LoadRatio("", "");
 }
 
 MainFrame::~MainFrame()
@@ -1676,13 +1677,13 @@ void MainFrame::on(TimerManagerListener::Second, uint64_t aTick) noexcept
 
     if(SETTING(TOTAL_DOWNLOAD) > 0){
         TCHAR buf[32];
-        snwprintf(buf, _countof(buf), _T("R: %.02f"), ((double)SETTING(TOTAL_UPLOAD)) / ((double)SETTING(TOTAL_DOWNLOAD)));
+        snwprintf(buf, _countof(buf), _T("R: %.02f"), CFlylinkDBManager::getInstance()->get_ratio());
         str->push_back(buf);
     }
     else{
         str->push_back(_T("R: -"));
     }
-    str->push_back(Util::formatBytesW(SETTING(TOTAL_UPLOAD)) + _T(" / ") + Util::formatBytesW(SETTING(TOTAL_DOWNLOAD)));
+    str->push_back(Util::formatBytesW(CFlylinkDBManager::getInstance()->m_global_ratio.m_upload) + _T(" / ") + Util::formatBytesW(CFlylinkDBManager::getInstance()->m_global_ratio.m_download));
     
     PostMessage(WM_SPEAKER, STATS, (LPARAM)str);
     

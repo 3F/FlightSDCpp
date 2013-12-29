@@ -56,8 +56,8 @@ class AboutDlg : public CDialogImpl<AboutDlg>
 #ifdef FLY_INCLUDE_EXE_TTH
             SetDlgItemText(IDC_TTH, WinUtil::tth.c_str());
 #endif
-            SetDlgItemText(IDC_TOTALS, (_T("Upload: ") + Util::formatBytesW(SETTING(TOTAL_UPLOAD)) + _T(", Download: ") +
-                                        Util::formatBytesW(SETTING(TOTAL_DOWNLOAD))).c_str());
+            SetDlgItemText(IDC_TOTALS, (_T("Upload: ") + Util::formatBytesW(CFlylinkDBManager::getInstance()->m_global_ratio.m_upload) + _T(", Download: ") +
+                                        Util::formatBytesW(CFlylinkDBManager::getInstance()->m_global_ratio.m_download)).c_str());
                                         
             SetDlgItemText(IDC_LINK_BLOG, _T("http://flylinkdc.blogspot.com"));
             m_url_blog.SubclassWindow(GetDlgItem(IDC_LINK_BLOG));
@@ -67,7 +67,7 @@ class AboutDlg : public CDialogImpl<AboutDlg>
             {
                 TCHAR buf[64];
                 buf[0] = 0;
-                snwprintf(buf, _countof(buf), _T("Ratio (up/down): %.2f"), ((double)SETTING(TOTAL_UPLOAD)) / ((double)SETTING(TOTAL_DOWNLOAD)));
+                snwprintf(buf, _countof(buf), _T("Ratio (up/down): %.2f"), CFlylinkDBManager::getInstance()->get_ratio());
                 
                 SetDlgItemText(IDC_RATIO, buf);
                 /*  sprintf(buf, "Uptime: %s", Util::formatTime(Util::getUptime()));
