@@ -142,7 +142,7 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
             initialSize(0), initialMode(SearchManager::SIZE_ATLEAST), initialType(SearchManager::TYPE_ANY),
             showUI(true), onlyFree(false), closed(false), isHash(false), droppedResults(0), resultsCount(0),
             expandSR(false), storeIP(false), exactSize1(false), exactSize2(0), searchEndTime(0), searchStartTime(0), waiting(false),
-            m_lastFindTTH(false), running(false)
+            m_lastFindTTH(false), running(false), _keypressPrevTime(clock())
         {
             SearchManager::getInstance()->addListener(this);
             useGrouping = BOOLSETTING(GROUP_SEARCH_RESULTS);
