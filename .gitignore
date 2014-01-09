@@ -19,3 +19,7 @@
 /EN_Example.xml
 /revision.h
 /UpdateRevision.bat
+/build_strongdc_all.bat
+/build_strongdc_sqlite.bat
+/build_strongdc_sqlite_64.bat
+/bzr_merge.bat

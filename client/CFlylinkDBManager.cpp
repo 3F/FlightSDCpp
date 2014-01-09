@@ -1081,17 +1081,21 @@ __int64 CFlylinkDBManager::get_tth_id(const TTHValue& p_tth, bool p_create /*= t
     }
 }
 //========================================================================================================
-void CFlylinkDBManager::Hit(const TTHValue& p_tth)
+void CFlylinkDBManager::Hit(const string& p_Path, const string& p_FileName)
 {
     Lock l(m_cs);
     try
     {
+        const __int64 l_path_id = get_path_id(p_Path, false);
+        if (!l_path_id)
+            return;
         if (!m_upload_file.get())
             m_upload_file = auto_ptr<sqlite3_command>(new sqlite3_command(m_flySQLiteDB,
-                                                                          "UPDATE fly_file SET hit = hit + 1 WHERE tth_id = (SELECT id FROM fly_hash WHERE tth = ?)"));
+                                                                          "update fly_file set hit=hit+1 where name=? and dic_path=?"));
         sqlite3_transaction l_trans(m_flySQLiteDB);
         sqlite3_command* l_sql = m_upload_file.get();
-        l_sql->bind(1, p_tth.data, 24, SQLITE_STATIC);
+        l_sql->bind(1, p_FileName, SQLITE_STATIC);
+        l_sql->bind(2, l_path_id);
         l_sql->executenonquery();
         l_trans.commit();
     }
