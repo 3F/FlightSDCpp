@@ -29,6 +29,7 @@
 #include "WinUtil.h"
 
 #include "grid/CGrid.h"
+#include "../client/Wildcards.h"
 
 #include "../client/Client.h"
 #include "../client/SearchManager.h"
@@ -46,6 +47,7 @@
 #define FILTER_MESSAGE_MAP 8
 
 using namespace net::r_eg::ui;
+using namespace net::r_eg::text::wildcards;
 
 class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255), IDR_SEARCH>,
     private SearchManagerListener, private ClientManagerListener,
@@ -291,7 +293,7 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
         
     private:
         /** time difference */
-        int _keypressPrevTime;
+        clock_t _keypressPrevTime;
 
         /** permission to perform */
         bool filterAllowRunning;
@@ -305,7 +307,7 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
          * delay after the last key press
          * pause - in msec delay
          */
-        void waitPerformAllow(int pause = 300)
+        void waitPerformAllow(unsigned int pause = 300)
         {
             while((clock() - _keypressPrevTime) < pause){
                 #ifdef _DEBUG
@@ -810,6 +812,7 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
         void updateSearchList(SearchInfo* si = NULL);
         void addSearchResult(SearchInfo* si);
 
+        WildcardsEss wildcards;
         /** 
          * wrapper match
          * from bitbucket.org/3F/sandbox

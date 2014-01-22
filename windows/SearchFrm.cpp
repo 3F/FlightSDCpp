@@ -31,8 +31,6 @@
 #include "../client/TimerManager.h"
 #include "../client/SearchManager.h"
 
-#include "../client/Wildcards.hpp"
-using namespace reg::text;
 
 TStringSet SearchFrame::lastSearches;
 
@@ -2112,7 +2110,7 @@ bool SearchFrame::matchFilter(const tstring& filter, int type, SearchInfo* si)
     if(type == COLUMN_SIZE){
         return matchFilter(filter, si->sr->getSize());
     }
-    return Wildcards::match(si->getText(static_cast<uint8_t>(type)), filter);
+    return wildcards.search(si->getText(static_cast<uint8_t>(type)), filter);
 }
 
 inline bool SearchFrame::matchFilter(const tstring& filter, int64_t size)
@@ -2137,7 +2135,7 @@ inline bool SearchFrame::matchFilter(const tstring& filter, int64_t size)
 
 inline bool SearchFrame::matchFilter(const tstring& filter, const tstring& str)
 {
-    return Wildcards::match(str, filter);
+    return wildcards.search(str, filter);
 }
 
 bool SearchFrame::matchFilter(SearchInfo* si)

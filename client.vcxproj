@@ -417,7 +417,7 @@
     <ClInclude Include="client\stdinc.h" />
     <ClInclude Include="client\Streams.h" />
     <ClInclude Include="client\util_flylinkdc.h" />
-    <ClInclude Include="client\Wildcards.hpp" />
+    <ClInclude Include="client\Wildcards.h" />
     <ClInclude Include="FlyFeatures\flyServer.h" />
     <ClInclude Include="jsoncpp\include\json\autolink.h" />
     <ClInclude Include="jsoncpp\include\json\config.h" />

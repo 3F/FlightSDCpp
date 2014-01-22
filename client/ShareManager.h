@@ -38,6 +38,9 @@
 # include <ShlObj.h> //[+]PPA
 #endif
 
+#include "../client/Wildcards.h"
+using namespace net::r_eg::text::wildcards;
+
 namespace dht
 {
 class IndexManager;
@@ -84,7 +87,7 @@ class ShareManager : public Singleton<ShareManager>, private SettingsManagerList
             m_sweep_path = true;
         }
         
-        
+        WildcardsEss wildcards;
         bool shareFolder(const string& path, bool thoroughCheck = false) const;
         int64_t removeExcludeFolder(const string &path, bool returnSize = true);
         int64_t addExcludeFolder(const string &path);

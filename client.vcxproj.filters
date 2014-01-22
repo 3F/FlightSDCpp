@@ -230,7 +230,7 @@
     <ClInclude Include="client\CFlyMediaInfo.h" />
     <ClInclude Include="client\HintedUser.h" />
     <ClInclude Include="client\util_flylinkdc.h" />
-    <ClInclude Include="client\Wildcards.hpp" />
+    <ClInclude Include="client\Wildcards.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="client\StringDefs.h" />

@@ -52,9 +52,6 @@
 
 #include <limits>
 
-#include "../client/Wildcards.hpp"
-using namespace reg::text;
-
 namespace dcpp
 {
 
@@ -871,10 +868,10 @@ ShareManager::Directory::Ptr ShareManager::buildTree(const string& aName, const 
     if (l_path_id)
         CFlylinkDBManager::getInstance()->LoadDir(l_path_id, l_dir_map);
 
-    string ignorelist = SETTING(SHARE_IGNORELIST);
+    tstring ignorelist = Text::toT(SETTING(SHARE_IGNORELIST));
     if(!ignorelist.empty()){
-        replace(ignorelist.begin(), ignorelist.end(), ';', '|'); //TODO: alias or additional metasymbols or new method
-        ignorelist.erase(ignorelist.find_last_not_of(" |") + 1);
+        replace(ignorelist.begin(), ignorelist.end(), _T(';'), _T('|')); //TODO: alias or additional metasymbols or new method
+        ignorelist.erase(ignorelist.find_last_not_of(_T(" |")) + 1);
     }
 
 #ifdef _WIN32
@@ -900,7 +897,10 @@ ShareManager::Directory::Ptr ShareManager::buildTree(const string& aName, const 
         if (!BOOLSETTING(SHARE_HIDDEN) && i->isHidden())
             continue;
         
-        if(!ignorelist.empty() && Wildcards::match(aName + name, ignorelist)){
+        // TODO: StrongDC uses a variety of string/wstring without unified typedef. Example without conversion - https://bitbucket.org/3F/flightsdc/src/025dcfbc2d01ce6389cb841ab9945bf817f042cf/client/Wildcards.hpp
+        tstring filter = Text::toT(aName + name);
+        replace(filter.begin(), filter.end(), _T('\\'), _T('/'));
+        if(!ignorelist.empty() && wildcards.search(filter, ignorelist)){
             #ifdef _DEBUG
                 dcdebug("ignored :: %s%s\n", aName.c_str(), name.c_str());
             #endif
