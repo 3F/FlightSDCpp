@@ -2143,7 +2143,7 @@ bool SearchFrame::matchFilter(SearchInfo* si)
     CComVariant value;
     for(int i = 0, n = ctrlGridFilters.GetItemCount(); i < n; ++i){
         ctrlGridFilters.GetProperty(i, FGC_INVERT)->GetValue(&value);
-        bool invert = value.boolVal;
+        VARIANT_BOOL invert = value.boolVal;
 
         ctrlGridFilters.GetProperty(i, FGC_TYPE)->GetValue(&value);
         int type = value.intVal;
@@ -2156,7 +2156,7 @@ bool SearchFrame::matchFilter(SearchInfo* si)
         }
         bool match = matchFilter(filter, type, si);
 
-        if((!match && !invert) || (match && invert)){
+        if((!match && invert == VARIANT_FALSE) || (match && invert == VARIANT_TRUE)){
             return false;
         }
     }
