@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by D:\prg\projects\FlightSDC++\FlightSDC++\StrongDC.rc
+// Used by D:\vc10\branches-vip\strongdc-sqlite\StrongDC.rc
 //
 #define IDD_ABOUTBOX                    100
 #define IDC_FILETYPES                   101
@@ -843,21 +843,15 @@
 #define IDC_CHATDBLCLICKACTION          10194
 #define IDC_CHAT_DBLCLICK               10195
 #define IDC_HEADER_MENU                 10196
-#define IDR_FLY_SERVER_CONFIG           10197
-#define IDR_IPGRANT_EXAMPLE             10198
-#define IDR_IPGUARD_EXAMPLE             10199
-#define IDR_IPTRUST_EXAMPLE             10200
-#define IDC_IGNORELIST_LABEL            11100
-#define IDC_IGNORELIST_LABELdf          11100
+#define IDC_SETTINGS_IGNORELIST         10197
+#define IDC_IGNORELIST_LABEL            10198
 #define ID_SHELLCONTEXTMENU_MIN         12000
-#define REVISION                        13665
 #define ID_SHELLCONTEXTMENU_MAX         14000
 #define IDC_BITZI_LOOKUP                20000
 #define IDC_BROWSELIST                  21000
 #define IDC_REMOVE_SOURCE               23000
 #define IDC_PM                          25000
 #define IDC_READD                       27000
-#define IDC_SETTINGS_IGNORELIST         28100
 #define IDC_REMOVE_SOURCES              29000
 #define IDR_CUSTOM_COMPRESS_EXT         29001
 #define ID_FILE_CONNECT                 32772
@@ -880,13 +874,13 @@
 #define IDC_CHATCOLORS                  65535
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        314
 #define _APS_NEXT_COMMAND_VALUE         32797
 #define _APS_NEXT_CONTROL_VALUE         1330
-#define _APS_NEXT_SYMED_VALUE           137
+#define _APS_NEXT_SYMED_VALUE           134
 #endif
 #endif

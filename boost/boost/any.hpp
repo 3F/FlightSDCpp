@@ -12,22 +12,18 @@
 //        with features contributed and bugs found by
 //        Antony Polukhin, Ed Brey, Mark Rodgers, 
 //        Peter Dimov, and James Curran
-// when:  July 2001, April 2013 - May 2013
+// when:  July 2001, Aplril 2013
 
 #include <algorithm>
 #include <typeinfo>
 
 #include "boost/config.hpp"
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/type_traits/decay.hpp>
-#include <boost/type_traits/add_reference.hpp>
 #include <boost/type_traits/is_reference.hpp>
-#include <boost/type_traits/is_const.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/is_const.hpp>
 
 // See boost/python/type_id.hpp
 // TODO: add BOOST_TYPEID_COMPARE_BY_NAME to config.hpp
@@ -39,11 +35,6 @@
 #  define BOOST_AUX_ANY_TYPE_ID_NAME
 #include <cstring>
 # endif 
-
-#if defined(_MSC_VER) 
-#pragma warning(push)
-#pragma warning(disable: 4172) // Mistakenly warns: returning address of local variable or temporary
-#endif
 
 namespace boost
 {
@@ -58,7 +49,7 @@ namespace boost
 
         template<typename ValueType>
         any(const ValueType & value)
-          : content(new holder<BOOST_DEDUCED_TYPENAME decay<const ValueType>::type>(value))
+          : content(new holder<ValueType>(value))
         {
         }
 
@@ -77,10 +68,8 @@ namespace boost
 
         // Perfect forwarding of ValueType
         template<typename ValueType>
-        any(ValueType&& value
-            , typename boost::disable_if<boost::is_same<any&, ValueType> >::type* = 0 // disable if value has type `any&`
-            , typename boost::disable_if<boost::is_const<ValueType> >::type* = 0) // disable if value has type `const ValueType&&`
-          : content(new holder< typename decay<ValueType>::type >(static_cast<ValueType&&>(value)))
+        any(ValueType&& value, typename boost::disable_if<boost::is_same<any&, ValueType> >::type* = 0)
+          : content(new holder< typename remove_reference<ValueType>::type >(static_cast<ValueType&&>(value)))
         {
         }
 #endif
@@ -144,12 +133,7 @@ namespace boost
             return !content;
         }
 
-        void clear() BOOST_NOEXCEPT
-        {
-            any().swap(*this);
-        }
-
-        const std::type_info & type() const BOOST_NOEXCEPT
+        const std::type_info & type() const
         {
             return content ? content->type() : typeid(void);
         }
@@ -170,7 +154,7 @@ namespace boost
 
         public: // queries
 
-            virtual const std::type_info & type() const BOOST_NOEXCEPT = 0;
+            virtual const std::type_info & type() const = 0;
 
             virtual placeholder * clone() const = 0;
 
@@ -194,7 +178,7 @@ namespace boost
 #endif
         public: // queries
 
-            virtual const std::type_info & type() const BOOST_NOEXCEPT
+            virtual const std::type_info & type() const
             {
                 return typeid(ValueType);
             }
@@ -237,10 +221,10 @@ namespace boost
         lhs.swap(rhs);
     }
 
-    class BOOST_SYMBOL_VISIBLE bad_any_cast : public std::bad_cast
+    class bad_any_cast : public std::bad_cast
     {
     public:
-        virtual const char * what() const BOOST_NOEXCEPT_OR_NOTHROW
+        virtual const char * what() const throw()
         {
             return "boost::bad_any_cast: "
                    "failed conversion using boost::any_cast";
@@ -284,18 +268,7 @@ namespace boost
         nonref * result = any_cast<nonref>(&operand);
         if(!result)
             boost::throw_exception(bad_any_cast());
-
-        // Attempt to avoid construction of a temporary object in cases when 
-        // `ValueType` is not a reference. Example:
-        // `static_cast<std::string>(*result);` 
-        // which is equal to `std::string(*result);`
-        typedef BOOST_DEDUCED_TYPENAME boost::mpl::if_<
-            boost::is_reference<ValueType>,
-            ValueType,
-            BOOST_DEDUCED_TYPENAME boost::add_reference<ValueType>::type
-        >::type ref_type;
-
-        return static_cast<ref_type>(*result);
+        return *result;
     }
 
     template<typename ValueType>
@@ -311,20 +284,6 @@ namespace boost
 
         return any_cast<const nonref &>(const_cast<any &>(operand));
     }
-
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-    template<typename ValueType>
-    inline ValueType&& any_cast(any&& operand)
-    {
-        BOOST_STATIC_ASSERT_MSG(
-            boost::is_rvalue_reference<ValueType&&>::value 
-            || boost::is_const< typename boost::remove_reference<ValueType>::type >::value,
-            "boost::any_cast shall not be used for getting nonconst references to temporary objects" 
-        );
-        return any_cast<ValueType&&>(operand);
-    }
-#endif
-
 
     // Note: The "unsafe" versions of any_cast are not part of the
     // public interface and may be removed at any time. They are
@@ -349,9 +308,5 @@ namespace boost
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
 
 #endif

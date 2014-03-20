@@ -22,7 +22,7 @@ leveldb
 snappy
 src_exclude.txt
 src_include.txt
-Doxyfile
+runDoxygen.bat
 src_backup.bat
 *.sln
 *.vcxproj
@@ -36,7 +36,3 @@ compiled\Settings\CustomLocations.bmp
 compiled\Settings\CustomLocations.ini
 compiled\EmoPacks\*
 StrongDC.rc
-compiled\Lang\*
-compiled\Sounds\*
-compiled\Themes\*
-compiled\WEBserver\*

@@ -24,12 +24,11 @@
 */
 
 #include "stdinc.h"
+
 #include <stdexcept>
 #include "sqlite3.h"
 #include "sqlite3x.hpp"
-#ifdef __linux__
- #include <string.h>
-#endif
+
 namespace sqlite3x {
 
 sqlite3_reader::sqlite3_reader() : cmd(NULL) {}

@@ -11,7 +11,7 @@
 #ifndef BOOST_CONTAINER_FLAT_SET_HPP
 #define BOOST_CONTAINER_FLAT_SET_HPP
 
-#if defined(_MSC_VER)
+#if (defined _MSC_VER) && (_MSC_VER >= 1200)
 #  pragma once
 #endif
 
@@ -51,7 +51,9 @@ inline bool operator<(const flat_set<Key,Compare,Allocator>& x,
 /// @endcond
 
 //! flat_set is a Sorted Associative Container that stores objects of type Key.
-//! It is also a Unique Associative Container, meaning that no two elements are the same.
+//! flat_set is a Simple Associative Container, meaning that its value type,
+//! as well as its key type, is Key. It is also a Unique Associative Container,
+//! meaning that no two elements are the same.
 //!
 //! flat_set is similar to std::set but it's implemented like an ordered vector.
 //! This means that inserting a new element into a flat_set invalidates
@@ -59,8 +61,6 @@ inline bool operator<(const flat_set<Key,Compare,Allocator>& x,
 //!
 //! Erasing an element of a flat_set invalidates iterators and references
 //! pointing to elements that come after (their keys are bigger) the erased element.
-//!
-//! This container provides random-access iterators.
 #ifdef BOOST_CONTAINER_DOXYGEN_INVOKED
 template <class Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key> >
 #else
@@ -119,13 +119,6 @@ class flat_set
    explicit flat_set(const Compare& comp,
                      const allocator_type& a = allocator_type())
       : m_flat_tree(comp, a)
-   {}
-
-   //! <b>Effects</b>: Constructs an empty flat_set using the specified allocator.
-   //!
-   //! <b>Complexity</b>: Constant.
-   explicit flat_set(const allocator_type& a)
-      : m_flat_tree(a)
    {}
 
    //! <b>Effects</b>: Constructs an empty set using the specified comparison object and
@@ -512,7 +505,7 @@ class flat_set
    //! <b>Note</b>: If an element is inserted it might invalidate elements.
    iterator insert(const_iterator position, value_type &&x);
    #else
-   BOOST_MOVE_CONVERSION_AWARE_CATCH_1ARG(insert, value_type, iterator, this->priv_insert, const_iterator, const_iterator)
+   BOOST_MOVE_CONVERSION_AWARE_CATCH_1ARG(insert, value_type, iterator, this->priv_insert, const_iterator)
    #endif
 
    //! <b>Requires</b>: first, last are not iterators into *this.
@@ -636,7 +629,7 @@ class flat_set
    //!
    //! <b>Complexity</b>: log(size())+count(k)
    size_type count(const key_type& x) const
-      {  return static_cast<size_type>(m_flat_tree.find(x) != m_flat_tree.end());  }
+      {  return m_flat_tree.find(x) == m_flat_tree.end() ? 0 : 1;  }
 
    //! <b>Returns</b>: An iterator pointing to the first element with key not less
    //!   than k, or a.end() if such an element is not found.
@@ -763,17 +756,16 @@ inline bool operator<(const flat_multiset<Key,Compare,Allocator>& x,
 /// @endcond
 
 //! flat_multiset is a Sorted Associative Container that stores objects of type Key.
-//!
-//! flat_multiset can store multiple copies of the same key value.
+//! flat_multiset is a Simple Associative Container, meaning that its value type,
+//! as well as its key type, is Key.
+//! flat_Multiset can store multiple copies of the same key value.
 //!
 //! flat_multiset is similar to std::multiset but it's implemented like an ordered vector.
 //! This means that inserting a new element into a flat_multiset invalidates
 //! previous iterators and references
 //!
-//! Erasing an element invalidates iterators and references
-//! pointing to elements that come after (their keys are bigger) the erased element.
-//!
-//! This container provides random-access iterators.
+//! Erasing an element of a flat_multiset invalidates iterators and references
+//! pointing to elements that come after (their keys are equal or bigger) the erased element.
 #ifdef BOOST_CONTAINER_DOXYGEN_INVOKED
 template <class Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key> >
 #else
@@ -818,21 +810,9 @@ class flat_multiset
       : m_flat_tree()
    {}
 
-   //! <b>Effects</b>: Constructs an empty flat_multiset using the specified
-   //! comparison object and allocator.
-   //!
-   //! <b>Complexity</b>: Constant.
    explicit flat_multiset(const Compare& comp,
                           const allocator_type& a = allocator_type())
-      : m_flat_tree(comp, a)
-   {}
-
-   //! <b>Effects</b>: Constructs an empty flat_multiset using the specified allocator.
-   //!
-   //! <b>Complexity</b>: Constant.
-   explicit flat_multiset(const allocator_type& a)
-      : m_flat_tree(a)
-   {}
+      : m_flat_tree(comp, a) {}
 
    template <class InputIterator>
    flat_multiset(InputIterator first, InputIterator last,
@@ -1189,7 +1169,7 @@ class flat_multiset
    //! <b>Note</b>: If an element is inserted it might invalidate elements.
    iterator insert(const_iterator position, value_type &&x);
    #else
-   BOOST_MOVE_CONVERSION_AWARE_CATCH_1ARG(insert, value_type, iterator, this->priv_insert, const_iterator, const_iterator)
+   BOOST_MOVE_CONVERSION_AWARE_CATCH_1ARG(insert, value_type, iterator, this->priv_insert, const_iterator)
    #endif
 
    //! <b>Requires</b>: first, last are not iterators into *this.

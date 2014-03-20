@@ -1,12 +1,12 @@
-/* $Id: upnpreplyparse.h,v 1.17 2013/06/06 21:36:40 nanard Exp $ */
+/* $Id: upnpreplyparse.h,v 1.13 2012/03/05 19:42:48 nanard Exp $ */
 /* MiniUPnP project
  * http://miniupnp.free.fr/ or http://miniupnp.tuxfamily.org/
- * (c) 2006-2013 Thomas Bernard
+ * (c) 2006-2012 Thomas Bernard
  * This software is subject to the conditions detailed
  * in the LICENCE file provided within the distribution */
 
-#ifndef UPNPREPLYPARSE_H_INCLUDED
-#define UPNPREPLYPARSE_H_INCLUDED
+#ifndef __UPNPREPLYPARSE_H__
+#define __UPNPREPLYPARSE_H__
 
 #if defined(NO_SYS_QUEUE_H) || defined(_WIN32) || defined(__HAIKU__)
 #include "bsdqueue.h"
@@ -21,7 +21,7 @@ extern "C" {
 struct NameValue {
     LIST_ENTRY(NameValue) entries;
     char name[64];
-    char value[128];
+    char value[64];
 };
 
 struct NameValueParserData {
@@ -29,9 +29,6 @@ struct NameValueParserData {
     char curelt[64];
 	char * portListing;
 	int portListingLength;
-	int topelt;
-	const char * cdata;
-	int cdatalen;
 };
 
 /* ParseNameValue() */
@@ -48,12 +45,10 @@ char *
 GetValueFromNameValueList(struct NameValueParserData * pdata,
                           const char * Name);
 
-#if 0
 /* GetValueFromNameValueListIgnoreNS() */
 char *
 GetValueFromNameValueListIgnoreNS(struct NameValueParserData * pdata,
                                   const char * Name);
-#endif
 
 /* DisplayNameValueList() */
 #ifdef DEBUG

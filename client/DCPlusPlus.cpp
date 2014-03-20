@@ -160,8 +160,8 @@ void shutdown()
     SearchManager::deleteInstance();
     FavoriteManager::deleteInstance();
     ClientManager::deleteInstance();
+    CFlylinkDBManager::deleteInstance();
     HashManager::deleteInstance();
-	CFlylinkDBManager::deleteInstance(); // fix http://code.google.com/p/flylinkdc/issues/detail?id=1355
     LogManager::deleteInstance();
     SettingsManager::deleteInstance();
     TimerManager::deleteInstance();

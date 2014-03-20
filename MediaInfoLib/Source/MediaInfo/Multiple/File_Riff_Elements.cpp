@@ -1204,17 +1204,6 @@ void File_Riff::AVI__hdlr_strl_strf_auds()
     if (Element_Offset+2<=Element_Size)
         Get_L2 (BitsPerSample,                                  "BitsPerSample");
 
-    if (FormatTag==1) //Only for PCM
-    {
-        //Coherancy
-        if (BitsPerSample && SamplesPerSec*BitsPerSample*Channels/8==AvgBytesPerSec*8)
-            AvgBytesPerSec*=8; //Found in one file. TODO: Provide information to end user about such error
-
-        //Computing of missing value
-        if (!BitsPerSample && AvgBytesPerSec && SamplesPerSec && Channels)
-            BitsPerSample=(int16u)(AvgBytesPerSec*8/SamplesPerSec/Channels);
-    }
-
     //Filling
     Stream_Prepare(Stream_Audio);
 #ifdef _DEBUG
@@ -1267,7 +1256,7 @@ void File_Riff::AVI__hdlr_strl_strf_auds()
         #if defined(MEDIAINFO_SMPTEST0337_YES)
         {
             File_SmpteSt0337* Parser=new File_SmpteSt0337;
-            Parser->Container_Bits=(int8u)BitsPerSample;
+            Parser->Container_Bits=(int8u)(AvgBytesPerSec*8/SamplesPerSec/Channels);
             Parser->Aligned=true;
             Parser->ShouldContinueParsing=true;
             #if MEDIAINFO_DEMUX
@@ -1679,7 +1668,7 @@ void File_Riff::AVI__hdlr_strl_strf_txts()
         Skip_XX(22,                                             "Unknown");
     }
 
-    FILLING_BEGIN_PRECISE();
+    FILLING_BEGIN_PRECISE()
         Stream_Prepare(Stream_Text);
 
         if (Element_Size==0)
@@ -1767,14 +1756,12 @@ void File_Riff::AVI__hdlr_strl_strf_vids()
             Fill(StreamKind_Last, StreamPos_Last, Fill_Parameter(StreamKind_Last, Generic_Codec_CC), Ztring().From_CC4(Compression).To_Local().c_str()); //FormatTag
         }
         Fill(StreamKind_Last, StreamPos_Last, "Width", Width, 10, true);
-        Fill(StreamKind_Last, StreamPos_Last, "Height", Height>=0x80000000?(-Height):Height, 10, true); // AVI can use negative height for raw to signal that it's coded top-down, not bottom-up
+        Fill(StreamKind_Last, StreamPos_Last, "Height", Height, 10, true);
         if (Resolution==32 && Compression==0x74736363) //tscc
             Fill(StreamKind_Last, StreamPos_Last, "BitDepth", 8);
         else if (Compression==0x44495633) //DIV3
             Fill(StreamKind_Last, StreamPos_Last, "BitDepth", 8);
-        else if (MediaInfoLib::Config.CodecID_Get(StreamKind_Last, InfoCodecID_Format_Riff, Ztring().From_CC4(Compression)).find(__T("Canopus"))!=std::string::npos) //Canopus codecs
-            Fill(StreamKind_Last, StreamPos_Last, "BitDepth", Resolution/3);
-         else if (Compression==0x44585342) //DXSB
+        else if (Compression==0x44585342) //DXSB
             Fill(StreamKind_Last, StreamPos_Last, "BitDepth", Resolution);
         else if (MediaInfoLib::Config.CodecID_Get(StreamKind_Last, InfoCodecID_Format_Riff, Ztring().From_CC4(Compression), InfoCodecID_ColorSpace).find(__T("RGBA"))!=std::string::npos) //RGB codecs
             Fill(StreamKind_Last, StreamPos_Last, "BitDepth", Resolution/4);
@@ -2613,21 +2600,13 @@ void File_Riff::AVI__movi_xxxx___tx()
     //Parsing
     int32u Name_Size;
     Ztring Value;
-    int32u GAB2;
-    Peek_B4(GAB2);
-    if (GAB2==0x47414232 && Element_Size>=17)
-    {
-        Skip_C4(                                                    "GAB2");
-        Skip_L1(                                                    "Zero");
-        Skip_L2(                                                    "CodePage"); //2=Unicode
-        Get_L4 (Name_Size,                                          "Name_Size");
-        Skip_UTF16L(Name_Size,                                      "Name");
-        Skip_L2(                                                    "Four");
-        Skip_L4(                                                    "File_Size");
-
-        if (Element_Offset>Element_Size)
-            Element_Offset=Element_Size; //Problem
-    }
+    Skip_C4(                                                    "GAB2");
+    Skip_L1(                                                    "Zero");
+    Skip_L2(                                                    "CodePage"); //2=Unicode
+    Get_L4 (Name_Size,                                          "Name_Size");
+    Skip_UTF16L(Name_Size,                                      "Name");
+    Skip_L2(                                                    "Four");
+    Skip_L4(                                                    "File_Size");
 
     //Skip it
     Stream[Stream_ID].SearchingPayload=false;
@@ -2706,7 +2685,7 @@ void File_Riff::AVI__movi_StreamJump()
     {
         do
             Stream_Structure_Temp++;
-        while (Stream_Structure_Temp!=Stream_Structure.end() && !(Stream[(int32u)Stream_Structure_Temp->second.Name].SearchingPayload && Config->ParseSpeed<1.0));
+        while (Stream_Structure_Temp!=Stream_Structure.end() && !Stream[(int32u)Stream_Structure_Temp->second.Name].SearchingPayload);
         if (Stream_Structure_Temp!=Stream_Structure.end())
         {
             int64u ToJump=Stream_Structure_Temp->first;

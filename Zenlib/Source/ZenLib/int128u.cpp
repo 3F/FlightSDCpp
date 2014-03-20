@@ -112,8 +112,8 @@ uint128::uint128 (const char * sz) throw ()
             ++i;
         };
     };
-	const size_t l_size_sz = strlen (sz); // V814 Decreased performance. Calls to the 'strlen' function have being made multiple times when a condition for the loop's continuation was calculated. int128u.cpp 102
-    for (; i < l_size_sz; ++i) {
+
+    for (; i < strlen (sz); ++i) {
         unsigned int n = 0;
         if (sz [i] >= '0' && sz [i] <= (('0' + (int) radix) < '9'?('0' + (int) radix):'9')) //if (sz [i] >= '0' && sz [i] <= (('0' + (int) radix) <? '9'))
             n = sz [i] - '0';

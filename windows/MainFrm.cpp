@@ -370,7 +370,7 @@ LRESULT MainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
     
     if (SETTING(NICK).empty())
     {
-		SettingsManager::getInstance()->set(SettingsManager::NICK, Util::getRegistryValueString(_T("Nick")));
+        SettingsManager::getInstance()->set(SettingsManager::NICK, Util::getRegistryValueString("Nick"));
         if (SETTING(NICK).empty())
             PostMessage(WM_COMMAND, ID_FILE_SETTINGS);
     }

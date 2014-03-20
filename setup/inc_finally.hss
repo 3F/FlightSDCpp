@@ -117,18 +117,7 @@ end;
 
 procedure DeinitializeUninstall();
 var ErrorCode : Integer;
-l_VID_VALUE : string;
 begin
-
-#ifdef  YANDEX_VID_PREFIX
-   #if YANDEX_VID_PREFIX > 9
-     l_VID_VALUE := IntToStr({#YANDEX_VID_PREFIX} * 1000000 + {#YANDEX_VID_INDEX});
-   #else
-     l_VID_VALUE := IntToStr({#YANDEX_VID_PREFIX} * 10000000 + {#YANDEX_VID_INDEX});
-   #endif
-    RegDeleteValue(HKEY_CURRENT_USER, 'Software\FlylinkDC++\VID', l_VID_VALUE);
-#endif
-
     if MsgBox('Спасибо за использование StrongDC++ sqlite' #13 'Вы можете сообщить о причине удаления программы и Ваше сообщение будет рассмотрено разработчиками...', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = idYes
     then ShellExec('open', 'http://flylinkdc.blogspot.com/2010/04/strongdc-sqlite-uninstall-feedback.html', '', '', SW_SHOW, ewNoWait, ErrorCode);
 end;

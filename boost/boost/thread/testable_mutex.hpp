@@ -48,7 +48,6 @@ namespace boost
 
     void lock()
     {
-      BOOST_ASSERT(! is_locked_by_this_thread());
       mtx_.lock();
       id_ = this_thread::get_id();
     }
@@ -62,7 +61,6 @@ namespace boost
 
     bool try_lock()
     {
-      BOOST_ASSERT(! is_locked_by_this_thread());
       if (mtx_.try_lock())
       {
         id_ = this_thread::get_id();
@@ -77,7 +75,6 @@ namespace boost
     template <class Rep, class Period>
     bool try_lock_for(const chrono::duration<Rep, Period>& rel_time)
     {
-      BOOST_ASSERT(! is_locked_by_this_thread());
       if (mtx_.try_lock_for(rel_time))
       {
         id_ = this_thread::get_id();
@@ -91,7 +88,6 @@ namespace boost
     template <class Clock, class Duration>
     bool try_lock_until(const chrono::time_point<Clock, Duration>& abs_time)
     {
-      BOOST_ASSERT(! is_locked_by_this_thread());
       if (mtx_.try_lock_until(abs_time))
       {
         id_ = this_thread::get_id();

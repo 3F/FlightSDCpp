@@ -42,9 +42,6 @@ public :
     #ifdef MEDIAINFO_TSP_YES
         size_t TSP_Size;
     #endif
-    #ifdef MEDIAINFO_ARIBSTDB24B37_YES
-        bool FromAribStdB24B37;
-    #endif
 
     //Constructor/Destructor
     File_MpegTs();
@@ -129,7 +126,6 @@ private :
     #endif // MEDIAINFO_ADVANCED
     #endif //MEDIAINFO_MPEGTS_PCR_YES
     void Streams_Update_Duration_End();
-    void SetAllToPES();
 
     #if MEDIAINFO_DUPLICATE
         //File__Duplicate

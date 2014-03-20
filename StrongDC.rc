@@ -26,8 +26,6 @@ LANGUAGE LANG_CZECH, SUBLANG_DEFAULT
 //
 
 IDR_CUSTOM_COMPRESS_EXT RCDATA                  "compiled\\Settings\\CustomCompressExt.ini"
-IDR_FLY_SERVER_CONFIG   RCDATA                  "compiled\\Settings\\strongdc-sqlite-config.xml"
-IDR_IPTRUST_EXAMPLE     RCDATA                  "compiled\\Settings\\IPTrust.ini"
 
 /////////////////////////////////////////////////////////////////////////////
 //

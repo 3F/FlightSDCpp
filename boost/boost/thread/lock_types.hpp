@@ -1112,10 +1112,6 @@ namespace boost
     {
       return exclusive.owns_lock();
     }
-    Mutex* mutex() const BOOST_NOEXCEPT
-    {
-      return exclusive.mutex();
-    }
   };
 
 BOOST_THREAD_DCL_MOVABLE_BEG(Mutex) upgrade_to_unique_lock<Mutex> BOOST_THREAD_DCL_MOVABLE_END
@@ -1191,7 +1187,7 @@ private unique_lock<Mutex>
     {
       return base::owns_lock();
     }
-    Mutex* mutex() const BOOST_NOEXCEPT
+    Mutex* mutex() const
     {
       return base::mutex();
     }

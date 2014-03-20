@@ -394,7 +394,6 @@ private :
         bool                    IsPriorityStream;
         bool                    IsFilled;
         bool                    IsChapter;
-        bool                    ScanOrder_StoredDisplayedInverted;
         float32                 CleanAperture_Width;
         float32                 CleanAperture_Height;
         float32                 CleanAperture_PixelAspectRatio;
@@ -417,7 +416,6 @@ private :
         #endif //MEDIAINFO_DEMUX || MEDIAINFO_SEEK
         #if MEDIAINFO_DEMUX
             bool            PtsDtsAreSame;
-            bool            Demux_EventWasSent;
         #endif //MEDIAINFO_DEMUX
 
         stream()
@@ -448,7 +446,6 @@ private :
             IsPriorityStream=false;
             IsFilled=false;
             IsChapter=false;
-            ScanOrder_StoredDisplayedInverted=false;
             CleanAperture_Width=0;
             CleanAperture_Height=0;
             CleanAperture_PixelAspectRatio=0;
@@ -460,7 +457,6 @@ private :
             #endif //MEDIAINFO_DEMUX
             #if MEDIAINFO_DEMUX
                 PtsDtsAreSame=false;
-                Demux_EventWasSent=false;
             #endif //MEDIAINFO_DEMUX
         }
 

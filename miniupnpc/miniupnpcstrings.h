@@ -8,12 +8,8 @@
 #ifndef __MINIUPNPCSTRINGS_H__
 #define __MINIUPNPCSTRINGS_H__
 
-#ifdef _WIN32
-#define OS_STRING "MSWindows/6.1.7601"
-#define MINIUPNPC_VERSION_STRING "1.8"
-#else
-#error TODO gen from the makefile
-#endif
+#define OS_STRING "OS/version"
+#define MINIUPNPC_VERSION_STRING "1.7"
 
 #endif
 

@@ -91,7 +91,6 @@ public :
 protected :
     //Streams management
     void Streams_Fill();
-    void Streams_Update();
     void Streams_Finish();
 
     //Buffer - File header
@@ -253,7 +252,7 @@ protected :
     void sbr_envelope                       (bool ch, bool bs_coupling);
     void sbr_noise                          (bool ch, bool bs_coupling);
     void sbr_sinusoidal_coding              (bool ch);
-    int16u sbr_huff_dec                     (const sbr_huffman& Table, const char* Name);
+    int16u sbr_huff_dec                     (sbr_huffman Table, const char* Name);
 
     //Elements - SBR - PS
     void ps_data                            (size_t End);

@@ -176,7 +176,6 @@ private :
     bool   quant_type;
     bool   data_partitioned;
     bool   reversible_vlc;
-    bool   colour_description;
 
     //From user_data
     Ztring Library;

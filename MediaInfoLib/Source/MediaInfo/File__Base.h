@@ -69,7 +69,7 @@ protected :
     virtual int WriteToDisk () {return -1;} //Write modified tags on disk
 
     //Arrays
-public : //TODO:put it as private
+//private : //TODO:put it as private (DvDif)
     std::vector<std::vector<ZtringList> > * Stream; //pointer to others listed streams
     std::vector<std::vector<ZtringListList> > * Stream_More; //pointer to others listed streams
     bool Stream_MustBeDeleted;

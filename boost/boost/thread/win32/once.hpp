@@ -363,7 +363,7 @@ namespace boost
         }
     }
 #else
-#if ! defined(BOOST_MSVC) && ! defined(BOOST_INTEL)
+#ifndef BOOST_MSVC
     template<typename Function>
     void call_once(once_flag& flag,Function f)
     {

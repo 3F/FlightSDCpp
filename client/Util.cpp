@@ -76,7 +76,6 @@ Util::LocationsList Util::userLocations;
 unordered_set<string> Util::g_compress_ext;
 
 StringList Util::countryNames;
-NUMBERFMT Util::g_nf = { 0 };
 
 string Util::paths[Util::PATH_LAST];
 
@@ -144,14 +143,6 @@ void Util::initialize()
 #endif
     
 #ifdef _WIN32
-	static TCHAR g_sep[2] = _T(",");
-	static wchar_t g_Dummy[16] = { 0 };
-	g_nf.lpDecimalSep = g_sep;
-	GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SGROUPING, g_Dummy, 16);
-	g_nf.Grouping = _wtoi(g_Dummy);
-	GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, g_Dummy, 16);
-	g_nf.lpThousandSep = g_Dummy;
-
     TCHAR buf[MAX_PATH + 1] = { 0 };
     ::GetModuleFileName(NULL, buf, MAX_PATH);
     
@@ -751,13 +742,12 @@ string Util::getAwayMessage(StringMap& params)
     return formatParams(awayMsg.empty() ? SETTING(DEFAULT_AWAY_MESSAGE) : awayMsg, params, false, awayTime);
 }
 
-string Util::formatBytes(int64_t aBytes) // TODO fix copy-paste
+string Util::formatBytes(int64_t aBytes)
 {
     char buf[64];
-	buf[0] = 0;
     if (aBytes < 1024)
     {
-		snprintf(buf, _countof(buf), "%d %s", (int)aBytes & 0xffffffff, CSTRING(B));
+        snprintf(buf, _countof(buf), "%d %s", (int)(aBytes & 0xffffffff), CSTRING(B));
     }
     else if (aBytes < 1048576)
     {
@@ -773,51 +763,18 @@ string Util::formatBytes(int64_t aBytes) // TODO fix copy-paste
     }
     else if (aBytes < (int64_t)1125899906842624)
     {
-		snprintf(buf, _countof(buf), "%.03f %s", (double)aBytes / (1099511627776.0), CSTRING(TB));
+        snprintf(buf, _countof(buf), "%.02f %s", (double)aBytes / (1099511627776.0), CSTRING(TB));
     }
     else if (aBytes < (int64_t)1152921504606846976)
     {
-		snprintf(buf, _countof(buf), "%.03f %s", (double)aBytes / (1125899906842624.0), CSTRING(PB));
+        snprintf(buf, _countof(buf), "%.02f %s", (double)aBytes / (1125899906842624.0), CSTRING(PB));
     }
     else
     {
-		snprintf(buf, _countof(buf), "%.03f %s", (double)aBytes / (1152921504606846976.0), CSTRING(EB));
+        snprintf(buf, _countof(buf), "%.02f %s", (double)aBytes / (1152921504606846976.0), CSTRING(EB));
     }
+    
     return buf;
-}
-string Util::formatBytes(double aBytes) // TODO fix copy-paste
-{
-	char buf[64];
-	buf[0] = 0;
-	if (aBytes < 1024)
-	{
-		snprintf(buf, _countof(buf), "%d %s", (int)aBytes & 0xffffffff, CSTRING(B));
-	}
-	else if (aBytes < 1048576)
-	{
-		snprintf(buf, _countof(buf), "%.02f %s", aBytes / (1024.0), CSTRING(KB));
-	}
-	else if (aBytes < 1073741824)
-	{
-		snprintf(buf, _countof(buf), "%.02f %s", aBytes / (1048576.0), CSTRING(MB));
-	}
-	else if (aBytes < (int64_t)1099511627776)
-	{
-		snprintf(buf, _countof(buf), "%.02f %s", aBytes / (1073741824.0), CSTRING(GB));
-	}
-	else if (aBytes < (int64_t)1125899906842624)
-	{
-		snprintf(buf, _countof(buf), "%.03f %s", aBytes / (1099511627776.0), CSTRING(TB));
-	}
-	else if (aBytes < (int64_t)1152921504606846976)
-	{
-		snprintf(buf, _countof(buf), "%.03f %s", aBytes / (1125899906842624.0), CSTRING(PB));
-	}
-	else
-	{
-		snprintf(buf, _countof(buf), "%.03f %s", aBytes / (1152921504606846976.0), CSTRING(EB));
-	}
-	return buf;
 }
 
 wstring Util::formatBytesW(int64_t aBytes)
@@ -841,15 +798,15 @@ wstring Util::formatBytesW(int64_t aBytes)
     }
     else if (aBytes < (int64_t)1125899906842624)
     {
-		snwprintf(buf, _countof(buf), L"%.03f %s", (double)aBytes / (1099511627776.0), CWSTRING(TB));
+        snwprintf(buf, _countof(buf), L"%.02f %s", (double)aBytes / (1099511627776.0), CWSTRING(TB));
     }
     else if (aBytes < (int64_t)1152921504606846976)
     {
-		snwprintf(buf, _countof(buf), L"%.03f %s", (double)aBytes / (1125899906842624.0), CWSTRING(PB));
+        snwprintf(buf, _countof(buf), L"%.02f %s", (double)aBytes / (1125899906842624.0), CWSTRING(PB));
     }
     else
     {
-		snwprintf(buf, _countof(buf), L"%.03f %s", (double)aBytes / (1152921504606846976.0), CWSTRING(EB)); //TODO Crash beta-16
+        snwprintf(buf, _countof(buf), L"%.02f %s", (double)aBytes / (1152921504606846976.0), CWSTRING(EB));
     }
     
     return buf;
@@ -858,17 +815,32 @@ wstring Util::formatBytesW(int64_t aBytes)
 wstring Util::formatExactSize(int64_t aBytes)
 {
 #ifdef _WIN32
-	wchar_t l_number[64];
-	l_number[0] = 0;
-	snwprintf(l_number, _countof(l_number), _T(I64_FMT), aBytes);
-	wchar_t l_buf_nf[64];
-	l_buf_nf[0] = 0;
-	GetNumberFormat(LOCALE_USER_DEFAULT, 0, l_number, &g_nf, l_buf_nf, _countof(l_buf_nf));
-	snwprintf(l_buf_nf, _countof(l_buf_nf), _T("%s %s"), l_buf_nf, CWSTRING(B));
-	return l_buf_nf;
+    wchar_t buf[64];
+    wchar_t number[64];
+    NUMBERFMT nf;
+    snwprintf(number, sizeof(number), _T("%I64d"), aBytes);
+    wchar_t Dummy[16];
+    TCHAR sep[2] = _T(",");
+    
+    /*No need to read these values from the system because they are not
+    used to format the exact size*/
+    nf.NumDigits = 0;
+    nf.LeadingZero = 0;
+    nf.NegativeOrder = 0;
+    nf.lpDecimalSep = sep;
+    
+    GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SGROUPING, Dummy, 16);
+    nf.Grouping = _wtoi(Dummy);
+    GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, Dummy, 16);
+    nf.lpThousandSep = Dummy;
+    
+    GetNumberFormat(LOCALE_USER_DEFAULT, 0, number, &nf, buf, 64);
+    
+    snwprintf(buf, _countof(buf), _T("%s %s"), buf, CTSTRING(B));
+    return buf;
 #else
     wchar_t buf[64];
-	snwprintf(buf, _countof(buf), _T(I64_FMT), (long long int)aBytes);
+    snwprintf(buf, _countof(buf), L"%'lld", (long long int)aBytes);
     return tstring(buf) + TSTRING(B);
 #endif
 }
@@ -882,11 +854,11 @@ string Util::getLocalIp()
     }
 #endif
     string tmp;
+    
     char buf[256];
-	if (!gethostname(buf, 255))
-	{
-		const hostent* he = gethostbyname(buf);
-		if (he == nullptr || he->h_addr_list[0] == 0)
+    gethostname(buf, 255);
+    hostent* he = gethostbyname(buf);
+    if (he == NULL || he->h_addr_list[0] == 0)
         return Util::emptyString;
     sockaddr_in dest;
     int i = 0;
@@ -907,18 +879,23 @@ string Util::getLocalIp()
             i++;
         }
     }
-	}
     return tmp;
 }
 
-bool Util::isPrivateIp(const string& ip)
+bool Util::isPrivateIp(string const& ip)
 {
     struct in_addr addr;
+    
     addr.s_addr = inet_addr(ip.c_str());
+    
     if (addr.s_addr  != INADDR_NONE)
     {
-		const uint32_t haddr = ntohl(addr.s_addr);
-		return isPrivateIp(haddr);
+        unsigned long haddr = ntohl(addr.s_addr);
+        return ((haddr & 0xff000000) == 0x0a000000 || // 10.0.0.0/8
+                (haddr & 0xff000000) == 0x7f000000 || // 127.0.0.0/8
+                (haddr & 0xffff0000) == 0xa9fe0000 || // 169.254.0.0/16
+                (haddr & 0xfff00000) == 0xac100000 || // 172.16.0.0/12
+                (haddr & 0xffff0000) == 0xc0a80000);  // 192.168.0.0/16
     }
     return false;
 }
@@ -1587,185 +1564,145 @@ string Util::formatStatus(int iStatus)
     
     return (status.empty() ? "Unknown " : status) + "(" + toString(iStatus) + ")";
 }
-std::string Util::getRegistryCommaSubkey(const tstring& p_key)
-{
-	std::string l_result;
-	std::string l_sep;
-	HKEY l_hk = nullptr;
-	TCHAR l_buf[512];
-	l_buf[0] = 0;
-	tstring l_key =  FLYLINKDC_REGISTRY_PATH _T("\\");
-	l_key += p_key;
-	if (::RegOpenKeyEx(HKEY_CURRENT_USER, l_key.c_str(), 0, KEY_READ, &l_hk) == ERROR_SUCCESS)
-	{
-		DWORD l_dwIndex = 0;
-		DWORD l_len = _countof(l_buf);
-		while (RegEnumValue(l_hk, l_dwIndex++, l_buf, &l_len, NULL, NULL, NULL, NULL) == ERROR_SUCCESS)
-		{
-			l_result += l_sep + Text::fromT(l_buf);
-			l_len = _countof(l_buf);
-			if (l_sep.empty())
-				l_sep = ',';
-		}
-		::RegCloseKey(l_hk);
-	}
-	return l_result;
-}
 
-string Util::getRegistryValueString(const tstring& p_key, bool p_is_path)
+} // namespace dcpp
+//[+]PPA
+string Util::getRegistryValueString(const string& p_key, bool p_is_path)
 {
-	HKEY hk = nullptr;
-	TCHAR l_buf[512];
-	l_buf[0] = 0;
-	if (::RegOpenKeyEx(HKEY_CURRENT_USER, FLYLINKDC_REGISTRY_PATH, 0, KEY_READ, &hk) == ERROR_SUCCESS)
+    HKEY hk;
+    TCHAR buf[512];
+    buf[0] = 0;
+    if (::RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\FlylinkDC++"), 0, KEY_READ, &hk) == ERROR_SUCCESS)
     {
-		DWORD l_bufLen = sizeof(l_buf);
-		::RegQueryValueEx(hk, p_key.c_str(), NULL, NULL, (LPBYTE)l_buf, &l_bufLen);
+        DWORD bufLen = sizeof(buf);
+        ::RegQueryValueEx(hk, Text::toT(p_key).c_str(), NULL, NULL, (LPBYTE)buf, &bufLen);
         ::RegCloseKey(hk);
-		if (l_bufLen)
+        if (bufLen)
         {
-			string l_result = Text::fromT(l_buf);
+            string l_result = Text::fromT(buf);
             if (p_is_path)
-				AppendPathSeparator(l_result); //[+]PPA
+                AppendPathSeparator(l_result);
             return l_result;
         }
     }
     return emptyString;
 }
 
-bool Util::deleteRegistryValue(const tstring& p_value)
-{
-	HKEY hk = nullptr;
-	if (::RegCreateKeyEx(HKEY_CURRENT_USER, FLYLINKDC_REGISTRY_PATH, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hk, NULL) != ERROR_SUCCESS)
-	{
-		return false;
-	}
-	const LSTATUS status = ::RegDeleteValue(hk, p_value.c_str());
-	::RegCloseKey(hk);
-	dcassert(status == ERROR_SUCCESS);
-	return status == ERROR_SUCCESS;
-}
 //[+] SSA
-bool Util::setRegistryValueString(const tstring& p_key, const tstring& p_value)
+size_t
+Util::getDataFromInet(LPCWSTR agent, const DWORD frameBufferSize, string const& url, string& data, LONG timeOut /*=0*/, IDateReceiveReporter* reporter /* = NULL */)
 {
-	HKEY hk = nullptr;
-	if (::RegCreateKeyEx(HKEY_CURRENT_USER, FLYLINKDC_REGISTRY_PATH, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hk, NULL) != ERROR_SUCCESS)
-	{
-		return false;
-	}
-	const LSTATUS status = ::RegSetValueEx(hk, p_key.c_str(), NULL, REG_SZ, (LPBYTE)p_value.c_str(), sizeof(TCHAR) * (p_value.length() + 1));
-	::RegCloseKey(hk);
-	dcassert(status == ERROR_SUCCESS);
-	return status == ERROR_SUCCESS;
-}
+    size_t totalBytesRead = 0;
+    DWORD numberOfBytesRead = 0;
+    DWORD numberOfBytesToRead = frameBufferSize;
     
-string Util::getExternalIP(const string& p_url, LONG p_timeOut /* = 500 */)
-{
-	CFlyLog l_log("[GetIP]");
-	string l_downBuf;
-	getDataFromInet(_T("GetIP"), 256, p_url, l_downBuf, p_timeOut);
-	if (!l_downBuf.empty())
-	{
-		SimpleXML xml;
+    AutoArray<char> pTempData(frameBufferSize + 1);
     try
     {
-			xml.fromXML(l_downBuf);
-			if (xml.findChild("html"))
-        {
-				xml.stepIn();
-				if (xml.findChild("body"))
-        {
-					const string l_IP = xml.getChildData().substr(20);
-					l_log.step("Download : " + p_url + " IP = " + l_IP);
-					if (isValidIP(l_IP))
-            {
-						return l_IP;
-            }
-            else
-            {
-						dcassert(0);
-                    }
-                }
-            }
-        }
-		catch (SimpleXMLException & e)
-        {
-			l_log.step(string("Error parse XML: ") + e.what());
-        }
-    }
-	else
-		l_log.step("Error download : " + Util::translateError(GetLastError()));
-	return Util::emptyString;
-}
-
-//[+] SSA
-size_t Util::getDataFromInet(LPCWSTR agent, const DWORD frameBufferSize, const string& url, string& data, LONG timeOut /*=0*/, IDateReceiveReporter* reporter /* = NULL */)
-    {
-	std::vector<byte> l_bin_data;
-	const size_t l_bin_size = Util::getBinaryDataFromInet(agent, frameBufferSize, url, l_bin_data, timeOut, reporter);
-	if (l_bin_size)
-	{
-		data = string((char*)l_bin_data.data(), l_bin_size);
-    }
-	else
-	{
-		data.clear();
-}
-
-	return l_bin_size;
-}
-//[+] SSA
-uint64_t Util::getBinaryDataFromInet(LPCWSTR agent, const DWORD frameBufferSize, const string& url, std::vector<byte>& p_dataOut, LONG timeOut /*=0*/, IDateReceiveReporter* reporter /* = NULL */)
-{
-	dcassert(frameBufferSize);
-	dcassert(!url.empty());
-    // FlylinkDC++ Team TODO: http://code.google.com/p/flylinkdc/issues/detail?id=632
-    if (url.empty())
-        return 0;
-        
-        CInternetHandle hInternet(InternetOpen(agent, INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0));
-        if (!hInternet)
-	{
-		LogManager::getInstance()->message("InternetOpen [" + url + "] error = " + Util::translateError(GetLastError()));
-		dcassert(0);
-            return 0;
-	}
-            
-	
+    
+        HINTERNET hInternet = InternetOpen(agent, INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
         if (timeOut)
+        {
             InternetSetOption(hInternet, INTERNET_OPTION_CONNECT_TIMEOUT, &timeOut, sizeof(timeOut));
-            
-	CInternetHandle hURL(InternetOpenUrlA(hInternet, url.c_str(), NULL, 0, INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_RELOAD, 0));
-        if (!hURL)
-        {
-		dcassert(0);
-		LogManager::getInstance()->message("InternetOpenUrl [" + url + "] error = " + Util::translateError(GetLastError()));
-		// TODO - залогировать коды ошибок для статы
-            return 0;
         }
+        HINTERNET hURL = InternetOpenUrlA(hInternet, url.c_str(), NULL, 0, INTERNET_FLAG_TRANSFER_ASCII | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_RELOAD, 1);
+        
         bool isUserCancel = false;
-	uint64_t totalBytesRead = 0;
-	for (;;)
+        while (InternetReadFile(hURL, pTempData.get(), numberOfBytesToRead, &numberOfBytesRead))
         {
-		DWORD l_BytesRead = 0;
-		p_dataOut.resize(totalBytesRead + frameBufferSize);
-		if (!InternetReadFile(hURL, &p_dataOut[totalBytesRead], frameBufferSize, &l_BytesRead))
+            if (numberOfBytesRead == 0)
             {
-			dcassert(0);
-			LogManager::getInstance()->message("InternetReadFile [" + url + "] error = " + Util::translateError(GetLastError()));
-			// TODO - залогировать коды ошибок для статы
-			return 0;
-		}
-		if (l_BytesRead == 0)
-		{
+                // EOF detected
                 break;
             }
             else
             {
-			totalBytesRead += l_BytesRead;
+                // Copy partial data
+                pTempData[numberOfBytesRead] = '\0';
+                data += pTempData.get();
+                totalBytesRead += numberOfBytesRead;
                 if (reporter)
                 {
-				if (!reporter->ReportResultReceive(l_BytesRead))
+                    if (!reporter->ReportResultReceive(numberOfBytesRead))
+                    {
+                        isUserCancel = true;
+                        break;
+                    }
+                }
+            }
+        }
+        // Close URL
+        InternetCloseHandle(hURL);
+        
+        // Close Internet session
+        InternetCloseHandle(hInternet);
+        
+        if (isUserCancel)
+        {
+            data = emptyString;
+            totalBytesRead = 0;
+        }
+    }
+    catch (...)
+    {
+        data = emptyString;
+        totalBytesRead = 0;
+    }
+    return totalBytesRead;
+}
+
+//[+] SSA
+uint64_t Util::getDataFromInet(LPCWSTR agent, const DWORD frameBufferSize, string const& url, unique_ptr<byte[]>& dataOut, LONG timeOut /*=0*/, IDateReceiveReporter* reporter /* = NULL */)
+{
+    // FlylinkDC++ Team TODO: http://code.google.com/p/flylinkdc/issues/detail?id=632
+    // TODO: please refactoring this code: The current implementation is redundant and is not optimal:
+    // now used three different storage container of the same data :( . Please use only one container.
+    if (url.empty())
+        return 0;
+        
+    uint64_t totalBytesRead = 0;
+    DWORD numberOfBytesRead = 0;
+    DWORD numberOfBytesToRead = frameBufferSize;
+    vector<byte*> vecOut(numberOfBytesToRead); // The first container.
+    
+    AutoArray<uint8_t> pTempData(frameBufferSize + 1); // Second container.
+    try
+    {
+        CInternetHandle hInternet(InternetOpen(agent, INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0));
+        if (!hInternet)
+            return 0;
+            
+        if (timeOut)
+            InternetSetOption(hInternet, INTERNET_OPTION_CONNECT_TIMEOUT, &timeOut, sizeof(timeOut));
+            
+        CInternetHandle hURL(InternetOpenUrlA(hInternet, url.c_str(), NULL, 0, INTERNET_FLAG_TRANSFER_ASCII | INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_RELOAD, 1));
+        if (!hURL)
+        {
+            LogManager::getInstance()->message("InternetOpenUrl error = " + Util::translateError(GetLastError()));
+            return 0;
+        }
+        bool isUserCancel = false;
+        while (InternetReadFile(hURL, pTempData.data(), numberOfBytesToRead, &numberOfBytesRead))
+        {
+            if (numberOfBytesRead == 0)
+            {
+                // EOF detected
+                break;
+            }
+            else
+            {
+                // Copy partial data
+                // pTempData[numberOfBytesRead] = '\0';
+                // data += pTempData.get();
+                if (totalBytesRead + numberOfBytesRead > vecOut.size())
+                {
+                    vecOut.resize(totalBytesRead + numberOfBytesRead);
+                }
+                memcpy(&vecOut[totalBytesRead], pTempData.data(), numberOfBytesRead);
+                totalBytesRead += numberOfBytesRead;
+                if (reporter)
+                {
+                    if (!reporter->ReportResultReceive(numberOfBytesRead)) //  2012-04-29_06-52-32_ZCMA2HPLJNT2IO6XPN2TGEMMKDEC4FRWXU24CMY_56E6F820_crash-stack-r502-beta23-build-9860.dmp
                     {
                         isUserCancel = true;
                         break;
@@ -1775,45 +1712,31 @@ uint64_t Util::getBinaryDataFromInet(LPCWSTR agent, const DWORD frameBufferSize,
         }
         if (isUserCancel)
         {
-		p_dataOut.clear();
+            dataOut.reset();
             totalBytesRead = 0;
         }
-	return totalBytesRead;
-}
-
-
-DWORD Util::GetTextResource(const int p_res, LPCSTR& p_data)
+        else
         {
-	HRSRC hResInfo = FindResource(nullptr, MAKEINTRESOURCE(p_res), RT_RCDATA);
-	if (hResInfo)
+            dataOut = unique_ptr<byte[]>(new byte[ totalBytesRead ]); // Third container.
+            for (size_t i = 0; i < totalBytesRead; i += frameBufferSize)
             {
-		HGLOBAL hResGlobal = LoadResource(nullptr, hResInfo);
-		if (hResGlobal)
-		{
-			p_data = (LPCSTR)LockResource(hResGlobal);
-			if (p_data)
-			{
-				return SizeofResource(nullptr, hResInfo);
+                size_t lenCopy = frameBufferSize;
+                if (totalBytesRead - i < frameBufferSize)
+                    lenCopy = totalBytesRead - i;
+                    
+                byte* ptrCopy = dataOut.get() + i;
+                memcpy(ptrCopy, &vecOut[i], lenCopy);
             }
         }
     }
-	dcassert(0);
-	return 0;
-}
-
-void Util::WriteTextResourceToFile(const int p_res, const tstring& p_file)
+    catch (...)
     {
-	LPCSTR l_data;
-	if (const DWORD l_size = GetTextResource(p_res, l_data))
-	{
-		std::ofstream l_file_out(p_file.c_str());
-		l_file_out.write(l_data, l_size);
-		return;
+        dataOut.reset();
+        totalBytesRead = 0;
     }
-	dcassert(0);
+    return totalBytesRead;
 }
 
-}
 
 /**
  * @file

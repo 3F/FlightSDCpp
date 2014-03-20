@@ -80,7 +80,6 @@ public:
     void PlusOne();
     void MinusOne();
     string ToString();
-    int32u ToFrames();
 
 public:
     int8u Hours;

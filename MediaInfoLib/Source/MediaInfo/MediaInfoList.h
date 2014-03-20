@@ -43,8 +43,6 @@
 namespace MediaInfoLib
 {
 
-#ifdef FLYLINKDC_USE_MEDIAINFO_LIST
-
 class MediaInfoList_Internal;
 
 //***************************************************************************
@@ -224,6 +222,5 @@ private :
     MediaInfoList& operator=(const MediaInfoList&);         // Prevent assignment
 };
 
-#endif // FLYLINKDC_USE_MEDIAINFO_LIST
 } //NameSpace
 #endif

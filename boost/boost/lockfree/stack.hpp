@@ -435,9 +435,21 @@ public:
     bool pop(U & ret)
     {
         BOOST_STATIC_ASSERT((boost::is_convertible<T, U>::value));
-        detail::consume_via_copy<U> consumer(ret);
+        tagged_node_handle old_tos = tos.load(detail::memory_order_consume);
 
-        return consume_one(consumer);
+        for (;;) {
+            node * old_tos_pointer = pool.get_pointer(old_tos);
+            if (!old_tos_pointer)
+                return false;
+
+            tagged_node_handle new_tos(old_tos_pointer->next, old_tos.get_next_tag());
+
+            if (tos.compare_exchange_weak(old_tos, new_tos)) {
+                detail::copy_payload(old_tos_pointer->v, ret);
+                pool.template destruct<true>(old_tos);
+                return true;
+            }
+        }
     }
 
 
@@ -493,42 +505,24 @@ public:
     template <typename Functor>
     bool consume_one(Functor & f)
     {
-        tagged_node_handle old_tos = tos.load(detail::memory_order_consume);
+        T element;
+        bool success = pop(element);
+        if (success)
+            f(element);
 
-        for (;;) {
-            node * old_tos_pointer = pool.get_pointer(old_tos);
-            if (!old_tos_pointer)
-                return false;
-
-            tagged_node_handle new_tos(old_tos_pointer->next, old_tos.get_next_tag());
-
-            if (tos.compare_exchange_weak(old_tos, new_tos)) {
-                f(old_tos_pointer->v);
-                pool.template destruct<true>(old_tos);
-                return true;
-            }
-        }
+        return success;
     }
 
     /// \copydoc boost::lockfree::stack::consume_one(Functor & rhs)
     template <typename Functor>
     bool consume_one(Functor const & f)
     {
-        tagged_node_handle old_tos = tos.load(detail::memory_order_consume);
+        T element;
+        bool success = pop(element);
+        if (success)
+            f(element);
 
-        for (;;) {
-            node * old_tos_pointer = pool.get_pointer(old_tos);
-            if (!old_tos_pointer)
-                return false;
-
-            tagged_node_handle new_tos(old_tos_pointer->next, old_tos.get_next_tag());
-
-            if (tos.compare_exchange_weak(old_tos, new_tos)) {
-                f(old_tos_pointer->v);
-                pool.template destruct<true>(old_tos);
-                return true;
-            }
-        }
+        return success;
     }
 
     /** consumes all elements via a functor

@@ -402,10 +402,9 @@ void File_Avc::Streams_Fill(std::vector<seq_parameter_set_struct*>::iterator seq
             Fill(Stream_Video, 0, Video_Standard, Avc_video_format[(*seq_parameter_set_Item)->vui_parameters->video_format]);
             if ((*seq_parameter_set_Item)->vui_parameters->colour_description_present_flag)
             {
-                Fill(Stream_Video, 0, Video_colour_description_present, "Yes");
-                Fill(Stream_Video, 0, Video_colour_primaries, Mpegv_colour_primaries((*seq_parameter_set_Item)->vui_parameters->colour_primaries));
-                Fill(Stream_Video, 0, Video_transfer_characteristics, Mpegv_transfer_characteristics((*seq_parameter_set_Item)->vui_parameters->transfer_characteristics));
-                Fill(Stream_Video, 0, Video_matrix_coefficients, Mpegv_matrix_coefficients((*seq_parameter_set_Item)->vui_parameters->matrix_coefficients));
+                Fill(Stream_Video, 0, "colour_primaries", Mpegv_colour_primaries((*seq_parameter_set_Item)->vui_parameters->colour_primaries));
+                Fill(Stream_Video, 0, "transfer_characteristics", Mpegv_transfer_characteristics((*seq_parameter_set_Item)->vui_parameters->transfer_characteristics));
+                Fill(Stream_Video, 0, "matrix_coefficients", Mpegv_matrix_coefficients((*seq_parameter_set_Item)->vui_parameters->matrix_coefficients));
             }
         }
 
@@ -581,10 +580,6 @@ void File_Avc::Streams_Finish()
         {
             Finish(GA94_03_Parser);
             Merge(*GA94_03_Parser);
-
-            Ztring LawRating=GA94_03_Parser->Retrieve(Stream_General, 0, General_LawRating);
-            if (!LawRating.empty())
-                Fill(Stream_General, 0, General_LawRating, LawRating, true);
 
             for (size_t Pos=0; Pos<Count_Get(Stream_Text); Pos++)
             {
@@ -873,27 +868,23 @@ bool File_Avc::Demux_UnpacketizeContainer_Test()
                         Demux_Offset--;
                 }
 
-                if (Demux_Offset+6>Buffer_Size)
+                if (Demux_Offset+6<=Buffer_Size)
                 {
-                    if (File_Offset+Buffer_Size==File_Size)
-                        Demux_Offset=Buffer_Size;
-                    break;
-                }
+                    zero_byte=Buffer[Demux_Offset+2]==0x00;
+                    if (Demux_IntermediateItemFound)
+                    {
+                        if (!(((Buffer[Demux_Offset+(zero_byte?4:3)]&0x1B)==0x01 && (Buffer[Demux_Offset+(zero_byte?5:4)]&0x80)!=0x80)
+                           || (Buffer[Demux_Offset+(zero_byte?4:3)]&0x1F)==0x0C))
+                            break;
+                    }
+                    else
+                    {
+                        if ((Buffer[Demux_Offset+(zero_byte?4:3)]&0x1B)==0x01 && (Buffer[Demux_Offset+(zero_byte?5:4)]&0x80)==0x80)
+                            Demux_IntermediateItemFound=true;
+                    }
 
-                zero_byte=Buffer[Demux_Offset+2]==0x00;
-                if (Demux_IntermediateItemFound)
-                {
-                    if (!(((Buffer[Demux_Offset+(zero_byte?4:3)]&0x1B)==0x01 && (Buffer[Demux_Offset+(zero_byte?5:4)]&0x80)!=0x80)
-                        || (Buffer[Demux_Offset+(zero_byte?4:3)]&0x1F)==0x0C))
-                        break;
+                    Demux_Offset++;
                 }
-                else
-                {
-                    if ((Buffer[Demux_Offset+(zero_byte?4:3)]&0x1B)==0x01 && (Buffer[Demux_Offset+(zero_byte?5:4)]&0x80)==0x80)
-                        Demux_IntermediateItemFound=true;
-                }
-
-                Demux_Offset++;
             }
 
             if (Demux_Offset+6>Buffer_Size && !FrameIsAlwaysComplete && File_Offset+Buffer_Size<File_Size)
@@ -1175,9 +1166,9 @@ void File_Avc::Header_Parse()
         Get_S1 ( 5, nal_unit_type,                              "nal_unit_type");
         BS_End();
 
-        FILLING_BEGIN();
+        FILLING_BEGIN()
             Header_Fill_Size(Size?(Element_Offset-1+Size):(Buffer_Size-Buffer_Offset)); //If Size is 0, it is not normal, we skip the complete frame
-        FILLING_END();
+        FILLING_END()
     }
 
     //Filling
@@ -2911,7 +2902,7 @@ void File_Avc::pic_parameter_set()
         while (Offset && Buffer[Buffer_Offset+(size_t)Offset]==0x00) //Searching if there are NULL bytes at the end of the data
             Offset--;
         size_t Bit_Pos=7;
-        while (Bit_Pos && !(Buffer[Buffer_Offset+(size_t)Offset]&(1<<(7-Bit_Pos))))
+        while (!(Buffer[Buffer_Offset+(size_t)Offset]&(1<<(7-Bit_Pos))))
             Bit_Pos--;
         if (Data_BS_Remain()>1+(7-Bit_Pos)+(Element_Size-Offset-1)*8)
             more_rbsp_data=true;
@@ -3224,7 +3215,7 @@ bool File_Avc::seq_parameter_set_data(std::vector<seq_parameter_set_struct*> &Da
         vui_parameters(vui_parameters_Item);
     TEST_SB_END();
 
-    FILLING_BEGIN();
+    FILLING_BEGIN()
         //Integrity
         if (Data_id>=32)
         {
@@ -3290,9 +3281,9 @@ bool File_Avc::seq_parameter_set_data(std::vector<seq_parameter_set_struct*> &Da
             TemporalReferences.resize(4*MaxNumber);
             TemporalReferences_Reserved=MaxNumber;
         }
-    FILLING_ELSE();
+    FILLING_ELSE()
         return false;
-    FILLING_END();
+    FILLING_END()
     return true;
 }
 
@@ -3527,11 +3518,11 @@ void File_Avc::seq_parameter_set_mvc_extension(int32u subset_seq_parameter_sets_
     Element_End0();
 
     std::vector<seq_parameter_set_struct*>::iterator subset_seq_parameter_sets_Item=subset_seq_parameter_sets.begin()+subset_seq_parameter_sets_id;
-    FILLING_BEGIN();
+    FILLING_BEGIN()
         (*subset_seq_parameter_sets_Item)->num_views_minus1                         =(int16u)num_views_minus1;
-    FILLING_ELSE();
+    FILLING_ELSE()
         delete (*subset_seq_parameter_sets_Item); (*subset_seq_parameter_sets_Item)=NULL;
-    FILLING_END();
+    FILLING_END()
 }
 
 //---------------------------------------------------------------------------

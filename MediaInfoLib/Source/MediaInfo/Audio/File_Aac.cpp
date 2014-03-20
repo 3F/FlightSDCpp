@@ -50,7 +50,7 @@ File_Aac::File_Aac()
     IsRawStream=true;
 
     //In
-    Frame_Count_Valid=MediaInfoLib::Config.ParseSpeed_Get()>=0.5?128:(MediaInfoLib::Config.ParseSpeed_Get()>=0.3?32:8);
+    Frame_Count_Valid=MediaInfoLib::Config.ParseSpeed_Get()>=0.5?128:(MediaInfoLib::Config.ParseSpeed_Get()>=0.3?32:2);
     FrameIsAlwaysComplete=false;
     Mode=Mode_Unknown;
 
@@ -77,7 +77,7 @@ File_Aac::File_Aac()
     ps=NULL;
 
     //Temp
-    CanFill=true;
+    CanFill=false;
 }
 
 //---------------------------------------------------------------------------
@@ -110,35 +110,6 @@ void File_Aac::Streams_Fill()
     {
         case Mode_ADTS    : File__Tags_Helper::Streams_Fill(); break;
         default           : ;
-    }
-}
-
-//---------------------------------------------------------------------------
-void File_Aac::Streams_Update()
-{
-    bool ComputeBitRate=false;
-    
-    switch(Mode)
-    {
-        #if MEDIAINFO_ADVANCED
-        case Mode_LATM    : if (Config->File_RiskyBitRateEstimation_Get())
-                                ComputeBitRate=true;
-                            break;
-        #endif //MEDIAINFO_ADVANCED
-        default           : ;
-    }
-
-    if (ComputeBitRate)
-    {
-        int64u aac_frame_length_Total=0;
-        for (size_t Pos=0; Pos<aac_frame_lengths.size(); Pos++)
-            aac_frame_length_Total+=aac_frame_lengths[Pos];
-
-        int64u BitRate=(sampling_frequency/1024);
-        BitRate*=aac_frame_length_Total*8;
-        BitRate/=aac_frame_lengths.size();
-
-        Fill(Stream_Audio, 0, Audio_BitRate, BitRate, 10, true);
     }
 }
 
@@ -297,8 +268,6 @@ void File_Aac::Read_Buffer_Continue_raw_data_block()
         if (Frame_Count>=Frame_Count_Valid)
         {
             //No more need data
-            if (Mode==Mode_LATM)
-                File__Analyze::Accept();
             File__Analyze::Finish();
         }
     FILLING_END();
@@ -421,6 +390,7 @@ bool File_Aac::Synchronize_ADTS()
 
     //Synched is OK
     Mode=Mode_ADTS;
+    File__Tags_Helper::Accept("ADTS");
     return true;
 }
 
@@ -482,6 +452,7 @@ bool File_Aac::Synchronize_LATM()
 
     //Synched is OK
     Mode=Mode_LATM;
+    File__Analyze::Accept("LATM");
     return true;
 }
 
@@ -652,15 +623,8 @@ void File_Aac::Data_Parse()
         FrameSize_Min=Header_Size+Element_Size;
     if (FrameSize_Max<Header_Size+Element_Size)
         FrameSize_Max=Header_Size+Element_Size;
-    switch(Mode)
-    {
-        case Mode_LATM    :
-                            if (aac_frame_lengths.size()<1000) //TODO: find a way to detect properly when the container has finished to analyze
-                                aac_frame_lengths.push_back((int16u)Element_Size); break;
-        default           : ;
-    }
 
-    if (Frame_Count>Frame_Count_Valid)
+    if (Frame_Count>Frame_Count_Valid || CanFill)
     {
         Skip_XX(Element_Size,                                   "Data");
         FrameInfo.DTS+=float64_int64s(((float64)frame_length)*1000000000/sampling_frequency);
@@ -679,31 +643,22 @@ void File_Aac::Data_Parse()
         //Counting
         if (File_Offset+Buffer_Offset+Element_Size==File_Size)
             Frame_Count_Valid=Frame_Count; //Finish frames in case of there are less than Frame_Count_Valid frames
-        if (CanFill)
-        {
-            Frame_Count++;
-            if (Frame_Count_NotParsedIncluded!=(int64u)-1)
-                Frame_Count_NotParsedIncluded++;
-            Element_Info1(Ztring::ToZtring(Frame_Count));
-        }
-
-        if (!Status[IsAccepted])
-            File__Analyze::Accept();
+        Frame_Count++;
+        if (Frame_Count_NotParsedIncluded!=(int64u)-1)
+            Frame_Count_NotParsedIncluded++;
+        Element_Info1(Ztring::ToZtring(Frame_Count));
 
         //Filling
-        if (Frame_Count>=Frame_Count_Valid && Config->ParseSpeed<1.0)
+        if ((Frame_Count>=Frame_Count_Valid || CanFill) && Config->ParseSpeed<1.0)
         {
             //No more need data
             switch (Mode)
             {
                 case Mode_ADTS        :
                 case Mode_LATM        :
-                                        if (!Status[IsFilled])
-                                        {
-                                            Fill();
-                                            if (!IsSub)
-                                                File__Tags_Helper::Finish();
-                                        }
+                                        Fill();
+                                        if (!IsSub)
+                                            File__Tags_Helper::Finish();
                                         break;
                 default               : ; //No header
             }

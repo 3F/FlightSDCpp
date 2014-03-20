@@ -609,12 +609,12 @@ int64u File::Size_Get()
             File_Size=lseek(File_Handle, 0, SEEK_END);
             lseek(File_Handle, CurrentPos, SEEK_SET);
             */
-            fstream::pos_type CurrentPos=((fstream*)File_Handle)->tellg();
-            if (CurrentPos!=(fstream::pos_type)-1)
+            streampos CurrentPos=((fstream*)File_Handle)->tellg();
+            if (CurrentPos!=(streampos)-1)
             {
                 ((fstream*)File_Handle)->seekg(0, ios_base::end);
                 Size=((fstream*)File_Handle)->tellg();
-                ((fstream*)File_Handle)->seekg(CurrentPos);
+                ((fstream*)File_Handle)->seekg(CurrentPos, ios_base::beg);
             }
             else
                 Size=(int64u)-1;

@@ -204,11 +204,9 @@ size_t Reader_File::Format_Test_PerParser_Continue (MediaInfo_Internal* MI)
                 return 2; //Must return immediately
         #endif //MEDIAINFO_DEMUX
 
-#ifdef FLYLINKDC_ZENLIB_USE_THREAD
         //Threading
         if (MI->IsTerminating())
             return 1; //Termination is requested
-#endif // FLYLINKDC_ZENLIB_USE_THREAD
 
         if (Status[File__Analyze::IsFinished] || (StopAfterFilled && Status[File__Analyze::IsFilled]))
             ShouldContinue=false;
@@ -281,7 +279,7 @@ size_t Reader_File::Format_Test_PerParser_Continue (MediaInfo_Internal* MI)
                     }
                     if (Pos>=MI->Config.File_Sizes.size())
                         break;
-                    if (Pos!=MI->Config.File_Names_Pos-1)
+                    if (Pos!=MI->Config.File_Names_Pos)
                     {
                         F.Close();
                         F.Open(MI->Config.File_Names[Pos]);
@@ -409,12 +407,9 @@ size_t Reader_File::Format_Test_PerParser_Continue (MediaInfo_Internal* MI)
                     return 2; //Must return immediately
             #endif //MEDIAINFO_DEMUX
 
-#ifdef FLYLINKDC_ZENLIB_USE_THREAD
             //Threading
             if (MI->IsTerminating())
                 break; //Termination is requested
-#endif // FLYLINKDC_ZENLIB_USE_THREAD
-
         }
     }
 

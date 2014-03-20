@@ -38,7 +38,6 @@
 namespace ZenLib
 {
 
-#ifdef FLYLINKDC_ZENLIB_USE_THREAD
 //***************************************************************************
 /// @brief Thread manipulation
 //***************************************************************************
@@ -101,8 +100,6 @@ private :
     CriticalSection C;
 };
 
-#endif
-
 } //NameSpace
 
-#endif // FLYLINKDC_ZENLIB_USE_THREAD
+#endif

@@ -24,8 +24,6 @@
 namespace MediaInfoLib
 {
 
-#ifdef FLYLINKDC_USE_MEDIAINFO_LIST
-
 class MediaInfoList_Internal : public ZenLib::Thread
 {
 public :
@@ -77,8 +75,6 @@ private :
     void    Entry();
     ZenLib::CriticalSection CS;
 };
-
-#endif // FLYLINKDC_USE_MEDIAINFO_LIST
 
 } //NameSpace
 #endif

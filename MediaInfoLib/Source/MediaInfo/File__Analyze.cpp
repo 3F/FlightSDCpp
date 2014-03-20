@@ -345,16 +345,13 @@ void File__Analyze::Open_Buffer_Continue (const int8u* ToAdd, size_t ToAdd_Size)
 
     //MD5
     #if MEDIAINFO_MD5
-        if (ToAdd_Size)
+        if (!IsSub && !Buffer_Temp_Size && File_Offset==Config->File_Current_Offset && Config->File_Md5_Get())
         {
-            if (!IsSub && !Buffer_Temp_Size && File_Offset==Config->File_Current_Offset && Config->File_Md5_Get())
-            {
-                delete MD5; MD5=new struct MD5Context;
-                MD5Init(MD5);
-            }
-            if (MD5)
-                MD5Update(MD5, ToAdd, (unsigned int)ToAdd_Size);
+            delete MD5; MD5=new struct MD5Context;
+            MD5Init(MD5);
         }
+        if (MD5)
+            MD5Update(MD5, ToAdd, (unsigned int)ToAdd_Size);
     #endif //MEDIAINFO_MD5
 
     //Integrity
@@ -1085,27 +1082,10 @@ size_t File__Analyze::Read_Buffer_Seek (size_t Method, int64u Value, int64u ID)
 {
     #if MEDIAINFO_IBI
         if (!IsSub)
-        {
-            size_t ReturnValue=Ibi_Read_Buffer_Seek(Method, Value, ID);
-            if (ReturnValue!=(size_t)-1) // If IBI file is supported
-                return ReturnValue;
-        }
+            return Ibi_Read_Buffer_Seek(Method, Value, ID);
     #endif //MEDIAINFO_IBI
 
-    //Parsing
-    switch (Method)
-    {
-        case 0  :   //Default stream seek (byte offset)
-                    GoTo(Value);
-                    Open_Buffer_Unsynch();
-                    return 1;
-        case 1  :   //Default stream seek (percentage)
-                    GoTo(File_Size*Value/10000);
-                    Open_Buffer_Unsynch();
-                    return 1;
-        default :
-                    return (size_t)-1; //Not supported
-    }
+    return (size_t)-1; //Not supported
 }
 #endif //MEDIAINFO_SEEK
 
@@ -1406,25 +1386,65 @@ bool File__Analyze::FileHeader_Begin_XML(tinyxml2::XMLDocument &Document)
     //XML header
     Ztring Data;
          if ((Buffer[0]=='<'
-           && Buffer[1]==0x00)
-          || (Buffer[0]==0xFF
-           && Buffer[1]==0xFE
-           && Buffer[2]=='<'
-           && Buffer[3]==0x00))
-        Data.From_UTF16LE((const char*)Buffer, Buffer_Size);
-    else if ((Buffer[0]==0x00
-           && Buffer[1]=='<')
-          || (Buffer[0]==0xFE
-           && Buffer[1]==0xFF
-           && Buffer[2]==0x00
-           && Buffer[3]=='<'))
-        Data.From_UTF16BE((const char*)Buffer, Buffer_Size);
-    else if ((Buffer[0]=='<')
+           && Buffer[1]=='?'
+           && Buffer[2]=='x'
+           && Buffer[3]=='m'
+           && Buffer[4]=='l')
           || (Buffer[0]==0xEF
            && Buffer[1]==0xBB
            && Buffer[2]==0xBF
-           && Buffer[3]=='<'))
+           && Buffer[3]=='<'
+           && Buffer[4]=='?'
+           && Buffer[5]=='x'
+           && Buffer[6]=='m'
+           && Buffer[7]=='l'))
         Data.From_UTF8((const char*)Buffer, Buffer_Size);
+    else if ((Buffer[0]=='<'
+           && Buffer[1]==0x00
+           && Buffer[2]=='?'
+           && Buffer[3]==0x00
+           && Buffer[4]=='x'
+           && Buffer[5]==0x00
+           && Buffer[6]=='m'
+           && Buffer[7]==0x00
+           && Buffer[8]=='l'
+           && Buffer[9]==0x00)
+          || (Buffer[0]==0xFF
+           && Buffer[1]==0xFE
+           && Buffer[2]=='<'
+           && Buffer[3]==0x00
+           && Buffer[4]=='?'
+           && Buffer[5]==0x00
+           && Buffer[6]=='x'
+           && Buffer[7]==0x00
+           && Buffer[8]=='m'
+           && Buffer[9]==0x00
+           && Buffer[10]=='l'
+           && Buffer[11]==0x00))
+        Data.From_UTF16LE((const char*)Buffer, Buffer_Size);
+    else if ((Buffer[0]==0x00
+           && Buffer[1]=='<'
+           && Buffer[2]==0x00
+           && Buffer[3]=='?'
+           && Buffer[4]==0x00
+           && Buffer[5]=='x'
+           && Buffer[6]==0x00
+           && Buffer[7]=='m'
+           && Buffer[8]==0x00
+           && Buffer[9]=='l')
+          || (Buffer[0]==0xFE
+           && Buffer[1]==0xFF
+           && Buffer[2]==0x00
+           && Buffer[3]=='<'
+           && Buffer[4]==0x00
+           && Buffer[5]=='?'
+           && Buffer[6]==0x00
+           && Buffer[7]=='x'
+           && Buffer[8]==0x00
+           && Buffer[9]=='m'
+           && Buffer[10]==0x00
+           && Buffer[11]=='l'))
+        Data.From_UTF16BE((const char*)Buffer, Buffer_Size);
     else
     {
         Reject();
@@ -1604,25 +1624,13 @@ bool File__Analyze::FileHeader_Manage()
         return false; //Wait for more data
     }
 
-    //Positionning
-    if ((Buffer_Size && Buffer_Offset+Element_Offset>Buffer_Size) || (sizeof(size_t)<sizeof(int64u) && Buffer_Offset+Element_Offset>=(int64u)(size_t)-1))
-    {
-        GoTo(File_Offset+Buffer_Offset+Element_Offset);
-        return false;
-    }
-    else
-    {
-        Buffer_Offset+=(size_t)Element_Offset;
-        Element_Offset=0;
-    }
-
     #if MEDIAINFO_DEMUX
         if (Config->Demux_EventWasSent)
             return false;
     #endif //MEDIAINFO_DEMUX
 
     //From the parser
-    Element_Size=Buffer_Size-Buffer_Offset;
+    Element_Size=Buffer_Size;
     Element_Begin1("File Header");
     FileHeader_Parse();
     if (Element_Offset==0)
@@ -1651,10 +1659,7 @@ bool File__Analyze::FileHeader_Manage()
         return false;
     }
     else
-    {
         Buffer_Offset+=(size_t)Element_Offset;
-        Element_Offset=0;
-    }
 
     MustParseTheHeaderFile=false;
     return true;
@@ -2119,7 +2124,7 @@ Ztring Log_Offset (int64u OffsetToShow, MediaInfo_Config::trace_Format Config_Tr
 //---------------------------------------------------------------------------
 void File__Analyze::Element_Begin()
 {
-    if ( Element_Level+1 >= Element.size() ) // FlylinkDC++ Team bug fix
+    if ( Element_Level+1 >= Element.size() ) // FlyLink Team bug fix
 	return;
     //Level
     Element_Level++;
@@ -2150,7 +2155,7 @@ void File__Analyze::Element_Begin()
 #if MEDIAINFO_TRACE
 void File__Analyze::Element_Begin(const Ztring &Name)
 {
-    if ( Element_Level+1 >= Element.size() ) // FlylinkDC++ Team bug fix
+    if ( Element_Level+1 >= Element.size() ) // FlyLink Team bug fix
 	return;
     //Level
     Element_Level++;
@@ -3336,7 +3341,7 @@ bool File__Analyze::Demux_UnpacketizeContainer_Test_OneFramePerFile ()
 
     float64 Demux_Rate=Config->Demux_Rate_Get();
     if (!Demux_Rate)
-        Demux_Rate=24;
+        Demux_Rate=25;
     if (Frame_Count_NotParsedIncluded!=(int64u)-1)
         FrameInfo.DTS=float64_int64s(Frame_Count_NotParsedIncluded*1000000000/Demux_Rate);
     else
@@ -3384,9 +3389,6 @@ void File__Analyze::Ibi_Read_Buffer_Unsynched ()
 
 size_t File__Analyze::Ibi_Read_Buffer_Seek (size_t Method, int64u Value, int64u ID)
 {
-    if (IbiStream==NULL)
-        return (size_t)-1;
-
     //Init
     if (!Seek_Duration_Detected)
     {

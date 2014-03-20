@@ -11,6 +11,7 @@
 #include "MediaInfo/TimeCode.h"
 //[-] FlylinkDC++ Team #include <cstring>
 using namespace MediaInfoLib;
+//[-] FlylinkDC++ Team using namespace std;
 
 //---------------------------------------------------------------------------
 // Generic

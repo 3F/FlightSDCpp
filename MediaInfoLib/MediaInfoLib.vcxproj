@@ -192,7 +192,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
-      <Optimization>Full</Optimization>
+      <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;$(ProjectDir)Source/ThirdParty/tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <StringPooling>true</StringPooling>
@@ -203,13 +203,13 @@
       <DisableSpecificWarnings>4100;4127;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;WIN32;MEDIAINFO_TRACE_NO;MEDIAINFO_EVENTS_NO;MEDIAINFO_DEMUX_NO;MEDIAINFO_DVDIF_ANALYZE_NO;MEDIAINFO_MPEGTS_DUPLICATE_NO;MEDIAINFO_NEXTPACKET_NO;MEDIAINFO_SEEK_NO;MEDIAINFO_IBI_NO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
-      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <PrecompiledHeaderFile>MediaInfo/PreComp.h</PrecompiledHeaderFile>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
       <OptimizeForWindowsApplication>true</OptimizeForWindowsApplication>
     </ClCompile>
     <Lib>
@@ -280,7 +280,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
-      <Optimization>Full</Optimization>
+      <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)../ZenLib/Source;$(ProjectDir)../zlib;../../../../curl/include;$(ProjectDir)Source/ThirdParty/tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;MEDIAINFO_TRACE_NO;MEDIAINFO_EVENTS_NO;MEDIAINFO_DEMUX_NO;MEDIAINFO_DVDIF_ANALYZE_NO;MEDIAINFO_MPEGTS_DUPLICATE_NO;MEDIAINFO_NEXTPACKET_NO;MEDIAINFO_SEEK_NO;MEDIAINFO_IBI_NO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -289,13 +289,13 @@
       <WarningLevel>Level4</WarningLevel>
       <DisableSpecificWarnings>4100;4127;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <OmitFramePointers>false</OmitFramePointers>
       <PrecompiledHeaderFile>MediaInfo/PreComp.h</PrecompiledHeaderFile>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
       <OptimizeForWindowsApplication>true</OptimizeForWindowsApplication>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
@@ -381,7 +381,6 @@
     <ClCompile Include="Source\MediaInfo\Audio\File_SmpteSt0302.cpp" />
     <ClCompile Include="Source\MediaInfo\Audio\File_SmpteSt0331.cpp" />
     <ClCompile Include="Source\MediaInfo\Audio\File_SmpteSt0337.cpp" />
-    <ClCompile Include="Source\MediaInfo\Export\Export_EbuCore.cpp" />
     <ClCompile Include="Source\MediaInfo\Export\Export_reVTMD.cpp" />
     <ClCompile Include="Source\MediaInfo\File__Analyze.cpp" />
     <ClCompile Include="Source\MediaInfo\File__Analyze_Buffer.cpp" />
@@ -445,13 +444,9 @@
     <ClCompile Include="Source\MediaInfo\Audio\File_Vorbis.cpp" />
     <ClCompile Include="Source\MediaInfo\Audio\File_Wvpk.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_Ancillary.cpp" />
-    <ClCompile Include="Source\MediaInfo\Multiple\File_DashMpd.cpp" />
-    <ClCompile Include="Source\MediaInfo\Multiple\File_DcpAm.cpp" />
-    <ClCompile Include="Source\MediaInfo\Multiple\File_DcpCpl.cpp" />
-    <ClCompile Include="Source\MediaInfo\Multiple\File_DcpPkl.cpp" />
+    <ClCompile Include="Source\MediaInfo\Multiple\File_Dcp.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_Dxw.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_Gxf_TimeCode.cpp" />
-    <ClCompile Include="Source\MediaInfo\Multiple\File_HdsF4m.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_Hls.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_Ibi.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_Ibi_Creation.cpp" />
@@ -460,7 +455,6 @@
     <ClCompile Include="Source\MediaInfo\Multiple\File_Lxf.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_P2_Clip.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_Pmp.cpp" />
-    <ClCompile Include="Source\MediaInfo\Multiple\File_Ptx.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_SequenceInfo.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File_Xdcam_Clip.cpp" />
     <ClCompile Include="Source\MediaInfo\Multiple\File__ReferenceFilesHelper.cpp" />
@@ -582,7 +576,6 @@
     <ClInclude Include="Source\MediaInfo\Audio\File_SmpteSt0302.h" />
     <ClInclude Include="Source\MediaInfo\Audio\File_SmpteSt0331.h" />
     <ClInclude Include="source\Mediainfo\audio\File_SmpteSt0337.h" />
-    <ClInclude Include="Source\MediaInfo\Export\Export_EbuCore.h" />
     <ClInclude Include="Source\MediaInfo\Export\Export_reVTMD.h" />
     <ClInclude Include="Source\MediaInfo\File__Analyse_Automatic.h" />
     <ClInclude Include="Source\MediaInfo\File__Analyze.h" />
@@ -609,13 +602,9 @@
     <ClInclude Include="Source\MediaInfo\MediaInfoList.h" />
     <ClInclude Include="Source\MediaInfo\MediaInfoList_Internal.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_Ancillary.h" />
-    <ClInclude Include="Source\MediaInfo\Multiple\File_DashMpd.h" />
-    <ClInclude Include="Source\MediaInfo\Multiple\File_DcpAm.h" />
-    <ClInclude Include="Source\MediaInfo\Multiple\File_DcpCpl.h" />
-    <ClInclude Include="Source\MediaInfo\Multiple\File_DcpPkl.h" />
+    <ClInclude Include="Source\MediaInfo\Multiple\File_Dcp.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_Dxw.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_Gxf_TimeCode.h" />
-    <ClInclude Include="Source\MediaInfo\Multiple\File_HdsF4m.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_Hls.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_Ibi.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_Ibi_Creation.h" />
@@ -624,7 +613,6 @@
     <ClInclude Include="Source\MediaInfo\Multiple\File_Lxf.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_P2_Clip.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_Pmp.h" />
-    <ClInclude Include="Source\MediaInfo\Multiple\File_Ptx.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_SequenceInfo.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File_Xdcam_Clip.h" />
     <ClInclude Include="Source\MediaInfo\Multiple\File__ReferenceFilesHelper.h" />

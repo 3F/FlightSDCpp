@@ -11,7 +11,7 @@
 #ifndef BOOST_CONTAINER_MAP_HPP
 #define BOOST_CONTAINER_MAP_HPP
 
-#if defined(_MSC_VER)
+#if (defined _MSC_VER) && (_MSC_VER >= 1200)
 #  pragma once
 #endif
 
@@ -138,16 +138,6 @@ class map
       BOOST_STATIC_ASSERT((container_detail::is_same<std::pair<const Key, T>, typename Allocator::value_type>::value));
    }
 
-   //! <b>Effects</b>: Constructs an empty map using the specified allocator.
-   //!
-   //! <b>Complexity</b>: Constant.
-   explicit map(const allocator_type& a)
-      : m_tree(a)
-   {
-      //Allocator type must be std::pair<CONST Key, T>
-      BOOST_STATIC_ASSERT((container_detail::is_same<std::pair<const Key, T>, typename Allocator::value_type>::value));
-   }
-
    //! <b>Effects</b>: Constructs an empty map using the specified comparison object and
    //! allocator, and inserts elements from the range [first ,last ).
    //!
@@ -170,8 +160,6 @@ class map
    //! unique values.
    //!
    //! <b>Complexity</b>: Linear in N.
-   //!
-   //! <b>Note</b>: Non-standard extension.
    template <class InputIterator>
    map( ordered_unique_range_t, InputIterator first, InputIterator last
       , const Compare& comp = Compare(), const allocator_type& a = allocator_type())
@@ -713,7 +701,7 @@ class map
    //!
    //! <b>Complexity</b>: log(size())+count(k)
    size_type count(const key_type& x) const
-   {  return static_cast<size_type>(m_tree.find(x) != m_tree.end());  }
+   {  return m_tree.find(x) == m_tree.end() ? 0 : 1;  }
 
    //! <b>Returns</b>: An iterator pointing to the first element with key not less
    //!   than k, or a.end() if such an element is not found.
@@ -930,22 +918,12 @@ class multimap
       BOOST_STATIC_ASSERT((container_detail::is_same<std::pair<const Key, T>, typename Allocator::value_type>::value));
    }
 
-   //! <b>Effects</b>: Constructs an empty multimap using the specified allocator.
-   //!
-   //! <b>Complexity</b>: Constant.
-   explicit multimap(const Compare& comp, const allocator_type& a = allocator_type())
-      : m_tree(comp, a)
-   {
-      //Allocator type must be std::pair<CONST Key, T>
-      BOOST_STATIC_ASSERT((container_detail::is_same<std::pair<const Key, T>, typename Allocator::value_type>::value));
-   }
-
    //! <b>Effects</b>: Constructs an empty multimap using the specified comparison
    //!   object and allocator.
    //!
    //! <b>Complexity</b>: Constant.
-   explicit multimap(const allocator_type& a)
-      : m_tree(a)
+   explicit multimap(const Compare& comp, const allocator_type& a = allocator_type())
+      : m_tree(comp, a)
    {
       //Allocator type must be std::pair<CONST Key, T>
       BOOST_STATIC_ASSERT((container_detail::is_same<std::pair<const Key, T>, typename Allocator::value_type>::value));
@@ -973,8 +951,6 @@ class multimap
    //! <b>Requires</b>: [first ,last) must be ordered according to the predicate.
    //!
    //! <b>Complexity</b>: Linear in N.
-   //!
-   //! <b>Note</b>: Non-standard extension.
    template <class InputIterator>
    multimap(ordered_range_t, InputIterator first, InputIterator last, const Compare& comp = Compare(),
          const allocator_type& a = allocator_type())

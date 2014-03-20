@@ -41,7 +41,6 @@ public :
 
 private :
     //Streams management
-    void Streams_Accept();
     void Streams_Fill();
     void Streams_Finish();
 

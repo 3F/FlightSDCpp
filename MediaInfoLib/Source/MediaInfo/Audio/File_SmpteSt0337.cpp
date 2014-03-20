@@ -574,7 +574,7 @@ bool File_SmpteSt0337::Synchronize()
             }
         }
 
-        if (Container_Bits>=4 && Aligned)
+        if (Container_Bits && Aligned)
             Buffer_Offset+=Container_Bits/4;
         else
             Buffer_Offset++;
@@ -1266,7 +1266,7 @@ void File_SmpteSt0337::Data_Parse()
         Skip_XX(Element_Size-Element_Offset,                    "Data");
     }
 
-    FILLING_BEGIN();
+    FILLING_BEGIN()
         FrameSizes[IsSub?Buffer_Size:((GuardBand_Before+Element_Size)*Container_Bits/Stream_Bits)]++;
 
         Frame_Count++;

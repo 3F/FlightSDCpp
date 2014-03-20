@@ -25,6 +25,7 @@
 
 #include "../client/AdcCommand.h"
 #include "../client/ClientManager.h"
+#include "../client/HttpConnection.h"
 #include "../client/LogManager.h"
 #include "../client/Util.h"
 #include "../client/SimpleXML.h"
@@ -51,7 +52,7 @@ bool BootstrapManager::bootstrap(const string& p_sub_agent)
 //		l_dht_log.step(STRING(DHT_BOOTSTRAPPING_STARTED));// [!]NightOrion(translate)
 		
 		// TODO: make URL settable
-		const auto& l_server = CFlyServerConfig::getRandomDHTServer();
+		const DHTServer& l_server = CFlyServerConfig::getRandomDHTServer();
 		
 		string l_url = l_server.getUrl() + "?cid=" + ClientManager::getInstance()->getMe()->getCID().toBase32() + "&encryption=1";  // [!] IRainman fix.
 		
@@ -64,8 +65,8 @@ bool BootstrapManager::bootstrap(const string& p_sub_agent)
         string l_agent = l_server.getAgent();
 		if(l_agent.empty())
 			l_agent += '-' + p_sub_agent;
-		std::vector<byte> l_data;
-		const size_t l_size = Util::getBinaryDataFromInet(Text::toT(l_agent).c_str(), 4096, l_url, l_data, 500);
+		std::unique_ptr<uint8_t[]> l_data;
+		const size_t l_size = Util::getDataFromInet(Text::toT(l_agent).c_str(), 4096, l_url, l_data, 500);
 		if (l_size == 0)
 		{
 			l_dht_log.step("Error");
@@ -85,7 +86,7 @@ bool BootstrapManager::bootstrap(const string& p_sub_agent)
 				destLen *= 2;
 				destBuf.reset(new uint8_t[destLen]);
 				
-				result = uncompress(&destBuf[0], &destLen, l_data.data(), l_size);
+				result = uncompress(&destBuf[0], &destLen, (Bytef*)l_data.get(), l_size);
 			}
 			while (result == Z_BUF_ERROR);
 			
