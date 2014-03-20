@@ -123,10 +123,11 @@ namespace net { namespace r_eg { namespace text { namespace wildcards {
         /** work with the pattern */
         tstring _filter;
 
-        inline tstring _lowercase(tstring str) throw()
+        inline tstring _lowercase(const tstring& str) throw()
         {
-            transform(str.begin(), str.end(), str.begin(), towlower);
-            return str;
+            tstring res(str.length(), 0);
+            transform(str.begin(), str.end(), res.begin(), _totlower);
+            return res;
         };
     };
 

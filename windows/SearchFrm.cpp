@@ -1422,7 +1422,7 @@ void SearchFrame::addSearchResult(SearchInfo* si)
         ctrlResults.insertGroupedItem(si, expandSR);
         
         //TODO:
-        boost::thread t(boost::bind(&SearchFrame::updateSearchList, this, si));
+        //filtering(si);
             
         if (BOOLSETTING(BOLD_SEARCH))
         {
@@ -1941,13 +1941,14 @@ inline bool SearchFrame::doFilter(WPARAM wParam)
     return true;
 }
 
-inline void SearchFrame::filtering()
+inline void SearchFrame::filtering(SearchInfo* si = nullptr)
 {
+    if(!filterAllowRunning){
+        return;
+    }
     //Lock l(cs);
     updatePrevTimeFilter();
-    if(filterAllowRunning){
-        boost::thread t(boost::bind(&SearchFrame::updateSearchList, this, (SearchFrame::SearchInfo*)NULL));
-    }
+    boost::thread t(boost::bind(&SearchFrame::updateSearchListSafe, this, si));
 }
 
 
@@ -1984,6 +1985,7 @@ LRESULT SearchFrame::onGridItemClick(int idCtrl, LPNMHDR pnmh, BOOL& /*bHandled*
         }
         case FGC_REMOVE:{
             if(ctrlGridFilters.GetItemCount() < 2){
+                ctrlGridFilters.GetProperty(0, FGC_FILTER)->SetValue(CComVariant(_T("")));
                 return 0;
             }
             ctrlGridFilters.DeleteItem(ctrlGridFilters.GetSelectedIndex());
@@ -1995,7 +1997,7 @@ LRESULT SearchFrame::onGridItemClick(int idCtrl, LPNMHDR pnmh, BOOL& /*bHandled*
 
 LRESULT SearchFrame::onGridItemChanged(int idCtrl, LPNMHDR pnmh, BOOL& /*bHandled*/)
 {
-    updateSearchList();
+    updateSearchListSafe();
     return 0;
 }
 
@@ -2141,7 +2143,8 @@ inline bool SearchFrame::matchFilter(const tstring& filter, const tstring& str)
 bool SearchFrame::matchFilter(SearchInfo* si)
 {
     CComVariant value;
-    for(int i = 0, n = ctrlGridFilters.GetItemCount(); i < n; ++i){
+    for(int i = 0, n = ctrlGridFilters.GetItemCount(); i < n; ++i)
+    {
         ctrlGridFilters.GetProperty(i, FGC_INVERT)->GetValue(&value);
         VARIANT_BOOL invert = value.boolVal;
 
@@ -2163,19 +2166,34 @@ bool SearchFrame::matchFilter(SearchInfo* si)
     return true;
 }
 
+void SearchFrame::updateSearchListSafe(SearchInfo* si)
+{
+    //Lock l(cs);
+    try{
+        updateSearchList(si);
+        return;
+    }
+    catch(...){
+        //TODO:
+        dcdebug("updateSearchList corrupt");
+    }
+}
+
 void SearchFrame::updateSearchList(SearchInfo* si)
 {
     filterAllowRunning = false;
-    #ifdef _DEBUG
-        dcdebug("updateSearchList: started\r\n");
-    #endif
+
+#ifdef _DEBUG
+    dcdebug("updateSearchList: started\r\n");
+#endif
 
     waitPerformAllow();
-    #ifdef _DEBUG
-        dcdebug("updateSearchList: launched\r\n");
-    #endif
+
+#ifdef _DEBUG
+    dcdebug("updateSearchList: launched\r\n");
+#endif
     
-    if (si != NULL)
+    if (si != nullptr)
     {
         if(!matchFilter(si))
         {
@@ -2187,9 +2205,14 @@ void SearchFrame::updateSearchList(SearchInfo* si)
         ctrlResults.SetRedraw(FALSE);
         ctrlResults.DeleteAllItems();
         
-        for (SearchInfoList::ParentMap::const_iterator i = ctrlResults.getParents().begin(); i != ctrlResults.getParents().end(); ++i)
+        for(SearchInfoList::ParentMap::const_iterator i = ctrlResults.getParents().begin(); i != ctrlResults.getParents().end(); ++i)
         {
             SearchInfo* si = (*i).second.parent;
+
+            if(si == nullptr){
+                continue;
+            }
+
             if(ctrlResults.findItem(si) != -1){
                 continue;
             }
@@ -2221,9 +2244,10 @@ void SearchFrame::updateSearchList(SearchInfo* si)
     }
 
     filterAllowRunning = true;
-    #ifdef _DEBUG
-        dcdebug("updateSearchList: completed\r\n");
-    #endif
+
+#ifdef _DEBUG
+    dcdebug("updateSearchList: completed\r\n");
+#endif
 }
 
 // This and related changes taken from apex-sppedmod by SMT

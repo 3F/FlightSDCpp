@@ -307,7 +307,7 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
          * delay after the last key press
          * pause - in msec delay
          */
-        void waitPerformAllow(unsigned int pause = 300)
+        void waitPerformAllow(clock_t pause = 300)
         {
             while((clock() - _keypressPrevTime) < pause){
                 #ifdef _DEBUG
@@ -372,7 +372,7 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
         };
 
         bool doFilter(WPARAM wParam);
-        void filtering();
+        void filtering(SearchInfo* si);
         void insertIntofilter(CGrid& grid);
         vector<LPCTSTR> getFilterTypes();
 
@@ -810,6 +810,7 @@ class SearchFrame : public MDITabChildWindowImpl<SearchFrame, RGB(127, 127, 255)
         void onHubRemoved(HubInfo* info);
         bool parseFilter(const tstring& filter, FilterModes& mode, int64_t& size);
         void updateSearchList(SearchInfo* si = NULL);
+        void updateSearchListSafe(SearchInfo* si = NULL);
         void addSearchResult(SearchInfo* si);
 
         WildcardsEss wildcards;
