@@ -1,0 +1,178 @@
+﻿{
+  "Header": {
+    "application": "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/",
+    "Compatibility": "0.9"
+  },
+  "PreBuild": [
+    {
+      "Enabled": true,
+      "Name": null,
+      "Caption": "Updating version",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": [],
+      "ExecutionOrder": {
+        "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",
+        "$values": []
+      },
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
+        "Type": "interpreter",
+        "Command": "#[\" \n     Updating version\n\"]\n\n#[(#[File sout(\"cscript\", \"//nologo revision.vbs\")]) {\n\n    #[var tpl = #[File get(\"revision.tpl\")]]\n\n    #[var bSha1 = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\n    #[var bName = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\n    #[var bRevCount = #[File sout(\"git\", \"rev-list HEAD --count\")]]\n\n    #[var fdata = $(tpl.Replace(%bName%, \"#[var bName]\").Replace(%bSha1%, \"#[var bSha1]\").Replace(%bCount%, \"#[var bRevCount]\"))]\n\n    #[File write(\"revision.h\"):#[var fdata]]\n\n}]",
+        "Handler": "",
+        "Newline": "",
+        "Wrapper": ""
+      }
+    }
+  ],
+  "PostBuild": [
+    {
+      "Enabled": false,
+      "Name": null,
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
+        "Type": "file",
+        "Command": ""
+      }
+    }
+  ],
+  "CancelBuild": [
+    {
+      "Enabled": false,
+      "Name": null,
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
+        "Type": "file",
+        "Command": ""
+      }
+    }
+  ],
+  "WarningsBuild": [
+    {
+      "Codes": [],
+      "IsWhitelist": true,
+      "Enabled": false,
+      "Name": null,
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
+        "Type": "file",
+        "Command": ""
+      }
+    }
+  ],
+  "ErrorsBuild": [
+    {
+      "Codes": [],
+      "IsWhitelist": true,
+      "Enabled": false,
+      "Name": null,
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
+        "Type": "file",
+        "Command": ""
+      }
+    }
+  ],
+  "OWPBuild": [
+    {
+      "Match": null,
+      "Enabled": false,
+      "Name": null,
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
+        "Type": "file",
+        "Command": ""
+      }
+    }
+  ],
+  "Transmitter": [
+    {
+      "Enabled": false,
+      "Name": null,
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
+        "Type": "file",
+        "Command": ""
+      }
+    }
+  ]
+}
